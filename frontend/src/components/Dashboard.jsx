@@ -559,13 +559,13 @@ export default function Dashboard({ notebook, notes, onBack, onSaveNote, onDelet
               <Quote className="w-4 h-4" />
             </button>
             <button
-              onClick={() => editor.chain().focus().toggleCode().run()}
+              onClick={() => editor.chain().focus().toggleCodeBlock().run()}
               className={`p-2 rounded-lg transition-all ${
-                editor.isActive('code')
+                editor.isActive('codeBlock')
                   ? 'bg-white text-black'
                   : 'hover:bg-[#1C1C1E] text-gray-400'
               }`}
-              title="Inline Code"
+              title="Code Block"
             >
               <Code className="w-4 h-4" />
             </button>
