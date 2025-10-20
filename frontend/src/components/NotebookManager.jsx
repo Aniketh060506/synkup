@@ -87,7 +87,7 @@ export default function NotebookManager({ notebooks, onCreateNotebook, onSelectN
                 </div>
                 <div className="flex-1">
                   <h3 className="text-white font-semibold text-lg mb-1">{notebook.name}</h3>
-                  <p className="text-gray-400 text-sm">{notebook.itemCount} notes</p>
+                  <p className="text-gray-400 text-sm">{notebook.wordCount.toLocaleString()} words</p>
                 </div>
               </div>
               <div className="flex items-center justify-between mt-4">
