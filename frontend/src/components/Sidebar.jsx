@@ -7,7 +7,9 @@ import {
   ResponsiveContainer, 
   CartesianGrid,
   Tooltip,
-  Cell
+  Cell,
+  ComposedChart,
+  Line
 } from 'recharts';
 import {
   Flame,
