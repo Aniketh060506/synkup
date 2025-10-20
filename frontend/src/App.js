@@ -286,6 +286,7 @@ function App() {
               onSelectNotebook={handleSelectNotebook}
               onDeleteNotebook={handleDeleteNotebook}
               onSetTarget={handleSetTarget}
+              onToggleFavorite={handleToggleFavorite}
             />
           )}
 
