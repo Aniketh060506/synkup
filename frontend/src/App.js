@@ -5,7 +5,7 @@ import Sidebar from './components/Sidebar';
 import NotebookManager from './components/NotebookManager';
 import Dashboard from './components/Dashboard';
 import TodoSystem from './components/TodoSystem';
-import { loadData, saveData, calculateAnalytics, getInitialData } from './utils/storage';
+import { loadData, saveData, calculateAnalytics, getInitialData, trackActivity } from './utils/storage';
 import { Menu, X, CheckSquare } from 'lucide-react';
 
 function App() {
