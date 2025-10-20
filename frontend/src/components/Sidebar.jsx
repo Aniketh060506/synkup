@@ -59,24 +59,37 @@ export default function Sidebar({ analytics, onSearch }) {
       {/* Quick Stats */}
       <div className="px-5 py-4 border-b border-[rgba(255,255,255,0.1)] flex-shrink-0">
         <div className="grid grid-cols-4 gap-3">
-          <div className="bg-[#1C1C1E] rounded-2xl p-3 text-center border border-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)] transition-all cursor-pointer">
+          <div className="bg-[#1C1C1E] rounded-2xl p-3 text-center border border-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)] transition-all cursor-pointer" title="Notebooks">
             <div className="text-2xl font-bold text-white mb-1">{analytics.notebookCount}</div>
             <div className="text-xs text-gray-400">NB</div>
           </div>
-          <div className="bg-[#1C1C1E] rounded-2xl p-3 text-center border border-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)] transition-all cursor-pointer">
-            <div className="flex items-center justify-center gap-1 text-2xl font-bold text-white mb-1">
-              <Flame className="w-5 h-5 text-[#EF4444]" />
-              {analytics.streak}
+          <div className="bg-[#1C1C1E] rounded-2xl p-3 text-center border border-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)] transition-all cursor-pointer" title="Todo Streak">
+            <div className="flex items-center justify-center gap-1 mb-1">
+              <Flame className={`w-5 h-5 ${analytics.streak > 0 ? 'text-orange-500' : 'text-gray-600'}`} />
+              <span className="text-2xl font-bold text-white">{analytics.streak}</span>
             </div>
             <div className="text-xs text-gray-400">STR</div>
           </div>
-          <div className="bg-[#1C1C1E] rounded-2xl p-3 text-center border border-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)] transition-all cursor-pointer">
+          <div className="bg-[#1C1C1E] rounded-2xl p-3 text-center border border-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)] transition-all cursor-pointer" title="Total Notes">
             <div className="text-2xl font-bold text-white mb-1">{analytics.totalNotes}</div>
             <div className="text-xs text-gray-400">NT</div>
           </div>
-          <div className="bg-[#1C1C1E] rounded-2xl p-3 text-center border border-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)] transition-all cursor-pointer">
+          <div className="bg-[#1C1C1E] rounded-2xl p-3 text-center border border-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)] transition-all cursor-pointer" title="Storage Used">
             <div className="text-lg font-bold text-white mb-1">{analytics.storageMb.toFixed(1)}</div>
             <div className="text-xs text-gray-400">MB</div>
+          </div>
+        </div>
+        
+        {/* Web Captures Row */}
+        <div className="mt-3">
+          <div className="bg-[#1C1C1E] rounded-2xl p-3 border border-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)] transition-all cursor-pointer" title="Web Captures">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Database className="w-4 h-4 text-blue-400" />
+                <span className="text-sm text-gray-400">Web Clips</span>
+              </div>
+              <span className="text-lg font-bold text-white">{analytics.webCaptures || 0}</span>
+            </div>
           </div>
         </div>
       </div>
