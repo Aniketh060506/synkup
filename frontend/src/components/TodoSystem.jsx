@@ -7,8 +7,8 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
   const currentDay = new Date().getDate();
   const years = todoData.length > 0 ? todoData : [];
   
-  // Initialize with current year if available, otherwise create it
-  const initializeYear = () => {
+  // Get initial year without side effects
+  const getInitialYear = () => {
     let yearData = years.find(y => y.year === currentYear);
     if (!yearData) {
       yearData = {
@@ -21,13 +21,12 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
           days: [],
         })),
       };
-      onUpdateTodos([...todoData, yearData]);
     }
     return yearData;
   };
 
   const [currentView, setCurrentView] = useState('month');
-  const [selectedYear, setSelectedYear] = useState(initializeYear());
+  const [selectedYear, setSelectedYear] = useState(getInitialYear());
   const [selectedMonth, setSelectedMonth] = useState(null);
   const [selectedDay, setSelectedDay] = useState(null);
   const [newTaskStartTime, setNewTaskStartTime] = useState('');
@@ -35,6 +34,24 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
   const [newTaskDesc, setNewTaskDesc] = useState('');
   const [streak, setStreak] = useState(0);
   const [showQuickJump, setShowQuickJump] = useState(false);
+
+  // Initialize year data if it doesn't exist
+  useEffect(() => {
+    const yearExists = years.find(y => y.year === currentYear);
+    if (!yearExists) {
+      const yearData = {
+        year: currentYear,
+        months: Array.from({ length: 12 }, (_, i) => ({
+          name: new Date(currentYear, i).toLocaleString('default', { month: 'long' }),
+          taskCount: 0,
+          focus: '',
+          index: i,
+          days: [],
+        })),
+      };
+      onUpdateTodos([...todoData, yearData]);
+    }
+  }, []);
 
   // Calculate global streak based on all years and months
   useEffect(() => {
