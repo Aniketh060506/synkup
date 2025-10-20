@@ -46,6 +46,16 @@ export interface DailyActivity {
   date: string;
   todos: number;
   captures: number;
+  notes: number;
+}
+
+export interface ActivityLog {
+  [date: string]: {
+    todosCompleted: number;
+    notesCreated: number;
+    captures: number;
+    wordsWritten: number;
+  };
 }
 
 export interface AnalyticsData {
@@ -58,6 +68,8 @@ export interface AnalyticsData {
   today: {
     todos: number;
     captures: number;
+    notes: number;
+    words: number;
   };
   content: {
     totalWords: number;
@@ -69,10 +81,16 @@ export interface AnalyticsData {
     monthlyProgress: number;
   };
   storageBreakdown: { name: string; value: number }[];
+  weeklyInsights?: {
+    mostProductiveDay: string;
+    averageTasksPerDay: number;
+    trend: 'up' | 'down' | 'stable';
+  };
 }
 
 export interface CopyDockData {
   notebooks: Notebook[];
   analytics: AnalyticsData;
   todoSystem: YearPlan[];
+  activityLog: ActivityLog;
 }
