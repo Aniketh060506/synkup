@@ -201,10 +201,54 @@ function App() {
   };
 
   const handleUpdateTodos = (todoSystem) => {
+    // Count newly completed todos by comparing with previous state
+    let newlyCompletedCount = 0;
+    
+    if (data.todoSystem) {
+      // Count total completed in new state
+      let newCompletedTotal = 0;
+      let oldCompletedTotal = 0;
+      
+      todoSystem.forEach(yearData => {
+        yearData.months.forEach(monthData => {
+          if (monthData.days) {
+            monthData.days.forEach(dayData => {
+              if (dayData.hours) {
+                dayData.hours.forEach(hour => {
+                  if (hour.completed) newCompletedTotal++;
+                });
+              }
+            });
+          }
+        });
+      });
+      
+      data.todoSystem.forEach(yearData => {
+        yearData.months.forEach(monthData => {
+          if (monthData.days) {
+            monthData.days.forEach(dayData => {
+              if (dayData.hours) {
+                dayData.hours.forEach(hour => {
+                  if (hour.completed) oldCompletedTotal++;
+                });
+              }
+            });
+          }
+        });
+      });
+      
+      newlyCompletedCount = Math.max(0, newCompletedTotal - oldCompletedTotal);
+    }
+    
     const updatedData = {
       ...data,
       todoSystem,
     };
+
+    // Track newly completed todos
+    if (newlyCompletedCount > 0) {
+      trackActivity(updatedData, 'todoCompleted', newlyCompletedCount);
+    }
 
     // Recalculate analytics to update streak
     updatedData.analytics = calculateAnalytics(updatedData);
