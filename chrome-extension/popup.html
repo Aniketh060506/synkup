@@ -1,146 +1,225 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>CopyDock</title>
+  <meta charset="UTF-8">
+  <title>CopyDock Web Clipper</title>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-
+    
     body {
-      width: 320px;
-      height: 240px;
+      width: 350px;
+      min-height: 200px;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #000000;
+      background: linear-gradient(135deg, #1F2937 0%, #111827 100%);
       color: white;
+      padding: 0;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%);
+      padding: 20px;
+      text-align: center;
+      border-bottom: 2px solid #60A5FA;
+    }
+    
+    .header h1 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .header .subtitle {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+    
+    .content {
       padding: 20px;
     }
-
-    .header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 20px;
+    
+    .status-section {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
     }
-
-    .icon {
-      width: 40px;
-      height: 40px;
-      background: #1C1C1E;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-center;
-      font-size: 24px;
-    }
-
-    h1 {
-      font-size: 20px;
-      font-weight: 700;
-    }
-
-    .status {
-      background: #1C1C1E;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 16px;
-      padding: 16px;
-      margin-bottom: 16px;
-    }
-
-    .status-item {
+    
+    .status-row {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 8px;
-      font-size: 14px;
+      align-items: center;
+      margin-bottom: 10px;
     }
-
+    
+    .status-row:last-child {
+      margin-bottom: 0;
+    }
+    
     .status-label {
-      color: #999999;
+      font-size: 13px;
+      color: #D1D5DB;
+    }
+    
+    .status-value {
+      font-size: 13px;
+      font-weight: 600;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
     }
-
+    
     .status-dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: #666;
       display: inline-block;
     }
-
-    kbd {
-      background: #2C2C2E;
+    
+    .status-connected {
+      background: #10B981;
+      box-shadow: 0 0 8px #10B981;
+    }
+    
+    .status-disconnected {
+      background: #EF4444;
+      box-shadow: 0 0 8px #EF4444;
+    }
+    
+    .status-checking {
+      background: #F59E0B;
+      box-shadow: 0 0 8px #F59E0B;
+      animation: pulse 1.5s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    .info-section {
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 15px;
+    }
+    
+    .info-section h3 {
+      font-size: 13px;
+      margin-bottom: 8px;
+      color: #60A5FA;
+    }
+    
+    .info-section ul {
+      font-size: 12px;
+      color: #D1D5DB;
+      line-height: 1.6;
+      padding-left: 20px;
+    }
+    
+    .info-section ul li {
+      margin-bottom: 4px;
+    }
+    
+    .kbd {
+      background: rgba(255, 255, 255, 0.1);
       padding: 2px 6px;
       border-radius: 4px;
       font-family: monospace;
       font-size: 11px;
-      border: 1px solid rgba(255,255,255,0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
-
-    .status-value {
+    
+    .footer {
+      padding: 15px 20px;
+      text-align: center;
+      font-size: 11px;
+      color: #9CA3AF;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .footer a {
+      color: #60A5FA;
+      text-decoration: none;
+    }
+    
+    .footer a:hover {
+      text-decoration: underline;
+    }
+    
+    .button {
+      background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%);
       color: white;
-      font-weight: 500;
-    }
-
-    .btn {
-      width: 100%;
-      background: white;
-      color: black;
       border: none;
-      padding: 12px 20px;
-      border-radius: 20px;
-      font-size: 14px;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 12px;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.2s;
+      width: 100%;
     }
-
-    .btn:hover {
-      transform: scale(1.02);
+    
+    .button:hover {
+      background: linear-gradient(135deg, #2563EB 0%, #1E3A8A 100%);
+      transform: translateY(-1px);
     }
-
-    .instructions {
-      font-size: 12px;
-      color: #666666;
-      margin-top: 16px;
-      line-height: 1.6;
+    
+    .button:active {
+      transform: translateY(0);
     }
   </style>
 </head>
 <body>
   <div class="header">
-    <div class="icon">📋</div>
-    <h1>CopyDock</h1>
+    <h1>
+      <span>📋</span>
+      <span>CopyDock Web Clipper</span>
+    </h1>
+    <div class="subtitle">Capture web content instantly</div>
   </div>
-
-  <div class="status">
-    <div class="status-item">
-      <span class="status-label">
-        <span id="statusDot" class="status-dot"></span>
-        Connection
-      </span>
-      <span class="status-value" id="status">Checking...</span>
+  
+  <div class="content">
+    <div class="status-section">
+      <div class="status-row">
+        <span class="status-label">Connection Status</span>
+        <span class="status-value" id="connection-status">
+          <span class="status-dot status-checking"></span>
+          <span>Checking...</span>
+        </span>
+      </div>
+      <div class="status-row">
+        <span class="status-label">Target Notebook</span>
+        <span class="status-value" id="target-notebook">Web Captures</span>
+      </div>
     </div>
-    <div class="status-item">
-      <span class="status-label">Saving to</span>
-      <span class="status-value" id="target">...</span>
+    
+    <div class="info-section">
+      <h3>💡 Quick Start</h3>
+      <ul>
+        <li>Select any text on a webpage</li>
+        <li>Click the floating "📋 Send to CopyDock" button</li>
+        <li>Or press <span class="kbd">Ctrl+Shift+C</span> (Windows/Linux)</li>
+        <li>Or press <span class="kbd">Cmd+Shift+C</span> (Mac)</li>
+      </ul>
     </div>
+    
+    <button class="button" id="test-capture">Test Capture</button>
   </div>
-
-  <button class="btn" id="openApp">Launch Desktop App</button>
-
-  <div class="instructions">
-    <strong>How to use:</strong><br>
-    1. Select text on any webpage<br>
-    2. Click "📋 Send to CopyDock" button<br>
-    3. Or use <kbd>Ctrl+Shift+C</kbd> shortcut<br>
-    4. Content saves to desktop app automatically
+  
+  <div class="footer">
+    <div>Made with ❤️ for CopyDock</div>
+    <div>Version 1.0.0</div>
   </div>
-
+  
   <script src="popup.js"></script>
 </body>
 </html>

@@ -1,36 +1,99 @@
-// Popup script for CopyDock extension
+// CopyDock Extension Popup Script
 
-document.getElementById('openApp').addEventListener('click', () => {
-  // Since it's a desktop app, we can't "open" it via URL
-  // Just show a message
-  alert('Please open the CopyDock desktop application if it\'s not already running.');
-});
+let connectionStatusInterval = null;
 
-// Check connection status and update UI
+// Initialize popup
+init();
+
+function init() {
+  updateStatus();
+  
+  // Update status every 3 seconds
+  connectionStatusInterval = setInterval(updateStatus, 3000);
+  
+  // Test capture button
+  document.getElementById('test-capture').addEventListener('click', testCapture);
+}
+
+// Update connection status and settings
 function updateStatus() {
-  chrome.runtime.sendMessage({ action: 'getConnectionStatus' }, (response) => {
-    const statusEl = document.getElementById('status');
-    const targetEl = document.getElementById('target');
-    const statusDot = document.getElementById('statusDot');
-
-    if (response && response.connected) {
-      statusEl.textContent = 'Connected';
-      statusEl.style.color = '#4ade80';
-      statusDot.style.background = '#4ade80';
-      
-      targetEl.textContent = response.targetNotebookName || 'Default Notebook';
-    } else {
-      statusEl.textContent = 'Disconnected';
-      statusEl.style.color = '#ef4444';
-      statusDot.style.background = '#ef4444';
-      
-      targetEl.textContent = 'App not running';
-      targetEl.style.color = '#999';
+  // Get settings from background script
+  chrome.runtime.sendMessage({ action: 'getSettings' }, (response) => {
+    if (response) {
+      updateNotebookDisplay(response.targetNotebookName || 'Web Captures');
+      updateConnectionDisplay(response.connectionStatus || 'checking');
+    }
+  });
+  
+  // Check actual connection
+  chrome.runtime.sendMessage({ action: 'checkConnection' }, (response) => {
+    if (response) {
+      updateConnectionDisplay(response.status);
     }
   });
 }
 
-// Update status immediately and every 3 seconds
-updateStatus();
-setInterval(updateStatus, 3000);
+function updateConnectionDisplay(status) {
+  const statusElement = document.getElementById('connection-status');
+  const dot = statusElement.querySelector('.status-dot');
+  const text = statusElement.querySelector('span:last-child');
+  
+  // Remove all status classes
+  dot.classList.remove('status-connected', 'status-disconnected', 'status-checking');
+  
+  if (status === 'connected') {
+    dot.classList.add('status-connected');
+    text.textContent = 'Connected ✅';
+    text.style.color = '#10B981';
+  } else if (status === 'error' || status === 'disconnected') {
+    dot.classList.add('status-disconnected');
+    text.textContent = 'Disconnected ❌';
+    text.style.color = '#EF4444';
+  } else {
+    dot.classList.add('status-checking');
+    text.textContent = 'Checking...';
+    text.style.color = '#F59E0B';
+  }
+}
 
+function updateNotebookDisplay(notebookName) {
+  document.getElementById('target-notebook').textContent = notebookName;
+}
+
+function testCapture() {
+  const button = document.getElementById('test-capture');
+  button.textContent = 'Testing...';
+  button.disabled = true;
+  
+  // Send test message to background
+  chrome.runtime.sendMessage({
+    action: 'capture',
+    selectedText: 'This is a test capture from CopyDock extension!',
+    selectedHTML: '<p>This is a <strong>test</strong> capture.</p>',
+    sourceUrl: 'chrome-extension://test'
+  }, (response) => {
+    button.disabled = false;
+    if (response && response.success) {
+      button.textContent = '✅ Test Successful!';
+      button.style.background = 'linear-gradient(135deg, #10B981 0%, #059669 100%)';
+      setTimeout(() => {
+        button.textContent = 'Test Capture';
+        button.style.background = '';
+      }, 2000);
+    } else {
+      button.textContent = '❌ Test Failed';
+      button.style.background = 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)';
+      setTimeout(() => {
+        button.textContent = 'Test Capture';
+        button.style.background = '';
+      }, 2000);
+    }
+  });
+}
+
+// Cleanup interval on popup close
+window.addEventListener('unload', () => {
+  if (connectionStatusInterval) {
+    clearInterval(connectionStatusInterval);
+  }
+});
