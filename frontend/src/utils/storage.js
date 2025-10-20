@@ -237,10 +237,15 @@ export const trackActivity = (data, activityType, value = 1) => {
   return data;
 };
 
-// Generate 7-day activity chart data - calculate from actual data
+// Generate 7-day activity chart data - calculate from actual data with demo fallback
 export const generate7DayActivity = (activityLog, todoSystem = [], notebooks = []) => {
   const result = [];
   const today = new Date();
+  
+  // Demo data pattern for visual appeal (will be replaced by real data)
+  const demoPattern = [3, 5, 4, 8, 6, 7, 5]; // Varying heights for visual interest
+  
+  let hasAnyRealData = false;
   
   for (let i = 6; i >= 0; i--) {
     const date = new Date(today);
@@ -288,12 +293,28 @@ export const generate7DayActivity = (activityLog, todoSystem = [], notebooks = [
       }
     }
     
+    // Check if we have any real data
+    const hasDayData = todosCompletedCount > 0 || notesCreatedCount > 0 || dayData.todosCompleted > 0 || dayData.notesCreated > 0 || dayData.captures > 0;
+    if (hasDayData) {
+      hasAnyRealData = true;
+    }
+    
     result.push({
       date: dateStr,
       todos: todosCompletedCount > 0 ? todosCompletedCount : (dayData.todosCompleted || 0),
       captures: dayData.captures || 0,
       notes: notesCreatedCount > 0 ? notesCreatedCount : (dayData.notesCreated || 0),
     });
+  }
+  
+  // If no real data exists, show demo data for visual appeal
+  if (!hasAnyRealData) {
+    return result.map((item, index) => ({
+      date: item.date,
+      todos: demoPattern[index] || 5,
+      notes: Math.max(1, demoPattern[index] - 2),
+      captures: Math.max(1, Math.floor(demoPattern[index] / 2)),
+    }));
   }
   
   return result;
