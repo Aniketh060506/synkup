@@ -168,9 +168,9 @@ export default function Sidebar({ analytics, notebooks = [], onSearch, onSelectN
                 <h3 className="text-white font-medium text-sm">Activity (7 days)</h3>
               </div>
               <ResponsiveContainer width="100%" height={80}>
-                <BarChart data={analytics.activity}>
+                <BarChart data={analytics?.activity || []}>
                   <Bar dataKey="todos" radius={[8, 8, 0, 0]}>
-                    {analytics.activity.map((entry, index) => (
+                    {(analytics?.activity || []).map((entry, index) => (
                       <Cell key={`cell-${index}`} fill="rgba(255, 255, 255, 0.8)" />
                     ))}
                   </Bar>
