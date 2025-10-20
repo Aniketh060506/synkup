@@ -103,6 +103,16 @@ export default function NotebookManager({ notebooks, onCreateNotebook, onSelectN
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
+                      onToggleFavorite(notebook.id);
+                    }}
+                    className="p-2 bg-[#262626] rounded-full hover:bg-[#333333] transition-all"
+                    title={notebook.isFavorite ? "Remove from favorites" : "Add to favorites"}
+                  >
+                    <Star className={`w-3 h-3 ${notebook.isFavorite ? 'text-yellow-500 fill-yellow-500' : 'text-white'}`} />
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
                       onSetTarget(notebook.id);
                     }}
                     className="p-2 bg-[#262626] rounded-full hover:bg-[#333333] transition-all"
