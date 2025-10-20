@@ -376,7 +376,11 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
                       <input
                         type="text"
                         value={dayData?.goal || ''}
-                        onChange={(e) => updateDayGoal(dayNum, e.target.value)}
+                        onChange={(e) => {
+                          e.stopPropagation();
+                          updateDayGoal(dayNum, e.target.value);
+                        }}
+                        onClick={(e) => e.stopPropagation()}
                         placeholder={`Day ${dayNum} tasks...`}
                         className="w-full bg-transparent text-gray-400 placeholder-gray-600 focus:outline-none focus:text-white transition-all"
                       />
