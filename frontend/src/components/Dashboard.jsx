@@ -129,6 +129,29 @@ export default function Dashboard({ notebook, onBack, onSaveNotebook }) {
     return () => clearTimeout(saveTimer);
   }, [editor?.getHTML()]);
 
+  // Update word and character count in real-time
+  useEffect(() => {
+    if (!editor) return;
+
+    const updateCounts = () => {
+      const text = editor.getText();
+      const words = text.split(/\s+/).filter(Boolean).length;
+      const characters = text.length;
+      setWordCount(words);
+      setCharacterCount(characters);
+    };
+
+    // Update immediately
+    updateCounts();
+
+    // Listen for editor updates
+    editor.on('update', updateCounts);
+
+    return () => {
+      editor.off('update', updateCounts);
+    };
+  }, [editor]);
+
   const handleSave = () => {
     if (!editor) return;
 
