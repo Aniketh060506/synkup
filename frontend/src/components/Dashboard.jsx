@@ -467,6 +467,7 @@ export default function Dashboard({ notebook, onBack, onSaveNotebook }) {
           <button
             onClick={() => setShowTableModal(true)}
             className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-[#1C1C1E] transition-all"
+            title="Insert table"
           >
             <TableIcon className="w-4 h-4" />
           </button>
@@ -476,61 +477,63 @@ export default function Dashboard({ notebook, onBack, onSaveNotebook }) {
             <>
               <div className="w-px h-6 bg-[rgba(255,255,255,0.1)]" />
               
-              {/* Row Controls */}
-              <button
-                onClick={() => editor.chain().focus().addRowBefore().run()}
-                className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-[#1C1C1E] transition-all"
-                title="Add row above"
-              >
-                <Plus className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => editor.chain().focus().addRowAfter().run()}
-                className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-[#1C1C1E] transition-all"
-                title="Add row below"
-              >
-                <Plus className="w-4 h-4 rotate-90" />
-              </button>
-              <button
-                onClick={() => editor.chain().focus().deleteRow().run()}
-                className="p-2 rounded-lg text-red-400 hover:text-red-300 hover:bg-[#1C1C1E] transition-all"
-                title="Delete row"
-              >
-                <Minus className="w-4 h-4" />
-              </button>
+              {/* Row Controls Group */}
+              <div className="flex items-center gap-1 px-2 bg-[#0A0A0A] rounded-lg">
+                <span className="text-xs text-gray-500 mr-1">Rows:</span>
+                <button
+                  onClick={() => editor.chain().focus().addRowBefore().run()}
+                  className="p-1.5 rounded hover:bg-[#1C1C1E] text-green-400 hover:text-green-300 transition-all"
+                  title="Add row above"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  onClick={() => editor.chain().focus().addRowAfter().run()}
+                  className="p-1.5 rounded hover:bg-[#1C1C1E] text-green-400 hover:text-green-300 transition-all"
+                  title="Add row below"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  onClick={() => editor.chain().focus().deleteRow().run()}
+                  className="p-1.5 rounded hover:bg-[#1C1C1E] text-red-400 hover:text-red-300 transition-all"
+                  title="Delete row"
+                >
+                  <Minus className="w-3.5 h-3.5" />
+                </button>
+              </div>
 
-              <div className="w-px h-6 bg-[rgba(255,255,255,0.1)]" />
-
-              {/* Column Controls */}
-              <button
-                onClick={() => editor.chain().focus().addColumnBefore().run()}
-                className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-[#1C1C1E] transition-all"
-                title="Add column before"
-              >
-                <Plus className="w-4 h-4 rotate-90" />
-              </button>
-              <button
-                onClick={() => editor.chain().focus().addColumnAfter().run()}
-                className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-[#1C1C1E] transition-all"
-                title="Add column after"
-              >
-                <Plus className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => editor.chain().focus().deleteColumn().run()}
-                className="p-2 rounded-lg text-red-400 hover:text-red-300 hover:bg-[#1C1C1E] transition-all"
-                title="Delete column"
-              >
-                <Minus className="w-4 h-4 rotate-90" />
-              </button>
-
-              <div className="w-px h-6 bg-[rgba(255,255,255,0.1)]" />
+              {/* Column Controls Group */}
+              <div className="flex items-center gap-1 px-2 bg-[#0A0A0A] rounded-lg">
+                <span className="text-xs text-gray-500 mr-1">Cols:</span>
+                <button
+                  onClick={() => editor.chain().focus().addColumnBefore().run()}
+                  className="p-1.5 rounded hover:bg-[#1C1C1E] text-green-400 hover:text-green-300 transition-all"
+                  title="Add column before"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  onClick={() => editor.chain().focus().addColumnAfter().run()}
+                  className="p-1.5 rounded hover:bg-[#1C1C1E] text-green-400 hover:text-green-300 transition-all"
+                  title="Add column after"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  onClick={() => editor.chain().focus().deleteColumn().run()}
+                  className="p-1.5 rounded hover:bg-[#1C1C1E] text-red-400 hover:text-red-300 transition-all"
+                  title="Delete column"
+                >
+                  <Minus className="w-3.5 h-3.5" />
+                </button>
+              </div>
 
               {/* Delete Table */}
               <button
                 onClick={() => editor.chain().focus().deleteTable().run()}
-                className="p-2 rounded-lg text-red-500 hover:text-red-400 hover:bg-red-900/20 transition-all"
-                title="Delete table"
+                className="p-2 rounded-lg bg-red-900/20 text-red-500 hover:text-red-400 hover:bg-red-900/30 transition-all"
+                title="Delete entire table"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
