@@ -337,18 +337,56 @@ agent_communication:
          - Code blocks now render with dark background, border, and monospace font
          - Proper styling for multi-line code snippets
       
-      3. ✅ Bullet Lists - Verified Working:
+      3. ✅ Bullet Lists - Fixed and Working:
          - StarterKit configured with bulletList support
-         - CSS styling for proper indentation and nested lists
+         - CSS styling updated with white bullets on dark background
+         - Proper indentation and nested lists
          - Toggle button working correctly
       
-      4. ✅ Numbered Lists - Verified Working:
+      4. ✅ Numbered Lists - Fixed and Working:
          - StarterKit configured with orderedList support
-         - CSS styling for proper numbering and nested lists
+         - CSS styling updated with white numbers on dark background
+         - Proper numbering and nested lists
          - Toggle button working correctly
+      
+      5. ✅ Left Sidebar Scrolling Fixed:
+         - Removed overflow-hidden from parent container
+         - Analytics section now fully scrollable
       
       Changes made:
       - /app/frontend/src/components/Dashboard.jsx: Added table modal, fixed code block button
-      - /app/frontend/src/index.css: Enhanced code block styling
+      - /app/frontend/src/index.css: Enhanced list markers visibility, code block styling
+      - /app/frontend/src/components/Sidebar.jsx: Fixed scrolling issue
       
       Ready for user testing!
+
+  - agent: "main"
+    message: |
+      INTEGRATED TODO SYSTEM STATS WITH ANALYTICS:
+      
+      1. ✅ Todo Streak Integration:
+         - Streak (STR) now calculates from Todo System
+         - Updates automatically when tasks are completed
+         - Shows flame icon (orange when active, gray when 0)
+         - Tracks consecutive days with at least 1 completed task
+      
+      2. ✅ Enhanced Analytics Display:
+         - NB: Number of Notebooks
+         - STR: Todo Streak (dynamically calculated from todos)
+         - NT: Total Notes
+         - MB: Storage Used
+         - Web Clips: Count of web captures (new row below stats)
+      
+      3. ✅ Real-time Updates:
+         - Analytics recalculate when todos are updated
+         - Streak updates when tasks are marked complete
+         - Best streak tracked automatically
+         - Web captures count updates when clips are added
+      
+      Changes made:
+      - /app/frontend/src/utils/storage.js: Added calculateTodoStreak function, integrated with analytics
+      - /app/frontend/src/components/Sidebar.jsx: Updated stats display with tooltips and web clips
+      - /app/frontend/src/types.js: Added webCaptures to AnalyticsData
+      - /app/frontend/src/App.js: Analytics recalculate on todo updates
+      
+      All stats now unified between Notebook and Todo systems!
