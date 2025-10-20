@@ -205,13 +205,77 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
     </div>
   );
 
+  // Check if all hours are completed for a day
+  const isDayComplete = (dayData) => {
+    if (!dayData || !dayData.hours || dayData.hours.length === 0) return false;
+    return dayData.hours.every(h => h.completed);
+  };
+
+  // Check if at least one task is done (for streak)
+  const hasSomeProgress = (dayData) => {
+    if (!dayData || !dayData.hours || dayData.hours.length === 0) return false;
+    return dayData.hours.some(h => h.completed);
+  };
+
+  const toggleDayComplete = (dayNum) => {
+    const updatedYears = years.map(y => 
+      y.year === selectedYear.year 
+        ? {
+            ...y,
+            months: y.months.map((m, idx) => 
+              idx === selectedMonth.index 
+                ? {
+                    ...m,
+                    days: m.days.map(d => 
+                      d.day === dayNum 
+                        ? { ...d, manuallyChecked: !d.manuallyChecked }
+                        : d
+                    )
+                  }
+                : m
+            )
+          }
+        : y
+    );
+    onUpdateTodos(updatedYears);
+    const updatedYear = updatedYears.find(y => y.year === selectedYear.year);
+    setSelectedYear(updatedYear);
+    setSelectedMonth(updatedYear.months[selectedMonth.index]);
+  };
+
+  const updateDayGoal = (dayNum, goal) => {
+    const updatedYears = years.map(y => 
+      y.year === selectedYear.year 
+        ? {
+            ...y,
+            months: y.months.map((m, idx) => 
+              idx === selectedMonth.index 
+                ? {
+                    ...m,
+                    days: m.days.map(d => 
+                      d.day === dayNum 
+                        ? { ...d, goal }
+                        : d
+                    )
+                  }
+                : m
+            )
+          }
+        : y
+    );
+    onUpdateTodos(updatedYears);
+    const updatedYear = updatedYears.find(y => y.year === selectedYear.year);
+    setSelectedYear(updatedYear);
+    setSelectedMonth(updatedYear.months[selectedMonth.index]);
+  };
+
   const renderDayView = () => {
     const daysInMonth = new Date(selectedYear.year, selectedMonth.index + 1, 0).getDate();
-    const days = selectedMonth.days.length > 0 ? selectedMonth.days : [];
+    const days = selectedMonth.days || [];
 
     return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
+      <div className="space-y-6 animate-fadeIn">
+        <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
             <button
               onClick={() => {
@@ -221,118 +285,102 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
               className="flex items-center gap-2 text-gray-400 hover:text-white transition-all"
             >
               <ChevronLeft className="w-4 h-4" />
-              Back to Months
+              Back
+            </button>
+            <h2 className="text-blue-400 text-xl font-bold">{selectedYear?.year}</h2>
+            <ChevronRight className="w-4 h-4 text-gray-600" />
+            <h2 className="text-blue-400 text-xl font-bold">{selectedMonth.name}</h2>
+          </div>
+          <div className="flex items-center gap-4">
+            <button className="p-2 hover:bg-[#1C1C1E] rounded-lg transition-all">
+              <ChevronLeft className="w-5 h-5 text-white" />
+            </button>
+            <button className="p-2 hover:bg-[#1C1C1E] rounded-lg transition-all">
+              <ChevronRight className="w-5 h-5 text-white" />
+            </button>
+            <button className="flex items-center gap-2 px-4 py-2 bg-[#1C1C1E] rounded-lg hover:bg-[#262626] transition-all">
+              <Calendar className="w-4 h-4 text-white" />
+              <span className="text-white text-sm">Quick Jump</span>
             </button>
           </div>
-          <h2 className="text-3xl font-bold text-white">
-            {selectedMonth.name} {selectedYear.year}
-          </h2>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {Array.from({ length: daysInMonth }, (_, i) => {
-            const dayNum = i + 1;
-            const dayData = days.find((d) => d.day === dayNum);
-            const weekday = new Date(selectedYear.year, selectedMonth.index, dayNum).toLocaleDateString(
-              'en-US',
-              { weekday: 'long' }
-            );
-
-            return (
-              <div
-                key={dayNum}
-                onClick={() => {
-                  setSelectedDay({ day: dayNum, weekday, tasks: dayData?.tasks || [], goal: dayData?.goal || '' });
-                }}
-                className="bg-[#1C1C1E] rounded-2xl p-4 border border-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)] transition-all cursor-pointer"
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-2xl font-bold text-white">{dayNum}</span>
-                  {dayData && <Check className="w-4 h-4 text-green-400" />}
-                </div>
-                <p className="text-gray-400 text-xs">{weekday}</p>
-                {dayData && (
-                  <p className="text-gray-600 text-xs mt-2">{dayData.tasks.length} tasks</p>
-                )}
-              </div>
-            );
-          })}
         </div>
 
-        {/* Day Detail Modal */}
-        {selectedDay && (
-          <div
-            className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 backdrop-blur-sm"
-            onClick={() => setSelectedDay(null)}
-          >
-            <div
-              className="bg-[#1C1C1E] rounded-3xl p-8 w-full max-w-2xl border border-[rgba(255,255,255,0.1)] max-h-[80vh] overflow-y-auto"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-center justify-between mb-6">
-                <div>
-                  <h2 className="text-white text-2xl font-bold">
-                    {selectedMonth.name} {selectedDay.day}, {selectedYear.year}
-                  </h2>
-                  <p className="text-gray-400 text-sm">{selectedDay.weekday}</p>
-                </div>
-                <button
-                  onClick={() => setSelectedDay(null)}
-                  className="text-gray-400 hover:text-white transition-all"
-                >
-                  ✕
-                </button>
-              </div>
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-white mb-2">{selectedMonth.name} {selectedYear.year} - Daily Schedule</h1>
+        </div>
 
-              <div className="space-y-4">
-                <div>
-                  <label className="text-gray-400 text-sm mb-2 block">Daily Goal</label>
-                  <input
-                    type="text"
-                    value={selectedDay.goal}
-                    onChange={(e) => setSelectedDay({ ...selectedDay, goal: e.target.value })}
-                    placeholder="What do you want to achieve today?"
-                    className="w-full px-4 py-3 bg-[#0A0A0A] border border-[rgba(255,255,255,0.1)] rounded-2xl text-white placeholder-gray-600 focus:outline-none focus:border-[rgba(255,255,255,0.3)]"
-                  />
-                </div>
+        <div className="bg-[#1C1C1E] rounded-2xl overflow-hidden border border-[rgba(255,255,255,0.1)]">
+          <table className="w-full">
+            <thead className="bg-[#2C2C2E]">
+              <tr>
+                <th className="text-center text-gray-400 font-medium text-sm px-4 py-4 w-12">✓</th>
+                <th className="text-left text-gray-400 font-medium text-sm px-6 py-4 w-32">Date</th>
+                <th className="text-left text-gray-400 font-medium text-sm px-6 py-4">What I Will Do</th>
+                <th className="text-right text-gray-400 font-medium text-sm px-6 py-4">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Array.from({ length: daysInMonth }, (_, i) => {
+                const dayNum = i + 1;
+                const dayData = days.find((d) => d.day === dayNum);
+                const weekday = new Date(selectedYear.year, selectedMonth.index, dayNum).toLocaleDateString(
+                  'en-US',
+                  { weekday: 'short' }
+                );
+                const isComplete = isDayComplete(dayData);
 
-                <div>
-                  <label className="text-gray-400 text-sm mb-2 block">Hourly Tasks</label>
-                  <div className="space-y-2">
-                    {selectedDay.tasks.map((task, idx) => (
-                      <div
-                        key={idx}
-                        className="flex items-center gap-3 p-3 bg-[#0A0A0A] rounded-2xl border border-[rgba(255,255,255,0.1)]"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={task.isComplete}
-                          onChange={() => {
-                            const newTasks = [...selectedDay.tasks];
-                            newTasks[idx].isComplete = !newTasks[idx].isComplete;
-                            setSelectedDay({ ...selectedDay, tasks: newTasks });
-                          }}
-                          className="w-5 h-5 rounded-full"
-                        />
-                        <span className="text-gray-400 text-sm">{task.timeRange}</span>
-                        <span className="text-white flex-1">{task.task}</span>
+                return (
+                  <tr 
+                    key={dayNum}
+                    className="border-t border-[rgba(255,255,255,0.05)] hover:bg-[#262626] transition-all"
+                    style={{ animationDelay: `${i * 0.02}s` }}
+                  >
+                    <td className="px-4 py-5 text-center">
+                      <input
+                        type="checkbox"
+                        checked={isComplete}
+                        readOnly
+                        className="w-5 h-5 rounded-full cursor-not-allowed"
+                      />
+                    </td>
+                    <td className="px-6 py-5">
+                      <div>
+                        <div className="text-white font-bold text-lg">{dayNum}</div>
+                        <div className="text-gray-500 text-xs">{weekday}</div>
                       </div>
-                    ))}
-                  </div>
-                  <button className="mt-3 w-full px-4 py-2.5 bg-white text-black rounded-full hover:scale-105 transition-all font-medium">
-                    Add Task
-                  </button>
-                </div>
-
-                <button
-                  onClick={() => setSelectedDay(null)}
-                  className="w-full px-4 py-2.5 bg-[#262626] text-white rounded-full hover:bg-[#333333] transition-all"
-                >
-                  Save & Close
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+                    </td>
+                    <td className="px-6 py-5">
+                      <input
+                        type="text"
+                        value={dayData?.goal || ''}
+                        onChange={(e) => updateDayGoal(dayNum, e.target.value)}
+                        placeholder={`Day ${dayNum} tasks...`}
+                        className="w-full bg-transparent text-gray-400 placeholder-gray-600 focus:outline-none focus:text-white transition-all"
+                      />
+                    </td>
+                    <td className="px-6 py-5 text-right">
+                      <button
+                        onClick={() => {
+                          const existingDay = days.find(d => d.day === dayNum);
+                          setSelectedDay({
+                            day: dayNum,
+                            weekday: new Date(selectedYear.year, selectedMonth.index, dayNum).toLocaleDateString('en-US', { weekday: 'long' }),
+                            hours: existingDay?.hours || [],
+                            goal: existingDay?.goal || ''
+                          });
+                          setCurrentView('hour');
+                        }}
+                        className="px-6 py-2 bg-white text-black rounded-full hover:scale-105 transition-all font-medium text-sm"
+                      >
+                        Open Hours
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
     );
   };
