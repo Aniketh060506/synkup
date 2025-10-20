@@ -706,6 +706,64 @@ export default function Dashboard({ notebook, notes, onBack, onSaveNote, onDelet
           </div>
         </div>
       </div>
+
+      {/* Table Modal */}
+      {showTableModal && (
+        <div 
+          className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 backdrop-blur-sm" 
+          onClick={() => setShowTableModal(false)}
+        >
+          <div 
+            className="bg-[#1C1C1E] rounded-3xl p-8 w-full max-w-md border border-[rgba(255,255,255,0.1)]" 
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-white text-2xl font-bold mb-6">Insert Table</h2>
+            
+            <div className="space-y-4 mb-6">
+              <div>
+                <label className="text-gray-400 text-sm mb-2 block">Number of Rows</label>
+                <input
+                  type="number"
+                  min="1"
+                  max="20"
+                  value={tableRows}
+                  onChange={(e) => setTableRows(e.target.value)}
+                  className="w-full px-4 py-3 bg-[#0A0A0A] border border-[rgba(255,255,255,0.1)] rounded-2xl text-white placeholder-gray-600 focus:outline-none focus:border-[rgba(255,255,255,0.3)]"
+                  autoFocus
+                />
+              </div>
+              
+              <div>
+                <label className="text-gray-400 text-sm mb-2 block">Number of Columns</label>
+                <input
+                  type="number"
+                  min="1"
+                  max="10"
+                  value={tableCols}
+                  onChange={(e) => setTableCols(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && insertTable()}
+                  className="w-full px-4 py-3 bg-[#0A0A0A] border border-[rgba(255,255,255,0.1)] rounded-2xl text-white placeholder-gray-600 focus:outline-none focus:border-[rgba(255,255,255,0.3)]"
+                />
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setShowTableModal(false)}
+                className="flex-1 px-4 py-2.5 bg-[#262626] text-white rounded-full hover:bg-[#333333] transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={insertTable}
+                className="flex-1 px-4 py-2.5 bg-white text-black rounded-full hover:scale-105 transition-all font-medium"
+              >
+                Insert Table
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
