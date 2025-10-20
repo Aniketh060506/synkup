@@ -166,6 +166,37 @@ export default function Dashboard({ notebook, notes, onBack, onSaveNote, onDelet
     }
   };
 
+  const setLink = () => {
+    const previousUrl = editor.getAttributes('link').href;
+    const url = window.prompt('Enter URL:', previousUrl);
+
+    if (url === null) {
+      return;
+    }
+
+    if (url === '') {
+      editor.chain().focus().extendMarkRange('link').unsetLink().run();
+      return;
+    }
+
+    editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+  };
+
+  const addTable = () => {
+    editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
+  };
+
+  const colors = [
+    '#FFFFFF', '#000000', '#FF0000', '#00FF00', '#0000FF',
+    '#FFFF00', '#FF00FF', '#00FFFF', '#FFA500', '#800080',
+    '#FFC0CB', '#A52A2A', '#808080', '#00FF7F', '#4B0082',
+  ];
+
+  const highlightColors = [
+    '#FFFF00', '#00FF00', '#00FFFF', '#FF00FF', '#FFA500',
+    '#FF69B4', '#90EE90', '#FFB6C1', '#DDA0DD', '#F0E68C',
+  ];
+
   if (!editor) {
     return null;
   }
