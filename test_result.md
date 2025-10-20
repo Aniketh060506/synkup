@@ -516,3 +516,44 @@ agent_communication:
         * Better spacing and typography for clearer UI
       
       All features working and visually improved!
+
+  - agent: "main"
+    message: |
+      ✅ FIXED DYNAMIC STATS & WEEKLY INSIGHTS:
+      
+      Problem: Left sidebar stats weren't updating properly - showed "0 todos completed" even when tasks were marked as complete
+      
+      Root Cause:
+      - Analytics relied on activityLog which only tracked "newly" completed tasks
+      - When page refreshed, all tasks were already completed, so no new completions detected
+      - Weekly insights calculated from activityLog instead of actual todo data
+      
+      Solution Applied:
+      1. Updated getTodayStats() to calculate directly from todo system data
+         - Scans today's date in todoSystem
+         - Counts actual completed tasks for today
+         - Now shows real-time accurate count
+      
+      2. Updated generateWeeklyInsights() to calculate directly from todo system
+         - Scans last 7 days in todoSystem
+         - Counts completed tasks for each day
+         - Calculates most productive day, average tasks/day, and trend
+         - More accurate trend detection (Increasing/Decreasing/Stable)
+      
+      3. Updated calculateAnalytics() to pass todoSystem parameter
+         - Both getTodayStats and generateWeeklyInsights now receive todoSystem
+         - Real-time calculation without depending on activity log
+      
+      Changes Made:
+      - /app/frontend/src/utils/storage.js:
+        * Lines 267-304: getTodayStats now accepts todoSystem parameter and calculates directly
+        * Lines 337-403: generateWeeklyInsights now accepts todoSystem parameter and scans actual data
+        * Lines 144-199: calculateAnalytics passes todoSystem to both functions
+      
+      Now Working:
+      ✓ Today's Productivity shows correct completed todo count
+      ✓ Weekly Insights shows most productive day based on actual data
+      ✓ Average tasks/day calculated from real todo completions
+      ✓ Trend shows "Increasing", "Decreasing", or "Stable" based on task patterns
+      ✓ All stats update in real-time when tasks are toggled
+      ✓ Stats persist correctly after page refresh
