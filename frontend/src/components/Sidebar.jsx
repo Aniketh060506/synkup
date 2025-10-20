@@ -256,21 +256,21 @@ export default function Sidebar({ analytics, notebooks = [], onSearch, onSelectN
                       fill="#60A5FA" 
                       radius={[4, 4, 0, 0]}
                       name="Tasks"
-                      minPointSize={2}
+                      minPointSize={5}
                     />
                     <Bar 
                       dataKey="notes" 
                       fill="#34D399" 
                       radius={[4, 4, 0, 0]}
                       name="Notes"
-                      minPointSize={2}
+                      minPointSize={5}
                     />
                     <Bar 
                       dataKey="captures" 
                       fill="#A78BFA" 
                       radius={[4, 4, 0, 0]}
                       name="Clips"
-                      minPointSize={2}
+                      minPointSize={5}
                     />
                   </BarChart>
                 </ResponsiveContainer>
