@@ -41,11 +41,16 @@ export default function SmartTimeInput({ value, onChange, placeholder = "00:00 A
     // Convert to number
     let num = parseInt(val);
     
-    // If single digit 0-9
+    // If single digit
     if (val.length === 1) {
-      if (num >= 0 && num <= 9) {
+      // If 0 or 1, wait for second digit (user might want 10, 11, 12)
+      if (num === 0 || num === 1) {
+        setHour(val);
+        return;
+      }
+      // If 2-9, auto-format and advance
+      else if (num >= 2 && num <= 9) {
         setHour(val.padStart(2, '0'));
-        // Auto-advance to minutes
         setTimeout(() => minuteRef.current?.focus(), 0);
       }
     } 
@@ -55,12 +60,9 @@ export default function SmartTimeInput({ value, onChange, placeholder = "00:00 A
         setHour(val);
         // Auto-advance to minutes
         setTimeout(() => minuteRef.current?.focus(), 0);
-      } else if (num === 0) {
+      } else if (num === 0 || num > 12) {
+        // Invalid - default to 12
         setHour('12');
-        setTimeout(() => minuteRef.current?.focus(), 0);
-      } else {
-        // Invalid, use first digit only
-        setHour(val[0].padStart(2, '0'));
         setTimeout(() => minuteRef.current?.focus(), 0);
       }
     }
