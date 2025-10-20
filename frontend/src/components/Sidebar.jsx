@@ -203,75 +203,92 @@ export default function Sidebar({ analytics, notebooks = [], onSearch, onSelectN
                 </div>
               </div>
               <div onWheel={(e) => e.stopPropagation()}>
-                <ResponsiveContainer width="100%" height={140} key={JSON.stringify(analytics?.activity || [])}>
+                <ResponsiveContainer width="100%" height={160} key={JSON.stringify(analytics?.activity || [])}>
                   <BarChart 
                     data={analytics?.activity || []} 
-                    margin={{ top: 5, right: 5, left: -25, bottom: 5 }}
-                    barGap={3}
-                    barCategoryGap="20%"
+                    margin={{ top: 10, right: 10, left: -20, bottom: 5 }}
+                    barGap={4}
+                    barCategoryGap="15%"
                   >
                     {/* Grid for better readability */}
                     <CartesianGrid 
                       strokeDasharray="3 3" 
-                      stroke="rgba(255,255,255,0.05)" 
+                      stroke="rgba(255,255,255,0.08)" 
                       vertical={false}
                     />
                     
                     {/* Axes */}
                     <XAxis 
                       dataKey="date" 
-                      tick={{ fill: '#888', fontSize: 10 }}
-                      stroke="rgba(255,255,255,0.1)"
+                      tick={{ fill: '#999', fontSize: 11, fontWeight: 500 }}
+                      stroke="rgba(255,255,255,0.15)"
                       tickFormatter={(value) => {
                         const date = new Date(value);
                         return date.toLocaleDateString('en-US', { weekday: 'short' })[0];
                       }}
                     />
                     <YAxis 
-                      tick={{ fill: '#888', fontSize: 10 }}
-                      stroke="rgba(255,255,255,0.1)"
-                      width={25}
+                      tick={{ fill: '#999', fontSize: 11, fontWeight: 500 }}
+                      stroke="rgba(255,255,255,0.15)"
+                      width={30}
                     />
                     
                     {/* Tooltip */}
                     <Tooltip 
                       contentStyle={{ 
-                        backgroundColor: '#2C2C2E', 
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        borderRadius: '8px',
-                        fontSize: '11px',
-                        padding: '8px'
+                        backgroundColor: '#1a1a1a', 
+                        border: '1px solid rgba(255,255,255,0.2)',
+                        borderRadius: '12px',
+                        fontSize: '12px',
+                        padding: '12px',
+                        boxShadow: '0 8px 32px rgba(0,0,0,0.4)'
                       }}
-                      labelStyle={{ color: '#fff', marginBottom: '4px' }}
-                      cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                      labelStyle={{ color: '#fff', marginBottom: '8px', fontWeight: 600 }}
+                      cursor={{ fill: 'rgba(96,165,250,0.1)' }}
                       labelFormatter={(value) => {
                         const date = new Date(value);
                         return date.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
                       }}
                     />
                     
-                    {/* Colored Bars - VISIBLE rectangles */}
+                    {/* Colored Bars - VIBRANT & VISIBLE */}
                     <Bar 
                       dataKey="todos" 
-                      fill="#60A5FA" 
-                      radius={[4, 4, 0, 0]}
+                      fill="url(#blueGradient)" 
+                      radius={[6, 6, 0, 0]}
                       name="Tasks"
-                      minPointSize={5}
+                      minPointSize={8}
                     />
                     <Bar 
                       dataKey="notes" 
-                      fill="#34D399" 
-                      radius={[4, 4, 0, 0]}
+                      fill="url(#greenGradient)" 
+                      radius={[6, 6, 0, 0]}
                       name="Notes"
-                      minPointSize={5}
+                      minPointSize={8}
                     />
                     <Bar 
                       dataKey="captures" 
-                      fill="#A78BFA" 
-                      radius={[4, 4, 0, 0]}
+                      fill="url(#purpleGradient)" 
+                      radius={[6, 6, 0, 0]}
                       name="Clips"
-                      minPointSize={5}
+                      minPointSize={8}
                     />
+                    
+                    {/* Gradients for vibrant colors */}
+                    <defs>
+                      <linearGradient id="blueGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#60A5FA" stopOpacity={1}/>
+                        <stop offset="100%" stopColor="#3B82F6" stopOpacity={0.8}/>
+                      </linearGradient>
+                      <linearGradient id="greenGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#34D399" stopOpacity={1}/>
+                        <stop offset="100%" stopColor="#10B981" stopOpacity={0.8}/>
+                      </linearGradient>
+                      <linearGradient id="purpleGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#A78BFA" stopOpacity={1}/>
+                        <stop offset="100%" stopColor="#8B5CF6" stopOpacity={0.8}/>
+                      </linearGradient>
+                    </defs>
                   </BarChart>
                 </ResponsiveContainer>
               </div>
