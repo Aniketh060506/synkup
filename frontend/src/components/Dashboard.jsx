@@ -230,7 +230,7 @@ export default function Dashboard({ notebook, onBack, onSaveNotebook }) {
           <div>
             <h1 className="text-white font-semibold text-xl">{notebook.name}</h1>
             <p className="text-gray-400 text-sm">
-              {notebook.wordCount.toLocaleString()} words · {notebook.characterCount.toLocaleString()} characters
+              {wordCount.toLocaleString()} words · {characterCount.toLocaleString()} characters
             </p>
           </div>
         </div>
