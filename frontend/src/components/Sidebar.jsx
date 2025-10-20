@@ -158,7 +158,7 @@ export default function Sidebar({ analytics, notebooks = [], onSearch, onSelectN
       </div>
 
       {/* Scrollable Content */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden px-5 py-4 space-y-4 pb-8">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden px-5 py-4 space-y-4 pb-8" style={{ overscrollBehavior: 'contain' }}>
         {activeTab === 'analytics' && (
           <>
             {/* Activity Chart */}
