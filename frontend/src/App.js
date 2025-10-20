@@ -52,12 +52,16 @@ function App() {
               ...nb, 
               content: nb.content + capturedContent,
               lastModified: new Date().toISOString(),
+              lastAccessed: new Date().toISOString(),
               wordCount: nb.wordCount + payload.selectedText.split(/\s+/).filter(Boolean).length,
               characterCount: nb.characterCount + payload.selectedText.length,
             }
           : nb
       ),
     };
+
+    // Track capture
+    trackActivity(updatedData, 'capture', 1);
 
     updatedData.analytics = calculateAnalytics(updatedData);
     updatedData.analytics.webCaptures = (updatedData.analytics.webCaptures || 0) + 1;
