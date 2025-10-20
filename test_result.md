@@ -519,6 +519,35 @@ agent_communication:
 
   - agent: "main"
     message: |
+      ✅ FIXED ANALYTICS SECTION SCROLLING:
+      
+      Problem: User couldn't scroll when mouse was over the Analytics section in sidebar
+      
+      Root Cause:
+      - ResponsiveContainer and BarChart from Recharts library were capturing pointer events
+      - This prevented scroll events from propagating to the scrollable container
+      
+      Solution Applied:
+      1. Wrapped the chart in a div with pointer-events-none class
+         - Chart remains visible but doesn't capture mouse events
+         - Allows scroll events to pass through to parent container
+      
+      2. Added overscrollBehavior: 'contain' to scrollable div
+         - Prevents scroll chaining to parent elements
+         - Improves scroll experience in sidebar
+      
+      Changes Made:
+      - /app/frontend/src/components/Sidebar.jsx:
+        * Line 170: Added pointer-events-none wrapper around ResponsiveContainer
+        * Line 161: Added overscrollBehavior style to scrollable content div
+      
+      Now Working:
+      ✓ Smooth scrolling when mouse is over Analytics section
+      ✓ Can scroll through Activity chart, Today's Productivity, Weekly Insights
+      ✓ All content in Analytics tab is accessible via scroll
+
+  - agent: "main"
+    message: |
       ✅ FIXED DYNAMIC STATS & WEEKLY INSIGHTS:
       
       Problem: Left sidebar stats weren't updating properly - showed "0 todos completed" even when tasks were marked as complete
