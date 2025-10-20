@@ -391,9 +391,9 @@ export const generateWeeklyInsights = (activityLog, todoSystem) => {
   const firstHalf = last7Days.slice(0, 3).reduce((sum, day) => sum + day.totalTasks, 0) / 3;
   const secondHalf = last7Days.slice(4, 7).reduce((sum, day) => sum + day.totalTasks, 0) / 3;
   
-  let trend = 'stable';
-  if (secondHalf > firstHalf * 1.2) trend = 'up';
-  else if (secondHalf < firstHalf * 0.8) trend = 'down';
+  let trend = 'Stable';
+  if (secondHalf > firstHalf * 1.2) trend = 'Increasing';
+  else if (secondHalf < firstHalf * 0.8) trend = 'Decreasing';
   
   return {
     mostProductiveDay: mostProductive.dayName,
