@@ -482,3 +482,34 @@ html.lenis body {
 .ProseMirror u {
   text-decoration: underline;
 }
+
+/* Force visible bullets and numbers - Override prose styles */
+.prose.prose-invert ul,
+.prose.prose-invert ol {
+  color: #FFFFFF !important;
+}
+
+.prose.prose-invert ul li,
+.prose.prose-invert ol li {
+  color: #FFFFFF !important;
+}
+
+.prose.prose-invert ul li::marker,
+.prose.prose-invert ol li::marker {
+  color: #FFFFFF !important;
+}
+
+.prose ul,
+.prose ol {
+  list-style: inherit !important;
+}
+
+.prose ul li {
+  list-style-type: disc !important;
+  display: list-item !important;
+}
+
+.prose ol li {
+  list-style-type: decimal !important;
+  display: list-item !important;
+}
