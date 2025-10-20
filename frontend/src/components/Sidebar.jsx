@@ -186,16 +186,16 @@ export default function Sidebar({ analytics, notebooks = [], onSearch, onSelectN
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-400">{analytics.today.notes} notes created</span>
+                  <span className="text-gray-400">{analytics?.todayStats?.notes || 0} notes created</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-400">{analytics.today.todos} todos completed</span>
+                  <span className="text-gray-400">{analytics?.todayStats?.todos || 0} todos completed</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-400">{analytics.today.words.toLocaleString()} words written</span>
+                  <span className="text-gray-400">{(analytics?.todayStats?.words || 0).toLocaleString()} words written</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-400">{analytics.today.captures} web captures</span>
+                  <span className="text-gray-400">{analytics?.todayStats?.captures || 0} web captures</span>
                 </div>
               </div>
             </div>
