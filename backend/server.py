@@ -37,6 +37,20 @@ class StatusCheck(BaseModel):
 class StatusCheckCreate(BaseModel):
     client_name: str
 
+class WebCaptureRequest(BaseModel):
+    selectedText: str
+    selectedHTML: str = ""
+    sourceDomain: str
+    sourceUrl: str
+    targetNotebookId: str = None
+    timestamp: str
+
+class WebCaptureResponse(BaseModel):
+    success: bool
+    notebookId: str
+    notebookName: str
+    message: str
+
 # Add your routes to the router instead of directly to app
 @api_router.get("/")
 async def root():
