@@ -443,23 +443,30 @@ html.lenis body {
 /* Improved Bullet and Ordered Lists */
 .ProseMirror ul,
 .ProseMirror ol {
-  color: var(--color-white);
+  color: #FFFFFF !important;
 }
 
 .ProseMirror ul li,
 .ProseMirror ol li {
-  margin-bottom: 0.3em;
-  color: var(--color-white);
+  margin-bottom: 0.5em;
+  color: #FFFFFF !important;
+  display: list-item !important;
 }
 
-.ProseMirror ul li::marker,
+.ProseMirror ul li::marker {
+  color: #FFFFFF !important;
+  font-size: 1.2em;
+}
+
 .ProseMirror ol li::marker {
-  color: var(--color-white) !important;
+  color: #FFFFFF !important;
+  font-weight: 600;
 }
 
 .ProseMirror ul li p,
 .ProseMirror ol li p {
   margin-bottom: 0;
+  color: #FFFFFF;
 }
 
 /* Better spacing for nested lists */
