@@ -687,3 +687,51 @@ agent_communication:
       ✓ Grid lines aid in reading values
       ✓ Beautiful, dynamic visualization that's easy to read
 
+  - agent: "main"
+    message: |
+      📊 FIXED: Changed to VISUAL BAR CHART (Colored Rectangles)
+      
+      User feedback: "broo i cant see visual graphs i can only see lines when i hover i wan visual graphs rectangle colour for differentiation"
+      
+      Changed from line chart back to BAR CHART with visible colored rectangles:
+      
+      1. **Replaced Line Chart with Bar Chart**:
+         - Removed ComposedChart with Line components
+         - Added BarChart with Bar components
+         - Now shows VISIBLE colored rectangles (bars) all the time
+      
+      2. **Color-Coded Bars for Easy Differentiation**:
+         - Blue bars (#60A5FA) for Tasks - always visible
+         - Green bars (#34D399) for Notes - always visible
+         - Purple bars (#A78BFA) for Clips - always visible
+         - Rounded corners on bars (radius [4, 4, 0, 0])
+      
+      3. **Enhanced Visibility**:
+         - minPointSize={2} ensures even zero values show small bars
+         - barGap={3} for spacing between bar groups
+         - barCategoryGap="20%" for better readability
+         - Grid lines for scale reference
+         - YAxis shows numeric scale
+      
+      4. **Interactive Features**:
+         - Hover shows detailed tooltip with full date
+         - Cursor highlight on hover
+         - Chart updates in real-time with key prop
+      
+      Changes Made:
+      - /app/frontend/src/components/Sidebar.jsx:
+        * Lines 1-13: Switched imports from ComposedChart/Line to BarChart/Bar
+        * Lines 171-240: Complete bar chart implementation
+        * Removed all Line components, added Bar components
+        * Added barGap and barCategoryGap for better spacing
+      
+      Now Working:
+      ✓ Colorful BARS (rectangles) visible at all times
+      ✓ Blue, Green, Purple colors clearly differentiate metrics
+      ✓ No need to hover to see data - bars are always visible
+      ✓ Smooth, clean bar chart visualization
+      ✓ Chart updates when todos/notes/captures change
+      ✓ Interactive tooltip shows exact values on hover
+      ✓ Grid and axes for easy reading
+
+
