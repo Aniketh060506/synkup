@@ -248,102 +248,405 @@ export default function Dashboard({ notebook, notes, onBack, onSaveNote, onDelet
       </div>
 
       {/* Editor */}
-      <div className="flex-1 flex flex-col bg-[#000000]">
-        {/* Toolbar */}
-        <div className="border-b border-[rgba(255,255,255,0.1)] p-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
+      <div className="flex-1 flex flex-col bg-[#000000] overflow-hidden">
+        {/* Toolbar - Multi-row for rich features */}
+        <div className="border-b border-[rgba(255,255,255,0.1)] p-3 bg-[#0A0A0A]">
+          {/* Row 1: Text Formatting */}
+          <div className="flex items-center gap-1 mb-2 flex-wrap">
+            <button
+              onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+              className={`p-2 rounded-lg transition-all text-xs font-medium ${
+                editor.isActive('heading', { level: 1 })
+                  ? 'bg-white text-black'
+                  : 'hover:bg-[#1C1C1E] text-gray-400'
+              }`}
+            >
+              <Heading1 className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+              className={`p-2 rounded-lg transition-all text-xs ${
+                editor.isActive('heading', { level: 2 })
+                  ? 'bg-white text-black'
+                  : 'hover:bg-[#1C1C1E] text-gray-400'
+              }`}
+            >
+              <Heading2 className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+              className={`p-2 rounded-lg transition-all text-xs ${
+                editor.isActive('heading', { level: 3 })
+                  ? 'bg-white text-black'
+                  : 'hover:bg-[#1C1C1E] text-gray-400'
+              }`}
+            >
+              <Heading3 className="w-4 h-4" />
+            </button>
+            
+            <div className="w-px h-6 bg-[rgba(255,255,255,0.1)] mx-2" />
+            
             <button
               onClick={() => editor.chain().focus().toggleBold().run()}
-              className={`p-2 rounded-full transition-all ${
+              className={`p-2 rounded-lg transition-all ${
                 editor.isActive('bold')
                   ? 'bg-white text-black'
                   : 'hover:bg-[#1C1C1E] text-gray-400'
               }`}
+              title="Bold"
             >
               <Bold className="w-4 h-4" />
             </button>
             <button
               onClick={() => editor.chain().focus().toggleItalic().run()}
-              className={`p-2 rounded-full transition-all ${
+              className={`p-2 rounded-lg transition-all ${
                 editor.isActive('italic')
                   ? 'bg-white text-black'
                   : 'hover:bg-[#1C1C1E] text-gray-400'
               }`}
+              title="Italic"
             >
               <Italic className="w-4 h-4" />
             </button>
             <button
+              onClick={() => editor.chain().focus().toggleUnderline().run()}
+              className={`p-2 rounded-lg transition-all ${
+                editor.isActive('underline')
+                  ? 'bg-white text-black'
+                  : 'hover:bg-[#1C1C1E] text-gray-400'
+              }`}
+              title="Underline"
+            >
+              <UnderlineIcon className="w-4 h-4" />
+            </button>
+            <button
               onClick={() => editor.chain().focus().toggleStrike().run()}
-              className={`p-2 rounded-full transition-all ${
+              className={`p-2 rounded-lg transition-all ${
                 editor.isActive('strike')
                   ? 'bg-white text-black'
                   : 'hover:bg-[#1C1C1E] text-gray-400'
               }`}
+              title="Strikethrough"
             >
               <Strikethrough className="w-4 h-4" />
             </button>
-            <button
-              onClick={() => editor.chain().focus().toggleCode().run()}
-              className={`p-2 rounded-full transition-all ${
-                editor.isActive('code')
-                  ? 'bg-white text-black'
-                  : 'hover:bg-[#1C1C1E] text-gray-400'
-              }`}
-            >
-              <Code className="w-4 h-4" />
-            </button>
+            
             <div className="w-px h-6 bg-[rgba(255,255,255,0.1)] mx-2" />
+            
+            {/* Text Color */}
+            <div className="relative">
+              <button
+                onClick={() => {
+                  setShowColorPicker(!showColorPicker);
+                  setShowHighlightPicker(false);
+                }}
+                className="p-2 rounded-lg hover:bg-[#1C1C1E] text-gray-400 transition-all"
+                title="Text Color"
+              >
+                <Palette className="w-4 h-4" />
+              </button>
+              {showColorPicker && (
+                <div className="absolute top-full mt-2 left-0 bg-[#1C1C1E] rounded-lg p-3 border border-[rgba(255,255,255,0.1)] shadow-lg z-50">
+                  <div className="grid grid-cols-5 gap-2">
+                    {colors.map((color) => (
+                      <button
+                        key={color}
+                        onClick={() => {
+                          editor.chain().focus().setColor(color).run();
+                          setShowColorPicker(false);
+                        }}
+                        className="w-6 h-6 rounded border-2 border-gray-600 hover:border-white transition-all"
+                        style={{ backgroundColor: color }}
+                      />
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => {
+                      editor.chain().focus().unsetColor().run();
+                      setShowColorPicker(false);
+                    }}
+                    className="mt-2 w-full text-xs text-gray-400 hover:text-white"
+                  >
+                    Clear Color
+                  </button>
+                </div>
+              )}
+            </div>
+            
+            {/* Highlight Color */}
+            <div className="relative">
+              <button
+                onClick={() => {
+                  setShowHighlightPicker(!showHighlightPicker);
+                  setShowColorPicker(false);
+                }}
+                className={`p-2 rounded-lg transition-all ${
+                  editor.isActive('highlight')
+                    ? 'bg-white text-black'
+                    : 'hover:bg-[#1C1C1E] text-gray-400'
+                }`}
+                title="Highlight"
+              >
+                <Highlighter className="w-4 h-4" />
+              </button>
+              {showHighlightPicker && (
+                <div className="absolute top-full mt-2 left-0 bg-[#1C1C1E] rounded-lg p-3 border border-[rgba(255,255,255,0.1)] shadow-lg z-50">
+                  <div className="grid grid-cols-5 gap-2">
+                    {highlightColors.map((color) => (
+                      <button
+                        key={color}
+                        onClick={() => {
+                          editor.chain().focus().toggleHighlight({ color }).run();
+                          setShowHighlightPicker(false);
+                        }}
+                        className="w-6 h-6 rounded border-2 border-gray-600 hover:border-white transition-all"
+                        style={{ backgroundColor: color }}
+                      />
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => {
+                      editor.chain().focus().unsetHighlight().run();
+                      setShowHighlightPicker(false);
+                    }}
+                    className="mt-2 w-full text-xs text-gray-400 hover:text-white"
+                  >
+                    Clear Highlight
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Row 2: Lists, Alignment, Tables */}
+          <div className="flex items-center gap-1 flex-wrap">
             <button
               onClick={() => editor.chain().focus().toggleBulletList().run()}
-              className={`p-2 rounded-full transition-all ${
+              className={`p-2 rounded-lg transition-all ${
                 editor.isActive('bulletList')
                   ? 'bg-white text-black'
                   : 'hover:bg-[#1C1C1E] text-gray-400'
               }`}
+              title="Bullet List"
             >
               <List className="w-4 h-4" />
             </button>
             <button
               onClick={() => editor.chain().focus().toggleOrderedList().run()}
-              className={`p-2 rounded-full transition-all ${
+              className={`p-2 rounded-lg transition-all ${
                 editor.isActive('orderedList')
                   ? 'bg-white text-black'
                   : 'hover:bg-[#1C1C1E] text-gray-400'
               }`}
+              title="Numbered List"
             >
               <ListOrdered className="w-4 h-4" />
             </button>
             <button
+              onClick={() => editor.chain().focus().toggleTaskList().run()}
+              className={`p-2 rounded-lg transition-all ${
+                editor.isActive('taskList')
+                  ? 'bg-white text-black'
+                  : 'hover:bg-[#1C1C1E] text-gray-400'
+              }`}
+              title="Task List"
+            >
+              <CheckSquare className="w-4 h-4" />
+            </button>
+            
+            <div className="w-px h-6 bg-[rgba(255,255,255,0.1)] mx-2" />
+            
+            <button
+              onClick={() => editor.chain().focus().setTextAlign('left').run()}
+              className={`p-2 rounded-lg transition-all ${
+                editor.isActive({ textAlign: 'left' })
+                  ? 'bg-white text-black'
+                  : 'hover:bg-[#1C1C1E] text-gray-400'
+              }`}
+              title="Align Left"
+            >
+              <AlignLeft className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => editor.chain().focus().setTextAlign('center').run()}
+              className={`p-2 rounded-lg transition-all ${
+                editor.isActive({ textAlign: 'center' })
+                  ? 'bg-white text-black'
+                  : 'hover:bg-[#1C1C1E] text-gray-400'
+              }`}
+              title="Align Center"
+            >
+              <AlignCenter className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => editor.chain().focus().setTextAlign('right').run()}
+              className={`p-2 rounded-lg transition-all ${
+                editor.isActive({ textAlign: 'right' })
+                  ? 'bg-white text-black'
+                  : 'hover:bg-[#1C1C1E] text-gray-400'
+              }`}
+              title="Align Right"
+            >
+              <AlignRight className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => editor.chain().focus().setTextAlign('justify').run()}
+              className={`p-2 rounded-lg transition-all ${
+                editor.isActive({ textAlign: 'justify' })
+                  ? 'bg-white text-black'
+                  : 'hover:bg-[#1C1C1E] text-gray-400'
+              }`}
+              title="Justify"
+            >
+              <AlignJustify className="w-4 h-4" />
+            </button>
+            
+            <div className="w-px h-6 bg-[rgba(255,255,255,0.1)] mx-2" />
+            
+            <button
               onClick={() => editor.chain().focus().toggleBlockquote().run()}
-              className={`p-2 rounded-full transition-all ${
+              className={`p-2 rounded-lg transition-all ${
                 editor.isActive('blockquote')
                   ? 'bg-white text-black'
                   : 'hover:bg-[#1C1C1E] text-gray-400'
               }`}
+              title="Quote"
             >
               <Quote className="w-4 h-4" />
             </button>
+            <button
+              onClick={() => editor.chain().focus().toggleCode().run()}
+              className={`p-2 rounded-lg transition-all ${
+                editor.isActive('code')
+                  ? 'bg-white text-black'
+                  : 'hover:bg-[#1C1C1E] text-gray-400'
+              }`}
+              title="Inline Code"
+            >
+              <Code className="w-4 h-4" />
+            </button>
+            
             <div className="w-px h-6 bg-[rgba(255,255,255,0.1)] mx-2" />
+            
+            <button
+              onClick={setLink}
+              className={`p-2 rounded-lg transition-all ${
+                editor.isActive('link')
+                  ? 'bg-white text-black'
+                  : 'hover:bg-[#1C1C1E] text-gray-400'
+              }`}
+              title="Insert Link"
+            >
+              <LinkIcon className="w-4 h-4" />
+            </button>
+            <button
+              onClick={addTable}
+              className="p-2 rounded-lg hover:bg-[#1C1C1E] text-gray-400 transition-all"
+              title="Insert Table"
+            >
+              <TableIcon className="w-4 h-4" />
+            </button>
+            
+            <div className="w-px h-6 bg-[rgba(255,255,255,0.1)] mx-2" />
+            
             <button
               onClick={() => editor.chain().focus().undo().run()}
               disabled={!editor.can().undo()}
-              className="p-2 rounded-full hover:bg-[#1C1C1E] text-gray-400 disabled:opacity-30"
+              className="p-2 rounded-lg hover:bg-[#1C1C1E] text-gray-400 disabled:opacity-30 transition-all"
+              title="Undo"
             >
               <Undo className="w-4 h-4" />
             </button>
             <button
               onClick={() => editor.chain().focus().redo().run()}
               disabled={!editor.can().redo()}
-              className="p-2 rounded-full hover:bg-[#1C1C1E] text-gray-400 disabled:opacity-30"
+              className="p-2 rounded-lg hover:bg-[#1C1C1E] text-gray-400 disabled:opacity-30 transition-all"
+              title="Redo"
             >
               <Redo className="w-4 h-4" />
             </button>
+          </div>
+        </div>
+
+        {/* Table Controls - Show when cursor is in table */}
+        {editor.isActive('table') && (
+          <div className="border-b border-[rgba(255,255,255,0.1)] px-4 py-2 bg-[#0A0A0A] flex items-center gap-2">
+            <span className="text-gray-400 text-xs mr-2">Table:</span>
+            <button
+              onClick={() => editor.chain().focus().addColumnBefore().run()}
+              className="px-3 py-1 text-xs rounded bg-[#1C1C1E] text-gray-400 hover:text-white transition-all"
+            >
+              + Column Left
+            </button>
+            <button
+              onClick={() => editor.chain().focus().addColumnAfter().run()}
+              className="px-3 py-1 text-xs rounded bg-[#1C1C1E] text-gray-400 hover:text-white transition-all"
+            >
+              + Column Right
+            </button>
+            <button
+              onClick={() => editor.chain().focus().deleteColumn().run()}
+              className="px-3 py-1 text-xs rounded bg-[#1C1C1E] text-gray-400 hover:text-white transition-all"
+            >
+              - Column
+            </button>
+            <div className="w-px h-4 bg-[rgba(255,255,255,0.1)] mx-1" />
+            <button
+              onClick={() => editor.chain().focus().addRowBefore().run()}
+              className="px-3 py-1 text-xs rounded bg-[#1C1C1E] text-gray-400 hover:text-white transition-all"
+            >
+              + Row Above
+            </button>
+            <button
+              onClick={() => editor.chain().focus().addRowAfter().run()}
+              className="px-3 py-1 text-xs rounded bg-[#1C1C1E] text-gray-400 hover:text-white transition-all"
+            >
+              + Row Below
+            </button>
+            <button
+              onClick={() => editor.chain().focus().deleteRow().run()}
+              className="px-3 py-1 text-xs rounded bg-[#1C1C1E] text-gray-400 hover:text-white transition-all"
+            >
+              - Row
+            </button>
+            <div className="w-px h-4 bg-[rgba(255,255,255,0.1)] mx-1" />
+            <button
+              onClick={() => editor.chain().focus().deleteTable().run()}
+              className="px-3 py-1 text-xs rounded bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-all"
+            >
+              Delete Table
+            </button>
+          </div>
+        )}
+
+        {/* Title Input */}
+        <div className="px-8 pt-6 pb-4">
+          <input
+            type="text"
+            value={noteTitle}
+            onChange={(e) => setNoteTitle(e.target.value)}
+            placeholder="Untitled Note"
+            className="w-full bg-transparent text-white text-3xl font-bold focus:outline-none placeholder-gray-700"
+          />
+        </div>
+
+        {/* Editor Content */}
+        <div className="flex-1 overflow-y-auto">
+          <EditorContent editor={editor} />
+        </div>
+
+        {/* Footer with Save */}
+        <div className="border-t border-[rgba(255,255,255,0.1)] px-8 py-4 flex items-center justify-between bg-[#0A0A0A]">
+          <div className="text-gray-400 text-sm">
+            {editor.storage.characterCount?.characters() || 0} characters · {' '}
+            {editor.storage.characterCount?.words() || 0} words
           </div>
           <div className="flex items-center gap-2">
             {currentNote && (
               <button
                 onClick={handleDelete}
-                className="p-2 rounded-full hover:bg-red-500 text-gray-400 hover:text-white transition-all"
+                className="p-2 rounded-lg hover:bg-red-500/20 text-red-400 hover:text-red-300 transition-all"
+                title="Delete Note"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
@@ -354,6 +657,14 @@ export default function Dashboard({ notebook, notes, onBack, onSaveNote, onDelet
               className="flex items-center gap-2 bg-white text-black px-5 py-2 rounded-full hover:scale-105 transition-all font-medium disabled:opacity-50"
             >
               <Save className="w-4 h-4" />
+              {isSaving ? 'Saving...' : 'Save'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
               {isSaving ? 'Saving...' : 'Save'}
             </button>
           </div>
