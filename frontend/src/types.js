@@ -91,6 +91,7 @@ export interface AnalyticsData {
   totalNotes: number;
   storageMb: number;
   storageTotalMb: number;
+  webCaptures?: number;
   activity: DailyActivity[];
   today: {
     notes: number;
