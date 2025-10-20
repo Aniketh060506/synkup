@@ -27,10 +27,20 @@ import {
   Activity,
   TrendingDown,
   Minus,
+  RefreshCw,
+  Clipboard,
 } from 'lucide-react';
 import { getRecentNotebooks, getFavoriteNotebooks } from '../utils/storage';
 
-export default function Sidebar({ analytics, notebooks = [], onSearch, onSelectNotebook }) {
+export default function Sidebar({ 
+  analytics, 
+  notebooks = [], 
+  onSearch, 
+  onSelectNotebook,
+  onSyncWebCaptures,
+  isSyncing = false,
+  lastSyncTime
+}) {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('analytics');
 
