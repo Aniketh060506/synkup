@@ -80,6 +80,51 @@ async def get_status_checks():
     
     return status_checks
 
+@api_router.post("/web-capture", response_model=WebCaptureResponse)
+async def capture_web_content(capture: WebCaptureRequest):
+    """
+    Receive web content from Chrome extension and store in database.
+    Returns the notebook ID and name where content was saved.
+    """
+    try:
+        # Create a web capture document
+        capture_doc = {
+            "id": str(uuid.uuid4()),
+            "selectedText": capture.selectedText,
+            "selectedHTML": capture.selectedHTML,
+            "sourceDomain": capture.sourceDomain,
+            "sourceUrl": capture.sourceUrl,
+            "targetNotebookId": capture.targetNotebookId,
+            "timestamp": capture.timestamp,
+            "createdAt": datetime.now(timezone.utc).isoformat()
+        }
+        
+        # Store in MongoDB
+        result = await db.web_captures.insert_one(capture_doc)
+        
+        logger.info(f"Web capture saved: {capture.sourceDomain} -> {capture.targetNotebookId}")
+        
+        return WebCaptureResponse(
+            success=True,
+            notebookId=capture.targetNotebookId or "default",
+            notebookName="Web Captures",
+            message="Content captured successfully"
+        )
+    except Exception as e:
+        logger.error(f"Error saving web capture: {str(e)}")
+        return WebCaptureResponse(
+            success=False,
+            notebookId="",
+            notebookName="",
+            message=f"Error: {str(e)}"
+        )
+
+@api_router.get("/web-captures")
+async def get_web_captures(limit: int = 100):
+    """Get recent web captures"""
+    captures = await db.web_captures.find({}, {"_id": 0}).sort("createdAt", -1).to_list(limit)
+    return {"captures": captures, "count": len(captures)}
+
 # Include the router in the main app
 app.include_router(api_router)
 
