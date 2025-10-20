@@ -237,8 +237,8 @@ export const trackActivity = (data, activityType, value = 1) => {
   return data;
 };
 
-// Generate 7-day activity chart data
-export const generate7DayActivity = (activityLog) => {
+// Generate 7-day activity chart data - calculate from actual data
+export const generate7DayActivity = (activityLog, todoSystem = [], notebooks = []) => {
   const result = [];
   const today = new Date();
   
@@ -247,17 +247,52 @@ export const generate7DayActivity = (activityLog) => {
     date.setDate(date.getDate() - i);
     const dateStr = date.toISOString().split('T')[0];
     
+    // Get data from activityLog
     const dayData = activityLog[dateStr] || {
       todosCompleted: 0,
       notesCreated: 0,
       captures: 0,
     };
     
+    // Calculate REAL todos completed for this date from todoSystem
+    let todosCompletedCount = 0;
+    const targetYear = date.getFullYear();
+    const targetMonth = date.getMonth();
+    const targetDay = date.getDate();
+    
+    // Scan todoSystem for completed tasks on this specific date
+    for (const year of todoSystem) {
+      if (year.year === targetYear && year.months) {
+        for (const month of year.months) {
+          if (month.month === targetMonth && month.days) {
+            for (const day of month.days) {
+              if (day.day === targetDay && day.hours) {
+                for (const hour of day.hours) {
+                  if (hour.completed) {
+                    todosCompletedCount++;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    // Count notebooks created on this date
+    let notesCreatedCount = 0;
+    for (const notebook of notebooks) {
+      const notebookDate = notebook.createdAt ? new Date(notebook.createdAt).toISOString().split('T')[0] : null;
+      if (notebookDate === dateStr) {
+        notesCreatedCount++;
+      }
+    }
+    
     result.push({
       date: dateStr,
-      todos: dayData.todosCompleted || 0,
+      todos: todosCompletedCount > 0 ? todosCompletedCount : (dayData.todosCompleted || 0),
       captures: dayData.captures || 0,
-      notes: dayData.notesCreated || 0,
+      notes: notesCreatedCount > 0 ? notesCreatedCount : (dayData.notesCreated || 0),
     });
   }
   
