@@ -156,8 +156,8 @@ export const calculateAnalytics = (data: CopyDockData): AnalyticsData => {
   const previousBestStreak = data.analytics.goals?.bestStreak || 0;
   const bestStreak = Math.max(todoStreak, previousBestStreak);
   
-  // Generate 7-day activity data
-  const activityData = generate7DayActivity(data.activityLog || {});
+  // Generate 7-day activity data - pass todoSystem and notebooks for real data
+  const activityData = generate7DayActivity(data.activityLog || {}, data.todoSystem || [], data.notebooks || []);
   
   // Get today's stats - pass todoSystem for real-time calculation
   const todayStats = getTodayStats(data.activityLog || {}, data.todoSystem);
