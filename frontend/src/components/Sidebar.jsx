@@ -203,20 +203,124 @@ export default function Sidebar({ analytics, notebooks = [], onSearch, onSelectN
                 </div>
               </div>
               <div onWheel={(e) => e.stopPropagation()}>
-                <ResponsiveContainer width="100%" height={100}>
-                  <BarChart data={analytics?.activity || []} barGap={2}>
+                <ResponsiveContainer width="100%" height={180}>
+                  <ComposedChart 
+                    data={analytics?.activity || []} 
+                    margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                  >
+                    <defs>
+                      {/* Gradients for Areas */}
+                      <linearGradient id="colorTodos" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#60A5FA" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#60A5FA" stopOpacity={0.05}/>
+                      </linearGradient>
+                      <linearGradient id="colorNotes" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#34D399" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#34D399" stopOpacity={0.05}/>
+                      </linearGradient>
+                      <linearGradient id="colorCaptures" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#A78BFA" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#A78BFA" stopOpacity={0.05}/>
+                      </linearGradient>
+                    </defs>
+                    
+                    {/* Grid for better readability */}
+                    <CartesianGrid 
+                      strokeDasharray="3 3" 
+                      stroke="rgba(255,255,255,0.05)" 
+                      vertical={false}
+                    />
+                    
+                    {/* Axes */}
                     <XAxis 
                       dataKey="date" 
-                      tick={{ fill: '#666', fontSize: 10 }}
+                      tick={{ fill: '#888', fontSize: 11 }}
+                      stroke="rgba(255,255,255,0.1)"
                       tickFormatter={(value) => {
                         const date = new Date(value);
                         return date.toLocaleDateString('en-US', { weekday: 'short' })[0];
                       }}
                     />
-                    <Bar dataKey="todos" fill="#60A5FA" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="notes" fill="#34D399" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="captures" fill="#A78BFA" radius={[4, 4, 0, 0]} />
-                  </BarChart>
+                    <YAxis 
+                      tick={{ fill: '#888', fontSize: 11 }}
+                      stroke="rgba(255,255,255,0.1)"
+                      width={30}
+                    />
+                    
+                    {/* Tooltip */}
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: '#2C2C2E', 
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        borderRadius: '8px',
+                        fontSize: '12px'
+                      }}
+                      labelStyle={{ color: '#fff' }}
+                      itemStyle={{ color: '#fff' }}
+                      labelFormatter={(value) => {
+                        const date = new Date(value);
+                        return date.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+                      }}
+                    />
+                    
+                    {/* Area charts with gradients */}
+                    <Area 
+                      type="monotone" 
+                      dataKey="todos" 
+                      fill="url(#colorTodos)" 
+                      stroke="none"
+                      animationDuration={1000}
+                      animationBegin={0}
+                    />
+                    <Area 
+                      type="monotone" 
+                      dataKey="notes" 
+                      fill="url(#colorNotes)" 
+                      stroke="none"
+                      animationDuration={1000}
+                      animationBegin={200}
+                    />
+                    <Area 
+                      type="monotone" 
+                      dataKey="captures" 
+                      fill="url(#colorCaptures)" 
+                      stroke="none"
+                      animationDuration={1000}
+                      animationBegin={400}
+                    />
+                    
+                    {/* Dynamic lines on top with glow effect */}
+                    <Line 
+                      type="monotone" 
+                      dataKey="todos" 
+                      stroke="#60A5FA" 
+                      strokeWidth={3}
+                      dot={{ fill: '#60A5FA', strokeWidth: 2, r: 4, stroke: '#1C1C1E' }}
+                      activeDot={{ r: 6, stroke: '#60A5FA', strokeWidth: 3 }}
+                      animationDuration={1000}
+                      animationBegin={0}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="notes" 
+                      stroke="#34D399" 
+                      strokeWidth={3}
+                      dot={{ fill: '#34D399', strokeWidth: 2, r: 4, stroke: '#1C1C1E' }}
+                      activeDot={{ r: 6, stroke: '#34D399', strokeWidth: 3 }}
+                      animationDuration={1000}
+                      animationBegin={200}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="captures" 
+                      stroke="#A78BFA" 
+                      strokeWidth={3}
+                      dot={{ fill: '#A78BFA', strokeWidth: 2, r: 4, stroke: '#1C1C1E' }}
+                      activeDot={{ r: 6, stroke: '#A78BFA', strokeWidth: 3 }}
+                      animationDuration={1000}
+                      animationBegin={400}
+                    />
+                  </ComposedChart>
                 </ResponsiveContainer>
               </div>
             </div>
