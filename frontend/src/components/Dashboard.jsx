@@ -374,8 +374,9 @@ export default function Dashboard({ notebook, notes, onBack, onSaveNote, onDelet
                 <Palette className="w-4 h-4" />
               </button>
               {showColorPicker && (
-                <div className="absolute top-full mt-2 left-0 bg-[#1C1C1E] rounded-lg p-3 border border-[rgba(255,255,255,0.1)] shadow-lg z-50">
-                  <div className="grid grid-cols-5 gap-2">
+                <div className="absolute top-full mt-2 left-0 bg-[#1C1C1E] rounded-lg p-4 border border-[rgba(255,255,255,0.1)] shadow-lg z-50 w-64">
+                  <p className="text-xs text-gray-400 mb-3 font-medium">Text Color</p>
+                  <div className="grid grid-cols-6 gap-2">
                     {colors.map((color) => (
                       <button
                         key={color}
@@ -383,8 +384,9 @@ export default function Dashboard({ notebook, notes, onBack, onSaveNote, onDelet
                           editor.chain().focus().setColor(color).run();
                           setShowColorPicker(false);
                         }}
-                        className="w-6 h-6 rounded border-2 border-gray-600 hover:border-white transition-all"
+                        className="w-8 h-8 rounded-lg border-2 border-gray-700 hover:border-white hover:scale-110 transition-all"
                         style={{ backgroundColor: color }}
+                        title={color}
                       />
                     ))}
                   </div>
@@ -393,9 +395,9 @@ export default function Dashboard({ notebook, notes, onBack, onSaveNote, onDelet
                       editor.chain().focus().unsetColor().run();
                       setShowColorPicker(false);
                     }}
-                    className="mt-2 w-full text-xs text-gray-400 hover:text-white"
+                    className="mt-3 w-full text-xs text-gray-400 hover:text-white py-2 px-3 rounded-lg hover:bg-[#262626] transition-all"
                   >
-                    Clear Color
+                    Reset Color
                   </button>
                 </div>
               )}
@@ -418,7 +420,8 @@ export default function Dashboard({ notebook, notes, onBack, onSaveNote, onDelet
                 <Highlighter className="w-4 h-4" />
               </button>
               {showHighlightPicker && (
-                <div className="absolute top-full mt-2 left-0 bg-[#1C1C1E] rounded-lg p-3 border border-[rgba(255,255,255,0.1)] shadow-lg z-50">
+                <div className="absolute top-full mt-2 left-0 bg-[#1C1C1E] rounded-lg p-4 border border-[rgba(255,255,255,0.1)] shadow-lg z-50 w-64">
+                  <p className="text-xs text-gray-400 mb-3 font-medium">Highlight Color</p>
                   <div className="grid grid-cols-5 gap-2">
                     {highlightColors.map((color) => (
                       <button
@@ -427,8 +430,9 @@ export default function Dashboard({ notebook, notes, onBack, onSaveNote, onDelet
                           editor.chain().focus().toggleHighlight({ color }).run();
                           setShowHighlightPicker(false);
                         }}
-                        className="w-6 h-6 rounded border-2 border-gray-600 hover:border-white transition-all"
+                        className="w-10 h-10 rounded-lg border-2 border-gray-700 hover:border-white hover:scale-110 transition-all"
                         style={{ backgroundColor: color }}
+                        title={color}
                       />
                     ))}
                   </div>
@@ -437,9 +441,9 @@ export default function Dashboard({ notebook, notes, onBack, onSaveNote, onDelet
                       editor.chain().focus().unsetHighlight().run();
                       setShowHighlightPicker(false);
                     }}
-                    className="mt-2 w-full text-xs text-gray-400 hover:text-white"
+                    className="mt-3 w-full text-xs text-gray-400 hover:text-white py-2 px-3 rounded-lg hover:bg-[#262626] transition-all"
                   >
-                    Clear Highlight
+                    Remove Highlight
                   </button>
                 </div>
               )}
