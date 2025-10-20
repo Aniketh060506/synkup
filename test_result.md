@@ -390,3 +390,15 @@ agent_communication:
       - /app/frontend/src/App.js: Analytics recalculate on todo updates
       
       All stats now unified between Notebook and Todo systems!
+
+  - agent: "main"
+    message: |
+      FIXING STREAK TRACKING LOGIC:
+      
+      User reported that streak should update when at least one todo per day is finished and should reflect properly in sidebar.
+      
+      Current Investigation:
+      - Streak calculation exists in both storage.js and TodoSystem.jsx
+      - Logic checks for dayData?.hours?.some(h => h.completed) which is correct
+      - Need to ensure synchronization between TodoSystem streak and Sidebar streak
+      - Will fix any inconsistencies in the streak calculation logic
