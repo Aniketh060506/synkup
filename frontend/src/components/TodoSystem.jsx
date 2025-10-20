@@ -596,21 +596,23 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
           <div className="flex items-center gap-4">
             <input
               type="text"
-              value={newTaskTime}
-              onChange={(e) => setNewTaskTime(e.target.value)}
+              value={newTaskStartTime}
+              onChange={(e) => setNewTaskStartTime(e.target.value)}
               placeholder="05:54 PM"
               className="w-32 px-4 py-3 bg-[#0A0A0A] border border-[rgba(255,255,255,0.1)] rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-[rgba(255,255,255,0.3)]"
             />
             <span className="text-gray-600">to</span>
             <input
               type="text"
-              value={newTaskDesc}
-              onChange={(e) => setNewTaskDesc(e.target.value)}
-              placeholder="--:-- --"
+              value={newTaskEndTime}
+              onChange={(e) => setNewTaskEndTime(e.target.value)}
+              placeholder="06:54 PM"
               className="w-32 px-4 py-3 bg-[#0A0A0A] border border-[rgba(255,255,255,0.1)] rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-[rgba(255,255,255,0.3)]"
             />
             <input
               type="text"
+              value={newTaskDesc}
+              onChange={(e) => setNewTaskDesc(e.target.value)}
               placeholder="What will you do during this time?"
               className="flex-1 px-4 py-3 bg-[#0A0A0A] border border-[rgba(255,255,255,0.1)] rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-[rgba(255,255,255,0.3)]"
               onKeyPress={(e) => {
