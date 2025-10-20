@@ -2,17 +2,36 @@ import { useState, useEffect } from 'react';
 import { ChevronLeft, Plus, ChevronRight, Calendar, Check, Flame, X } from 'lucide-react';
 
 export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
-  const [currentView, setCurrentView] = useState('year');
-  const [selectedYear, setSelectedYear] = useState(null);
+  const currentYear = new Date().getFullYear();
+  const years = todoData.length > 0 ? todoData : [];
+  
+  // Initialize with current year if available, otherwise create it
+  const initializeYear = () => {
+    let yearData = years.find(y => y.year === currentYear);
+    if (!yearData) {
+      yearData = {
+        year: currentYear,
+        months: Array.from({ length: 12 }, (_, i) => ({
+          name: new Date(currentYear, i).toLocaleString('default', { month: 'long' }),
+          taskCount: 0,
+          focus: '',
+          index: i,
+          days: [],
+        })),
+      };
+      onUpdateTodos([...todoData, yearData]);
+    }
+    return yearData;
+  };
+
+  const [currentView, setCurrentView] = useState('month');
+  const [selectedYear, setSelectedYear] = useState(initializeYear());
   const [selectedMonth, setSelectedMonth] = useState(null);
   const [selectedDay, setSelectedDay] = useState(null);
   const [newTaskStartTime, setNewTaskStartTime] = useState('');
   const [newTaskEndTime, setNewTaskEndTime] = useState('');
   const [newTaskDesc, setNewTaskDesc] = useState('');
   const [streak, setStreak] = useState(0);
-
-  const currentYear = new Date().getFullYear();
-  const years = todoData.length > 0 ? todoData : [];
 
   // Calculate streak based on consecutive days with at least 1 task done
   useEffect(() => {
