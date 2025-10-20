@@ -132,7 +132,7 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
         ? {
             ...y,
             months: y.months.map((m, idx) => 
-              idx === monthIndex ? { ...m, focus } : m
+              idx === monthIndex ? { ...m, focus, index: idx } : m
             )
           }
         : y
@@ -145,16 +145,6 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
     <div className="space-y-6 animate-fadeIn">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
-          <button
-            onClick={() => {
-              setCurrentView('year');
-              setSelectedYear(null);
-            }}
-            className="flex items-center gap-2 text-gray-400 hover:text-white transition-all"
-          >
-            <ChevronLeft className="w-4 h-4" />
-            Back
-          </button>
           <h2 className="text-blue-400 text-xl font-bold">{selectedYear?.year}</h2>
         </div>
         <div className="flex items-center gap-4">
@@ -194,21 +184,26 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
                 <td className="px-6 py-5">
                   <div>
                     <div className="text-white font-semibold text-base">{month.name}</div>
-                    <div className="text-gray-500 text-sm">{month.taskCount} tasks</div>
+                    <div className="text-gray-500 text-sm">{month.taskCount || 0} tasks</div>
                   </div>
                 </td>
                 <td className="px-6 py-5">
                   <input
                     type="text"
                     value={month.focus || ''}
-                    onChange={(e) => updateMonthFocus(idx, e.target.value)}
+                    onChange={(e) => {
+                      e.stopPropagation();
+                      updateMonthFocus(idx, e.target.value);
+                    }}
+                    onClick={(e) => e.stopPropagation()}
                     placeholder={`Enter ${month.name} goals...`}
                     className="w-full bg-transparent text-gray-400 placeholder-gray-600 focus:outline-none focus:text-white transition-all"
                   />
                 </td>
                 <td className="px-6 py-5 text-right">
                   <button
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       setSelectedMonth({ ...month, index: idx });
                       setCurrentView('day');
                     }}
