@@ -47,18 +47,68 @@ export default function Dashboard({ notebook, notes, onBack, onSaveNote, onDelet
   const [currentNote, setCurrentNote] = useState(null);
   const [noteTitle, setNoteTitle] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [showColorPicker, setShowColorPicker] = useState(false);
+  const [showHighlightPicker, setShowHighlightPicker] = useState(false);
 
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        bulletList: {
+          keepMarks: true,
+          keepAttributes: false,
+        },
+        orderedList: {
+          keepMarks: true,
+          keepAttributes: false,
+        },
+      }),
       Placeholder.configure({
         placeholder: 'Start writing your note...',
+      }),
+      Table.configure({
+        resizable: true,
+        HTMLAttributes: {
+          class: 'table-auto border-collapse border border-gray-700 w-full',
+        },
+      }),
+      TableRow,
+      TableHeader.configure({
+        HTMLAttributes: {
+          class: 'border border-gray-700 bg-gray-800 px-4 py-2 font-bold',
+        },
+      }),
+      TableCell.configure({
+        HTMLAttributes: {
+          class: 'border border-gray-700 px-4 py-2',
+        },
+      }),
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
+      }),
+      TextStyle,
+      Color,
+      Highlight.configure({
+        multicolor: true,
+      }),
+      Underline,
+      Link.configure({
+        openOnClick: false,
+        HTMLAttributes: {
+          class: 'text-blue-400 underline cursor-pointer',
+        },
+      }),
+      TaskList,
+      TaskItem.configure({
+        nested: true,
+        HTMLAttributes: {
+          class: 'flex items-start gap-2',
+        },
       }),
     ],
     content: '',
     editorProps: {
       attributes: {
-        class: 'prose prose-invert max-w-none focus:outline-none min-h-[400px]',
+        class: 'prose prose-invert max-w-none focus:outline-none min-h-[400px] px-8 py-6',
       },
     },
   });
