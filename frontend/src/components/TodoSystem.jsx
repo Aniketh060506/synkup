@@ -75,29 +75,106 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
     setStreak(currentStreak);
   };
 
-  const calculateStreak = () => {
-    if (!selectedMonth || !selectedMonth.days) {
-      setStreak(0);
-      return;
+  // Quick Jump to Today
+  const jumpToToday = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth();
+    const day = today.getDate();
+
+    let yearData = years.find(y => y.year === year);
+    if (!yearData) {
+      yearData = {
+        year: year,
+        months: Array.from({ length: 12 }, (_, i) => ({
+          name: new Date(year, i).toLocaleString('default', { month: 'long' }),
+          taskCount: 0,
+          focus: '',
+          index: i,
+          days: [],
+        })),
+      };
+      onUpdateTodos([...todoData, yearData]);
     }
 
-    let currentStreak = 0;
-    const today = new Date();
-    const sortedDays = [...selectedMonth.days].sort((a, b) => b.day - a.day);
+    setSelectedYear(yearData);
+    setSelectedMonth({ ...yearData.months[month], index: month });
+    
+    const existingDay = yearData.months[month].days?.find(d => d.day === day);
+    setSelectedDay({
+      day: day,
+      weekday: today.toLocaleDateString('en-US', { weekday: 'long' }),
+      hours: existingDay?.hours || [],
+      goal: existingDay?.goal || ''
+    });
+    setCurrentView('hour');
+    setShowQuickJump(false);
+  };
 
-    for (let dayData of sortedDays) {
-      const dayDate = new Date(selectedYear.year, selectedMonth.index, dayData.day);
-      if (dayDate > today) continue;
+  // Navigate between years
+  const navigateYear = (direction) => {
+    const currentIndex = years.findIndex(y => y.year === selectedYear.year);
+    if (direction === 'prev' && currentIndex > 0) {
+      setSelectedYear(years[currentIndex - 1]);
+    } else if (direction === 'next' && currentIndex < years.length - 1) {
+      setSelectedYear(years[currentIndex + 1]);
+    }
+  };
 
-      const hasCompletedTask = dayData.hours && dayData.hours.some(h => h.completed);
-      if (hasCompletedTask) {
-        currentStreak++;
+  // Navigate between months
+  const navigateMonth = (direction) => {
+    if (direction === 'prev') {
+      if (selectedMonth.index > 0) {
+        setSelectedMonth({ ...selectedYear.months[selectedMonth.index - 1], index: selectedMonth.index - 1 });
       } else {
-        break;
+        // Go to previous year's December
+        const prevYearIndex = years.findIndex(y => y.year === selectedYear.year) - 1;
+        if (prevYearIndex >= 0) {
+          setSelectedYear(years[prevYearIndex]);
+          setSelectedMonth({ ...years[prevYearIndex].months[11], index: 11 });
+        }
+      }
+    } else {
+      if (selectedMonth.index < 11) {
+        setSelectedMonth({ ...selectedYear.months[selectedMonth.index + 1], index: selectedMonth.index + 1 });
+      } else {
+        // Go to next year's January
+        const nextYearIndex = years.findIndex(y => y.year === selectedYear.year) + 1;
+        if (nextYearIndex < years.length) {
+          setSelectedYear(years[nextYearIndex]);
+          setSelectedMonth({ ...years[nextYearIndex].months[0], index: 0 });
+        }
       }
     }
+  };
 
-    setStreak(currentStreak);
+  // Navigate between days
+  const navigateDay = (direction) => {
+    const daysInMonth = new Date(selectedYear.year, selectedMonth.index + 1, 0).getDate();
+    
+    if (direction === 'prev') {
+      if (selectedDay.day > 1) {
+        const newDay = selectedDay.day - 1;
+        const existingDay = selectedMonth.days?.find(d => d.day === newDay);
+        setSelectedDay({
+          day: newDay,
+          weekday: new Date(selectedYear.year, selectedMonth.index, newDay).toLocaleDateString('en-US', { weekday: 'long' }),
+          hours: existingDay?.hours || [],
+          goal: existingDay?.goal || ''
+        });
+      }
+    } else {
+      if (selectedDay.day < daysInMonth) {
+        const newDay = selectedDay.day + 1;
+        const existingDay = selectedMonth.days?.find(d => d.day === newDay);
+        setSelectedDay({
+          day: newDay,
+          weekday: new Date(selectedYear.year, selectedMonth.index, newDay).toLocaleDateString('en-US', { weekday: 'long' }),
+          hours: existingDay?.hours || [],
+          goal: existingDay?.goal || ''
+        });
+      }
+    }
   };
 
   const handleCreateYear = () => {
