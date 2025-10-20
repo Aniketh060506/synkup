@@ -1,14 +1,49 @@
-import { useState } from 'react';
-import { ChevronLeft, Plus, ChevronRight, Calendar, Check } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ChevronLeft, Plus, ChevronRight, Calendar, Check, Flame, X } from 'lucide-react';
 
 export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
   const [currentView, setCurrentView] = useState('year');
   const [selectedYear, setSelectedYear] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState(null);
   const [selectedDay, setSelectedDay] = useState(null);
+  const [newTaskTime, setNewTaskTime] = useState('');
+  const [newTaskDesc, setNewTaskDesc] = useState('');
+  const [streak, setStreak] = useState(0);
 
   const currentYear = new Date().getFullYear();
   const years = todoData.length > 0 ? todoData : [];
+
+  // Calculate streak based on consecutive days with at least 1 task done
+  useEffect(() => {
+    if (selectedYear && selectedMonth) {
+      calculateStreak();
+    }
+  }, [selectedYear, selectedMonth]);
+
+  const calculateStreak = () => {
+    if (!selectedMonth || !selectedMonth.days) {
+      setStreak(0);
+      return;
+    }
+
+    let currentStreak = 0;
+    const today = new Date();
+    const sortedDays = [...selectedMonth.days].sort((a, b) => b.day - a.day);
+
+    for (let dayData of sortedDays) {
+      const dayDate = new Date(selectedYear.year, selectedMonth.index, dayData.day);
+      if (dayDate > today) continue;
+
+      const hasCompletedTask = dayData.hours && dayData.hours.some(h => h.completed);
+      if (hasCompletedTask) {
+        currentStreak++;
+      } else {
+        break;
+      }
+    }
+
+    setStreak(currentStreak);
+  };
 
   const handleCreateYear = () => {
     const newYear = {
