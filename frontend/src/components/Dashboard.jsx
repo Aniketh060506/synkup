@@ -53,6 +53,8 @@ export default function Dashboard({ notebook, onBack, onSaveNotebook }) {
   const [showTableModal, setShowTableModal] = useState(false);
   const [tableRows, setTableRows] = useState('3');
   const [tableCols, setTableCols] = useState('3');
+  const [wordCount, setWordCount] = useState(notebook?.wordCount || 0);
+  const [characterCount, setCharacterCount] = useState(notebook?.characterCount || 0);
 
   const editor = useEditor({
     extensions: [
