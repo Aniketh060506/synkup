@@ -6,18 +6,34 @@ import NotebookManager from './components/NotebookManager';
 import Dashboard from './components/Dashboard';
 import TodoSystem from './components/TodoSystem';
 import { loadData, saveData, calculateAnalytics, getInitialData, trackActivity } from './utils/storage';
-import { Menu, X, CheckSquare } from 'lucide-react';
+import { Menu, X, CheckSquare, RefreshCw } from 'lucide-react';
+import WebCaptureService from './services/webCaptureService';
 
 function App() {
   const [data, setData] = useState(null);
   const [currentView, setCurrentView] = useState('notebooks');
   const [selectedNotebook, setSelectedNotebook] = useState(null);
   const [showSidebar, setShowSidebar] = useState(true);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [lastSyncTime, setLastSyncTime] = useState(null);
 
   useEffect(() => {
     // Load data from localStorage
     const storedData = loadData();
     setData(storedData);
+    
+    // Initial sync of web captures
+    syncWebCaptures(storedData);
+  }, []);
+
+  useEffect(() => {
+    // Auto-sync web captures every 30 seconds
+    const cleanup = WebCaptureService.startAutoSync((updatedData) => {
+      setData(updatedData);
+      setLastSyncTime(new Date());
+    }, 30);
+
+    return cleanup;
   }, []);
 
   useEffect(() => {
@@ -31,6 +47,23 @@ function App() {
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
   }, [data]);
+
+  const syncWebCaptures = async (currentData = data) => {
+    if (!currentData) return;
+    
+    setIsSyncing(true);
+    try {
+      const updatedData = await WebCaptureService.syncCapturesWithLocalStorage(currentData);
+      setData(updatedData);
+      saveData(updatedData);
+      setLastSyncTime(new Date());
+      console.log('✅ Web captures synced successfully');
+    } catch (error) {
+      console.error('Failed to sync web captures:', error);
+    } finally {
+      setIsSyncing(false);
+    }
+  };
 
   const handleWebCapture = (payload) => {
     if (!data) return;
