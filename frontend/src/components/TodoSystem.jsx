@@ -6,7 +6,8 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
   const [selectedYear, setSelectedYear] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState(null);
   const [selectedDay, setSelectedDay] = useState(null);
-  const [newTaskTime, setNewTaskTime] = useState('');
+  const [newTaskStartTime, setNewTaskStartTime] = useState('');
+  const [newTaskEndTime, setNewTaskEndTime] = useState('');
   const [newTaskDesc, setNewTaskDesc] = useState('');
   const [streak, setStreak] = useState(0);
 
