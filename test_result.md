@@ -548,6 +548,51 @@ agent_communication:
 
   - agent: "main"
     message: |
+      ✅ ENHANCED ACTIVITY CHART WITH MULTI-METRIC VISUALIZATION:
+      
+      Enhancement: Transformed simple activity chart into dynamic multi-metric visualization
+      
+      What Was Added:
+      1. **Multiple Data Series Display**:
+         - Blue bars: Tasks completed (todos)
+         - Green bars: Notes/Notebooks created
+         - Purple bars: Web captures/clips
+         - All metrics shown side-by-side for each day
+      
+      2. **Visual Improvements**:
+         - Color-coded legend at the top (Tasks, Notes, Clips)
+         - X-axis with day labels (M, T, W, T, F, S, S)
+         - Increased chart height from 80px to 100px for better visibility
+         - Rounded bar tops for modern look
+         - Proper spacing between bars (barGap: 2)
+      
+      3. **Better Data Visualization**:
+         - Shows 7-day trend for all activities
+         - Easy to spot productive days at a glance
+         - Color-coded for quick understanding
+         - Compact yet informative design
+      
+      Technical Implementation:
+      - Added XAxis with day formatter showing first letter of weekday
+      - Multiple Bar components with different dataKeys
+      - Custom colors: #60A5FA (blue), #34D399 (green), #A78BFA (purple)
+      - Legend with matching color indicators
+      
+      Changes Made:
+      - /app/frontend/src/components/Sidebar.jsx:
+        * Lines 172-196: Enhanced Activity chart with multi-series bars and legend
+        * Added XAxis with custom tick formatter
+        * Three Bar components for todos, notes, and captures
+      
+      Now Working:
+      ✓ Activity chart shows all 3 metrics dynamically
+      ✓ Color-coded bars for easy identification
+      ✓ Legend explains what each color represents
+      ✓ Day labels on X-axis for context
+      ✓ Compact and informative visualization
+
+  - agent: "main"
+    message: |
       ✅ FIXED DYNAMIC STATS & WEEKLY INSIGHTS:
       
       Problem: Left sidebar stats weren't updating properly - showed "0 todos completed" even when tasks were marked as complete
