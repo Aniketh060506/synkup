@@ -2575,6 +2575,11 @@
   resolved "https://registry.yarnpkg.com/@tiptap/extension-code/-/extension-code-3.7.2.tgz#80b43d1590cff592c25b7552c3706b4f4fbbece3"
   integrity sha512-J8FaCiKJJnHvQiPcbfbUtc5RNmGx/Gui/K5CDMPc17jhCiQ9JhR9idRPREV24Z2t7GujWX7LG6ZDDR82pSns+g==
 
+"@tiptap/extension-color@^3.7.2":
+  version "3.7.2"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-color/-/extension-color-3.7.2.tgz#a5a4ff8aafdb779a7863c788f2d105876af6eac6"
+  integrity sha512-fMSPjWWsztAAtEgXY+g8ldXRuiI3My9C7TefdirSsBdP8sRx3dCS3QaUe3ZJro0nr3wYbhntJNaokcxVC7HHyA==
+
 "@tiptap/extension-document@^3.7.2":
   version "3.7.2"
   resolved "https://registry.yarnpkg.com/@tiptap/extension-document/-/extension-document-3.7.2.tgz#76432dad6eb0d042b0469f358788754f6f84ded0"
@@ -2604,6 +2609,11 @@
   version "3.7.2"
   resolved "https://registry.yarnpkg.com/@tiptap/extension-heading/-/extension-heading-3.7.2.tgz#c8a5756c7464f693c41896587455506bed7d74c4"
   integrity sha512-eH/G66FIRlTQz4MhEmlNNNQgVTxhoqlkyFzgeG5aipIplYOdYa5Y6Wl0NF4xqr1jAHGLAK6LaYS4FXp3TE7LyA==
+
+"@tiptap/extension-highlight@^3.7.2":
+  version "3.7.2"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-highlight/-/extension-highlight-3.7.2.tgz#7401570c518b1e36cc2879cd22dbf3ec054b0ef2"
+  integrity sha512-+R10j0BaN3J8XeZM/RHIiYNpEHBetTtZQVDsEwmG5QBPzOTItvCc4qNaJjpoCPhkwTd5EQdmW7feUDPsTW+bgw==
 
 "@tiptap/extension-horizontal-rule@^3.7.2":
   version "3.7.2"
@@ -2656,6 +2666,46 @@
   version "3.7.2"
   resolved "https://registry.yarnpkg.com/@tiptap/extension-strike/-/extension-strike-3.7.2.tgz#fd82bc48e47413bb80caa53b6fb9d90c4edeff3c"
   integrity sha512-I1G+4vZbCBTpAMmyVwaO8cLBJgXEf1DyEzc0B+HhTJiBa9qA9OKgRQEGFgisxu1kggjbzB6+d0+taHfjsZC1SQ==
+
+"@tiptap/extension-table-cell@^3.7.2":
+  version "3.7.2"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-table-cell/-/extension-table-cell-3.7.2.tgz#8c184aa9bda7be4fd0433ad9c6831ddeced37ff7"
+  integrity sha512-kudewSGmYYCD6UjndW4QVO9KCnc0rl51s25zFhk2KR97RU1NvRG2phDznGj5/oHckvROkfzMb+pFJYZHe61KWg==
+
+"@tiptap/extension-table-header@^3.7.2":
+  version "3.7.2"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-table-header/-/extension-table-header-3.7.2.tgz#159d196c901b689bca185827020f66494163a4c4"
+  integrity sha512-CzdtitQ7AucxeK0UNCAdekibr+3IxACjB3aDNU+7jCriYFecHE7QfDyX0eojznAMpkXJy+09E426y/MH5xa/Sg==
+
+"@tiptap/extension-table-row@^3.7.2":
+  version "3.7.2"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-table-row/-/extension-table-row-3.7.2.tgz#2e0189244bb1a6a4175bc08f835dee54d7272fd2"
+  integrity sha512-3vcjWU9Ps8EtaDNcsf8/TvZzQHonFYR0CzJXMeqzCNjKra28wDZEmel32T2xM93atZ+9LT2iX0iX1LJkI2NyiQ==
+
+"@tiptap/extension-table@^3.7.2":
+  version "3.7.2"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-table/-/extension-table-3.7.2.tgz#639ff29a3e4dfe7f41710ae59cf293b019d0f2e4"
+  integrity sha512-1sBOrYHoMDcygPSuBfunp/bw21rea/r7L8AQaeZ/NIo2RZ6GXWxI9sRzTkLWijZ4xC3md0O/ylmvxvLL4V0SVA==
+
+"@tiptap/extension-task-item@^3.7.2":
+  version "3.7.2"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-task-item/-/extension-task-item-3.7.2.tgz#67a97cf5dfcdc88ae7957677b75795cc15f9202c"
+  integrity sha512-idfQUeMm1wxJBZMe52YdGnQ/4PI9H6nKL9TxlvqqXDVKD8XHrGguI/9OSnPsDLN/Yqc4tzXFnPH+8NkL7esdYQ==
+
+"@tiptap/extension-task-list@^3.7.2":
+  version "3.7.2"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-task-list/-/extension-task-list-3.7.2.tgz#fa363aa33f8c3e7e016108a9c7e794eab6d8d7f0"
+  integrity sha512-6ZdSiHeS69iuGkWE1DFhVtC1xwokWtqtQuEJU6Mlh7g+UvEVEn+QGAjUXzUWPqFHjlXUvmTvhYOeqMjKL/FzVQ==
+
+"@tiptap/extension-text-align@^3.7.2":
+  version "3.7.2"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-text-align/-/extension-text-align-3.7.2.tgz#e1d99bbb586ee996c54dcfef51f4a1857e54263e"
+  integrity sha512-tUdoatcxM8u16tFVfEURFZwmxvZQR33f9VLtkyR+1aXgy0Pi87cNoFC60pTjH7gNtktEuagNfPE00tGMvqIehg==
+
+"@tiptap/extension-text-style@^3.7.2":
+  version "3.7.2"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-text-style/-/extension-text-style-3.7.2.tgz#1b311dced7aab06526609ee77895d6f57f40de5d"
+  integrity sha512-afbEnk+Cf9tOfnM+dcKRtyAVb99JZRzUd2qTGqqoEJuySRk5KckVBZSkwGAt6TiIKpPlmwHHB5YTdMx9Fg+tbQ==
 
 "@tiptap/extension-text@^3.7.2":
   version "3.7.2"
