@@ -338,15 +338,13 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
         <div className="flex items-center gap-4">
           <button 
             onClick={() => navigateYear('prev')}
-            disabled={years.findIndex(y => y.year === selectedYear.year) === 0}
-            className="p-2 hover:bg-[#1C1C1E] rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-2 hover:bg-[#1C1C1E] rounded-lg transition-all"
           >
             <ChevronLeft className="w-5 h-5 text-white" />
           </button>
           <button 
             onClick={() => navigateYear('next')}
-            disabled={years.findIndex(y => y.year === selectedYear.year) === years.length - 1}
-            className="p-2 hover:bg-[#1C1C1E] rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-2 hover:bg-[#1C1C1E] rounded-lg transition-all"
           >
             <ChevronRight className="w-5 h-5 text-white" />
           </button>
