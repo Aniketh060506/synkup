@@ -14,17 +14,47 @@ import {
   Calendar,
   Zap,
   Activity,
+  TrendingDown,
+  Minus,
 } from 'lucide-react';
+import { getRecentNotebooks, getFavoriteNotebooks } from '../utils/storage';
 
-export default function Sidebar({ analytics, onSearch }) {
-  const [activeTab, setActiveTab] = useState('analytics');
+export default function Sidebar({ analytics, notebooks = [], onSearch, onSelectNotebook }) {
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeTab, setActiveTab] = useState('analytics');
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
     if (onSearch) {
       onSearch(e.target.value);
     }
+  };
+
+  const recentNotebooks = getRecentNotebooks(notebooks, 5);
+  const favoriteNotebooks = getFavoriteNotebooks(notebooks);
+
+  const getTrendIcon = () => {
+    if (!analytics.weeklyInsights) return null;
+    const { trend } = analytics.weeklyInsights;
+    if (trend === 'up') return <TrendingUp className="w-4 h-4 text-green-500" />;
+    if (trend === 'down') return <TrendingDown className="w-4 h-4 text-red-500" />;
+    return <Minus className="w-4 h-4 text-gray-500" />;
+  };
+
+  const formatTimeAgo = (dateString) => {
+    if (!dateString) return 'Never';
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+    return date.toLocaleDateString();
   };
 
   return (
@@ -90,39 +120,39 @@ export default function Sidebar({ analytics, onSearch }) {
         </div>
       </div>
 
-      {/* Tab Navigation - Vertical */}
-      <div className="px-5 py-4 border-b border-[rgba(255,255,255,0.1)] flex flex-col gap-3 flex-shrink-0">
+      {/* Tab Navigation - Horizontal */}
+      <div className="px-5 py-3 border-b border-[rgba(255,255,255,0.1)] flex gap-2 flex-shrink-0 overflow-x-auto">
         <button
           onClick={() => setActiveTab('analytics')}
-          className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
             activeTab === 'analytics'
               ? 'bg-white text-black'
               : 'text-gray-400 hover:text-white hover:bg-[#1C1C1E]'
           }`}
         >
-          <TrendingUp className="w-5 h-5 flex-shrink-0" />
+          <TrendingUp className="w-4 h-4 flex-shrink-0" />
           <span>Analytics</span>
         </button>
         <button
           onClick={() => setActiveTab('recent')}
-          className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
             activeTab === 'recent'
               ? 'bg-white text-black'
               : 'text-gray-400 hover:text-white hover:bg-[#1C1C1E]'
           }`}
         >
-          <Clock className="w-5 h-5 flex-shrink-0" />
+          <Clock className="w-4 h-4 flex-shrink-0" />
           <span>Recent</span>
         </button>
         <button
           onClick={() => setActiveTab('favorites')}
-          className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
             activeTab === 'favorites'
               ? 'bg-white text-black'
               : 'text-gray-400 hover:text-white hover:bg-[#1C1C1E]'
           }`}
         >
-          <Star className="w-5 h-5 flex-shrink-0" />
+          <Star className="w-4 h-4 flex-shrink-0" />
           <span>Favorites</span>
         </button>
       </div>
@@ -156,13 +186,46 @@ export default function Sidebar({ analytics, onSearch }) {
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-400">{analytics.today.notes} notes created</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
                   <span className="text-gray-400">{analytics.today.todos} todos completed</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-400">{analytics.today.words.toLocaleString()} words written</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-gray-400">{analytics.today.captures} web captures</span>
                 </div>
               </div>
             </div>
+
+            {/* Weekly Insights */}
+            {analytics.weeklyInsights && (
+              <div className="bg-[#1C1C1E] rounded-2xl p-4 border border-[rgba(255,255,255,0.1)]">
+                <div className="flex items-center gap-2 mb-3">
+                  <Calendar className="w-4 h-4 text-white" />
+                  <h3 className="text-white font-medium text-sm">Weekly Insights</h3>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-400">Most productive</span>
+                    <span className="text-white font-medium">{analytics.weeklyInsights.mostProductiveDay}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-400">Avg tasks/day</span>
+                    <span className="text-white font-medium">{analytics.weeklyInsights.averageTasksPerDay}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-400">Trend</span>
+                    <div className="flex items-center gap-1">
+                      {getTrendIcon()}
+                      <span className="text-white font-medium capitalize">{analytics.weeklyInsights.trend}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Content Analytics */}
             <div className="bg-[#1C1C1E] rounded-2xl p-4 border border-[rgba(255,255,255,0.1)]">
@@ -171,12 +234,12 @@ export default function Sidebar({ analytics, onSearch }) {
                 <h3 className="text-white font-medium text-sm">Content Analytics</h3>
               </div>
               <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center justify-between text-sm mb-3">
                   <span className="text-gray-400">{analytics.content.totalWords.toLocaleString()} total words</span>
                 </div>
                 {analytics.content.breakdown.slice(0, 3).map((item, idx) => (
                   <div key={idx} className="flex items-center justify-between text-sm">
-                    <span className="text-gray-400">{item.name}</span>
+                    <span className="text-gray-400 truncate max-w-[150px]">{item.name}</span>
                     <span className="text-white">{item.value.toLocaleString()} words</span>
                   </div>
                 ))}
@@ -230,30 +293,85 @@ export default function Sidebar({ analytics, onSearch }) {
         )}
 
         {activeTab === 'recent' && (
-          <div className="bg-[#1C1C1E] rounded-2xl p-4 border border-[rgba(255,255,255,0.1)]">
-            <div className="flex items-center gap-2 mb-3">
-              <Clock className="w-4 h-4 text-white" />
-              <h3 className="text-white font-medium text-sm">Recent Notebooks</h3>
-            </div>
-            <div className="space-y-3">
-              <div className="text-gray-400 text-sm text-center py-4">
-                Recently accessed notebooks will appear here
+          <div className="space-y-3">
+            {recentNotebooks.length > 0 ? (
+              <>
+                <div className="flex items-center gap-2 mb-2">
+                  <Clock className="w-4 h-4 text-white" />
+                  <h3 className="text-white font-medium text-sm">Recently Accessed</h3>
+                </div>
+                {recentNotebooks.map((notebook) => (
+                  <div
+                    key={notebook.id}
+                    onClick={() => onSelectNotebook && onSelectNotebook(notebook)}
+                    className="bg-[#1C1C1E] rounded-xl p-3 border border-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)] transition-all cursor-pointer group"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-[#262626] flex items-center justify-center flex-shrink-0">
+                        <BookOpen className="w-5 h-5 text-white" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-white font-medium text-sm truncate">{notebook.name}</h4>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-xs text-gray-500">{formatTimeAgo(notebook.lastAccessed)}</span>
+                          <span className="text-xs text-gray-600">•</span>
+                          <span className="text-xs text-gray-500">{notebook.wordCount.toLocaleString()} words</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </>
+            ) : (
+              <div className="bg-[#1C1C1E] rounded-2xl p-8 border border-[rgba(255,255,255,0.1)] text-center">
+                <Clock className="w-8 h-8 text-gray-600 mx-auto mb-3" />
+                <p className="text-gray-400 text-sm">No recent notebooks</p>
+                <p className="text-gray-600 text-xs mt-1">Open a notebook to see it here</p>
               </div>
-            </div>
+            )}
           </div>
         )}
 
         {activeTab === 'favorites' && (
-          <div className="bg-[#1C1C1E] rounded-2xl p-4 border border-[rgba(255,255,255,0.1)]">
-            <div className="flex items-center gap-2 mb-3">
-              <Star className="w-4 h-4 text-white" />
-              <h3 className="text-white font-medium text-sm">Favorite Notebooks</h3>
-            </div>
-            <div className="space-y-3">
-              <div className="text-gray-400 text-sm text-center py-4">
-                Star notebooks to add them to your favorites
+          <div className="space-y-3">
+            {favoriteNotebooks.length > 0 ? (
+              <>
+                <div className="flex items-center gap-2 mb-2">
+                  <Star className="w-4 h-4 text-yellow-500" />
+                  <h3 className="text-white font-medium text-sm">Favorite Notebooks</h3>
+                </div>
+                {favoriteNotebooks.map((notebook) => (
+                  <div
+                    key={notebook.id}
+                    onClick={() => onSelectNotebook && onSelectNotebook(notebook)}
+                    className="bg-[#1C1C1E] rounded-xl p-3 border border-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)] transition-all cursor-pointer group"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-[#262626] flex items-center justify-center flex-shrink-0">
+                        <BookOpen className="w-5 h-5 text-white" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <h4 className="text-white font-medium text-sm truncate flex-1">{notebook.name}</h4>
+                          <Star className="w-4 h-4 text-yellow-500 fill-yellow-500 flex-shrink-0" />
+                        </div>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-xs text-gray-500">{notebook.wordCount.toLocaleString()} words</span>
+                          <span className="text-xs text-gray-600">•</span>
+                          <span className="text-xs text-gray-500">Modified {formatTimeAgo(notebook.lastModified)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </>
+            ) : (
+              <div className="bg-[#1C1C1E] rounded-2xl p-8 border border-[rgba(255,255,255,0.1)] text-center">
+                <Star className="w-8 h-8 text-gray-600 mx-auto mb-3" />
+                <p className="text-gray-400 text-sm">No favorite notebooks</p>
+                <p className="text-gray-600 text-xs mt-1">Star notebooks to add them here</p>
               </div>
-            </div>
+            )}
           </div>
         )}
       </div>
