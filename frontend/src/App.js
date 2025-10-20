@@ -190,6 +190,9 @@ function App() {
       todoSystem,
     };
 
+    // Recalculate analytics to update streak
+    updatedData.analytics = calculateAnalytics(updatedData);
+    
     setData(updatedData);
     saveData(updatedData);
   };
