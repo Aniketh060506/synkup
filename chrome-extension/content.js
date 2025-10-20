@@ -52,7 +52,85 @@ function captureCurrentSelection() {
   }
 }
 
-// Listen for target notebook updates from CopyDock
+// Listen for text selection on the page
+document.addEventListener('mouseup', handleTextSelection);
+document.addEventListener('touchend', handleTextSelection);
+
+// Handle text selection
+function handleTextSelection(e) {
+  // Small delay to ensure selection is complete
+  setTimeout(() => {
+    const selection = window.getSelection();
+    const selectedText = selection.toString().trim();
+
+    if (selectedText.length > 0) {
+      currentSelection = selection;
+      showFloatingButton(e);
+    } else {
+      hideFloatingButton();
+    }
+  }, 10);
+}
+
+// Show floating "Send to CopyDock" button
+function showFloatingButton(event) {
+  // Remove existing button if any
+  hideFloatingButton();
+
+  // Create floating button
+  floatingButton = document.createElement('div');
+  floatingButton.id = 'copydock-floating-button';
+  floatingButton.innerHTML = `
+    <button class="copydock-btn">
+      <span class="copydock-icon">📋</span>
+      <span class="copydock-text">Send to CopyDock</span>
+    </button>
+  `;
+
+  // Position near cursor
+  const x = event.pageX;
+  const y = event.pageY;
+  
+  floatingButton.style.cssText = `
+    position: absolute;
+    left: ${x + 10}px;
+    top: ${y + 10}px;
+    z-index: 999999;
+    animation: copydockFadeIn 0.2s ease-out;
+  `;
+
+  document.body.appendChild(floatingButton);
+
+  // Add click handler
+  const btn = floatingButton.querySelector('.copydock-btn');
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    captureCurrentSelection();
+  });
+
+  // Hide on click outside
+  setTimeout(() => {
+    document.addEventListener('click', handleClickOutside);
+  }, 100);
+}
+
+// Hide floating button
+function hideFloatingButton() {
+  if (floatingButton) {
+    floatingButton.remove();
+    floatingButton = null;
+    document.removeEventListener('click', handleClickOutside);
+  }
+}
+
+// Handle clicks outside the button
+function handleClickOutside(e) {
+  if (floatingButton && !floatingButton.contains(e.target)) {
+    hideFloatingButton();
+  }
+}
+
 window.addEventListener('message', (event) => {
   if (event.data.type === 'TARGET_NOTEBOOK_UPDATED') {
     chrome.runtime.sendMessage({
