@@ -83,17 +83,29 @@ const calculateTodoStreak = (todoSystem) => {
     const day = checkDate.getDate();
 
     const yearData = todoSystem.find(y => y.year === year);
-    if (!yearData) break;
+    if (!yearData) {
+      // No data for this year - if it's not today, break the streak
+      if (i > 0) break;
+      checkDate.setDate(checkDate.getDate() - 1);
+      continue;
+    }
 
     const monthData = yearData.months[month];
-    if (!monthData || !monthData.days) break;
+    if (!monthData || !monthData.days) {
+      // No data for this month - if it's not today, break the streak
+      if (i > 0) break;
+      checkDate.setDate(checkDate.getDate() - 1);
+      continue;
+    }
 
     const dayData = monthData.days.find(d => d.day === day);
+    // Check if at least one task is completed for this day
     const hasCompletedTask = dayData?.hours?.some(h => h.completed);
 
     if (hasCompletedTask) {
       currentStreak++;
     } else if (i > 0) {
+      // Only break if it's not today (allow today to have no tasks yet)
       break;
     }
 
