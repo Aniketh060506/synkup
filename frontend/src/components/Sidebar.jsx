@@ -127,16 +127,35 @@ export default function Sidebar({
           </div>
         </div>
         
-        {/* Web Captures Row */}
+        {/* Web Captures Row with Sync Button */}
         <div className="mt-3">
-          <div className="bg-[#1C1C1E] rounded-2xl p-3 border border-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)] transition-all cursor-pointer" title="Web Captures">
+          <div className="bg-[#1C1C1E] rounded-2xl p-3 border border-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)] transition-all" title="Web Captures">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Database className="w-4 h-4 text-blue-400" />
+                <Clipboard className="w-4 h-4 text-blue-400" />
                 <span className="text-sm text-gray-400">Web Clips</span>
               </div>
-              <span className="text-lg font-bold text-white">{analytics?.webCaptures || 0}</span>
+              <div className="flex items-center gap-2">
+                <span className="text-lg font-bold text-white">{analytics?.webCaptures || 0}</span>
+                <button
+                  onClick={onSyncWebCaptures}
+                  disabled={isSyncing}
+                  className={`p-1.5 rounded-lg transition-all ${
+                    isSyncing 
+                      ? 'bg-gray-700 cursor-not-allowed' 
+                      : 'bg-blue-600 hover:bg-blue-700'
+                  }`}
+                  title={isSyncing ? 'Syncing...' : 'Sync web captures from extension'}
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 text-white ${isSyncing ? 'animate-spin' : ''}`} />
+                </button>
+              </div>
             </div>
+            {lastSyncTime && (
+              <div className="mt-1 text-[10px] text-gray-500">
+                Last synced: {lastSyncTime.toLocaleTimeString()}
+              </div>
+            )}
           </div>
         </div>
       </div>
