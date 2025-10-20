@@ -800,6 +800,45 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
 
     return (
       <div className="space-y-6 animate-fadeIn">
+        {/* Streak Display - Top */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 px-4 py-2 bg-[#1C1C1E] rounded-lg border border-[rgba(255,255,255,0.1)]">
+              <Flame className={`w-5 h-5 ${streak > 0 ? 'text-orange-500' : 'text-gray-600'}`} />
+              <span className={`font-bold text-lg ${streak > 0 ? 'text-orange-500' : 'text-gray-600'}`}>{streak}</span>
+              <span className="text-gray-400 text-sm">Day Streak</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <button
+                onClick={() => setShowQuickJump(!showQuickJump)}
+                className="flex items-center gap-2 px-4 py-2 bg-[#1C1C1E] rounded-lg hover:bg-[#262626] transition-all border border-[rgba(255,255,255,0.1)]"
+              >
+                <Calendar className="w-4 h-4 text-white" />
+                <span className="text-white text-sm">Quick Jump</span>
+              </button>
+              {showQuickJump && (
+                <div className="absolute right-0 mt-2 w-48 bg-[#1C1C1E] rounded-lg border border-[rgba(255,255,255,0.1)] shadow-lg z-50">
+                  <button
+                    onClick={jumpToToday}
+                    className="w-full px-4 py-3 text-left text-white hover:bg-[#262626] transition-all flex items-center gap-2 rounded-t-lg"
+                  >
+                    <Calendar className="w-4 h-4" />
+                    Jump to Today
+                  </button>
+                </div>
+              )}
+            </div>
+            <button 
+              onClick={onBack}
+              className="p-2 hover:bg-[#1C1C1E] rounded-lg transition-all"
+            >
+              <X className="w-5 h-5 text-white" />
+            </button>
+          </div>
+        </div>
+
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
             <button
@@ -819,20 +858,19 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
             <h2 className="text-blue-400 text-xl font-bold">Day {selectedDay.day} - Hours</h2>
           </div>
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 px-4 py-2 bg-[#1C1C1E] rounded-lg border border-[rgba(255,255,255,0.1)]">
-              <Flame className={`w-5 h-5 ${someCompleted ? 'text-orange-500' : 'text-gray-600'}`} />
-              <span className={`font-bold text-lg ${someCompleted ? 'text-orange-500' : 'text-gray-600'}`}>{streak}</span>
-              <span className="text-gray-400 text-sm">Streak</span>
-            </div>
-            <button className="flex items-center gap-2 px-4 py-2 bg-[#1C1C1E] rounded-lg hover:bg-[#262626] transition-all">
-              <Calendar className="w-4 h-4 text-white" />
-              <span className="text-white text-sm">Quick Jump</span>
+            <button 
+              onClick={() => navigateDay('prev')}
+              disabled={selectedDay.day === 1}
+              className="p-2 hover:bg-[#1C1C1E] rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <ChevronLeft className="w-5 h-5 text-white" />
             </button>
             <button 
-              onClick={onBack}
-              className="p-2 hover:bg-[#1C1C1E] rounded-lg transition-all"
+              onClick={() => navigateDay('next')}
+              disabled={selectedDay.day === new Date(selectedYear.year, selectedMonth.index + 1, 0).getDate()}
+              className="p-2 hover:bg-[#1C1C1E] rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <X className="w-5 h-5 text-white" />
+              <ChevronRight className="w-5 h-5 text-white" />
             </button>
           </div>
         </div>
