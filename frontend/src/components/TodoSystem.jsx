@@ -111,14 +111,28 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
     setShowQuickJump(false);
   };
 
-  // Navigate between years
+  // Navigate between years - create year if it doesn't exist
   const navigateYear = (direction) => {
-    const currentIndex = years.findIndex(y => y.year === selectedYear.year);
-    if (direction === 'prev' && currentIndex > 0) {
-      setSelectedYear(years[currentIndex - 1]);
-    } else if (direction === 'next' && currentIndex < years.length - 1) {
-      setSelectedYear(years[currentIndex + 1]);
+    const targetYear = direction === 'prev' ? selectedYear.year - 1 : selectedYear.year + 1;
+    
+    let yearData = years.find(y => y.year === targetYear);
+    
+    if (!yearData) {
+      // Create the year if it doesn't exist
+      yearData = {
+        year: targetYear,
+        months: Array.from({ length: 12 }, (_, i) => ({
+          name: new Date(targetYear, i).toLocaleString('default', { month: 'long' }),
+          taskCount: 0,
+          focus: '',
+          index: i,
+          days: [],
+        })),
+      };
+      onUpdateTodos([...todoData, yearData]);
     }
+    
+    setSelectedYear(yearData);
   };
 
   // Navigate between months
