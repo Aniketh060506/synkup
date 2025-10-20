@@ -279,7 +279,7 @@ export default function Sidebar({ analytics, onSearch }) {
               <h3 className="text-white font-medium text-sm">Recent Activity</h3>
             </div>
             <div className="space-y-3">
-              {analytics.recentActivity.map((item) => (
+              {(analytics.recentActivity || []).map((item) => (
                 <div key={item.id} className="flex items-start gap-3">
                   <div className="w-8 h-8 rounded-full bg-[#262626] flex items-center justify-center flex-shrink-0">
                     <BookOpen className="w-4 h-4 text-white" />
