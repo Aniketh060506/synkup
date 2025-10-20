@@ -42,56 +42,23 @@ export interface YearPlan {
 // Analytics System
 export interface DailyActivity {
   date: string;
-  notes: number;
   todos: number;
   captures: number;
-}
-
-export interface Template {
-  id: string;
-  name: string;
-  content: string;
-  useCount: number;
-}
-
-export interface RecentItem {
-  id: string;
-  notebookName: string;
-  timestamp: string;
-  type: 'note' | 'capture' | 'edit';
-}
-
-export interface Favorite {
-  id: string;
-  notebookId: string;
-  name: string;
-  lastAccessed: string;
-}
-
-export interface WeeklyInsights {
-  mostProductiveDay: string;
-  totalWords: number;
-  notesCreated: number;
-  todosCompleted: number;
 }
 
 export interface AnalyticsData {
   notebookCount: number;
   streak: number;
-  totalNotes: number;
   storageMb: number;
   storageTotalMb: number;
   webCaptures?: number;
   activity: DailyActivity[];
   today: {
-    notes: number;
     todos: number;
-    templates: number;
     captures: number;
   };
   content: {
     totalWords: number;
-    avgWordsPerNote: number;
     breakdown: { name: string; value: number }[];
   };
   goals: {
@@ -100,15 +67,10 @@ export interface AnalyticsData {
     monthlyProgress: number;
   };
   storageBreakdown: { name: string; value: number }[];
-  templates: Template[];
-  recentActivity: RecentItem[];
-  favorites: Favorite[];
-  weeklyInsights: WeeklyInsights;
 }
 
 export interface CopyDockData {
   notebooks: Notebook[];
-  notes: Note[];
   analytics: AnalyticsData;
   todoSystem: YearPlan[];
 }
