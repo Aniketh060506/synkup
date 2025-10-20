@@ -276,13 +276,13 @@ export default function Sidebar({ analytics, notebooks = [], onSearch, onSelectN
                 <div className="w-full bg-[#0A0A0A] rounded-full h-2 mb-2">
                   <div
                     className="bg-white h-2 rounded-full transition-all"
-                    style={{ width: `${(analytics.storageMb / analytics.storageTotalMb) * 100}%` }}
+                    style={{ width: `${((analytics?.storageMb || 0) / (analytics?.storageTotalMb || 1)) * 100}%` }}
                   />
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-400">{analytics.storageMb.toFixed(1)}MB / {analytics.storageTotalMb}MB</span>
+                  <span className="text-gray-400">{(analytics?.storageMb || 0).toFixed(1)}MB / {analytics?.storageTotalMb || 10}MB</span>
                 </div>
-                {analytics.storageBreakdown.map((item, idx) => (
+                {(analytics?.storageBreakdown || []).map((item, idx) => (
                   <div key={idx} className="flex items-center justify-between text-sm">
                     <span className="text-gray-400">{item.name}: {item.value.toFixed(1)}MB</span>
                   </div>
