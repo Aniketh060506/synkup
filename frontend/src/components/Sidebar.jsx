@@ -1,5 +1,16 @@
 import { useState, useEffect } from 'react';
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Cell } from 'recharts';
+import { 
+  ComposedChart, 
+  Line, 
+  Area, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  ResponsiveContainer, 
+  CartesianGrid,
+  Tooltip,
+  Legend as RechartsLegend
+} from 'recharts';
 import {
   Flame,
   FileText,
