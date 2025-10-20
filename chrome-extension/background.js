@@ -1,128 +1,179 @@
-// Background service worker for CopyDock extension
+// CopyDock Chrome Extension - Background Service Worker
 
+const API_URL = 'http://localhost:3000/api';
+
+let connectionStatus = 'disconnected';
 let targetNotebookId = null;
-let targetNotebookName = 'Default Notebook';
-let port = null;
+let targetNotebookName = 'Web Captures';
 
-// Connect to native CopyDock desktop app
-function connectToNativeApp() {
-  try {
-    port = chrome.runtime.connectNative('com.copydock.app');
-    
-    port.onMessage.addListener((message) => {
-      console.log('Received from CopyDock app:', message);
-      
-      // Handle target notebook updates
-      if (message.type === 'TARGET_NOTEBOOK_UPDATE') {
-        targetNotebookId = message.notebookId;
-        targetNotebookName = message.notebookName || 'Default Notebook';
-        chrome.storage.local.set({ targetNotebookId, targetNotebookName });
-      }
-      
-      // Handle success confirmation
-      if (message.type === 'CAPTURE_SUCCESS') {
-        console.log('Content saved successfully to:', message.notebookName);
-      }
-    });
-    
-    port.onDisconnect.addListener(() => {
-      console.log('Disconnected from CopyDock app');
-      port = null;
-      // Try to reconnect after 5 seconds
-      setTimeout(connectToNativeApp, 5000);
-    });
-    
-    console.log('Connected to CopyDock desktop app');
-  } catch (error) {
-    console.error('Failed to connect to CopyDock app:', error);
-    port = null;
-  }
-}
-
-// Initialize connection on startup
-connectToNativeApp();
-
-// Create context menu when extension is installed
+// Initialize extension
 chrome.runtime.onInstalled.addListener(() => {
+  console.log('CopyDock Extension installed');
+  
+  // Create context menu
   chrome.contextMenus.create({
     id: 'copydock-capture',
     title: 'Send to CopyDock',
-    contexts: ['selection'],
+    contexts: ['selection']
+  });
+  
+  // Load saved settings
+  chrome.storage.local.get(['targetNotebookId', 'targetNotebookName'], (result) => {
+    if (result.targetNotebookId) {
+      targetNotebookId = result.targetNotebookId;
+    }
+    if (result.targetNotebookName) {
+      targetNotebookName = result.targetNotebookName;
+    }
   });
 });
 
 // Handle context menu clicks
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === 'copydock-capture' && info.selectionText) {
-    // Send message to content script to get full HTML
-    chrome.tabs.sendMessage(tab.id, {
-      action: 'getSelection',
-      text: info.selectionText,
-    });
+    captureContent(info.selectionText, '', tab.url, tab);
   }
 });
 
-// Handle keyboard shortcuts
+// Handle keyboard shortcut
 chrome.commands.onCommand.addListener((command) => {
   if (command === 'capture-selection') {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs[0]) {
-        chrome.tabs.sendMessage(tabs[0].id, {
-          action: 'captureFromShortcut',
-        });
+        chrome.tabs.sendMessage(tabs[0].id, { action: 'captureSelection' });
       }
     });
   }
 });
 
-// Listen for messages from content script
+// Handle messages from content script and popup
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === 'captureContent') {
-    // Send to CopyDock desktop app via Native Messaging
-    if (port) {
-      port.postMessage({
-        type: 'CONTENT_CAPTURE',
-        payload: {
-          ...request.data,
-          targetNotebookId: targetNotebookId,
-          timestamp: new Date().toISOString(),
-        },
-      });
-      sendResponse({ success: true, message: 'Sent to CopyDock app' });
-    } else {
-      console.error('Not connected to CopyDock app');
-      // Try to reconnect
-      connectToNativeApp();
-      sendResponse({ success: false, message: 'CopyDock app not running. Please start the desktop app.' });
-    }
+  console.log('Background received message:', request);
+  
+  if (request.action === 'capture') {
+    captureContent(
+      request.selectedText,
+      request.selectedHTML,
+      request.sourceUrl,
+      sender.tab
+    ).then(response => {
+      sendResponse(response);
+    });
+    return true; // Keep channel open for async response
   }
-
+  
+  if (request.action === 'getSettings') {
+    sendResponse({
+      targetNotebookId: targetNotebookId,
+      targetNotebookName: targetNotebookName,
+      connectionStatus: connectionStatus
+    });
+    return true;
+  }
+  
   if (request.action === 'setTargetNotebook') {
     targetNotebookId = request.notebookId;
-    targetNotebookName = request.notebookName || 'Default Notebook';
+    targetNotebookName = request.notebookName;
     chrome.storage.local.set({ targetNotebookId, targetNotebookName });
-    
-    // Notify desktop app
-    if (port) {
-      port.postMessage({
-        type: 'SET_TARGET_NOTEBOOK',
-        notebookId: targetNotebookId,
-      });
-    }
+    sendResponse({ success: true });
+    return true;
   }
   
-  if (request.action === 'getConnectionStatus') {
-    sendResponse({ 
-      connected: port !== null,
-      targetNotebookName: targetNotebookName 
+  if (request.action === 'checkConnection') {
+    checkConnection().then(status => {
+      sendResponse({ status });
     });
+    return true;
   }
-  
-  return true; // Keep channel open for async response
 });
 
-// Load target notebook on startup
-chrome.storage.local.get(['targetNotebookId', 'targetNotebookName'], (result) => {
-  targetNotebookId = result.targetNotebookId;
-  targetNotebookName = result.targetNotebookName || 'Default Notebook';
-});
+// Capture content and send to backend
+async function captureContent(selectedText, selectedHTML, sourceUrl, tab) {
+  try {
+    const url = new URL(sourceUrl);
+    const domain = url.hostname;
+    
+    const payload = {
+      selectedText: selectedText,
+      selectedHTML: selectedHTML || '',
+      sourceDomain: domain,
+      sourceUrl: sourceUrl,
+      targetNotebookId: targetNotebookId || 'default',
+      timestamp: new Date().toISOString()
+    };
+    
+    console.log('Sending capture to backend:', payload);
+    
+    const response = await fetch(`${API_URL}/web-capture`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload)
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const result = await response.json();
+    console.log('Backend response:', result);
+    
+    connectionStatus = 'connected';
+    
+    // Send success message back to content script
+    if (tab && tab.id) {
+      chrome.tabs.sendMessage(tab.id, {
+        action: 'captureSuccess',
+        notebookName: result.notebookName || targetNotebookName
+      });
+    }
+    
+    return {
+      success: true,
+      notebookName: result.notebookName || targetNotebookName
+    };
+    
+  } catch (error) {
+    console.error('Capture error:', error);
+    connectionStatus = 'error';
+    
+    // Send error message back to content script
+    if (tab && tab.id) {
+      chrome.tabs.sendMessage(tab.id, {
+        action: 'captureError',
+        error: error.message
+      });
+    }
+    
+    return {
+      success: false,
+      error: error.message
+    };
+  }
+}
+
+// Check connection to backend
+async function checkConnection() {
+  try {
+    const response = await fetch(`${API_URL}/`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    
+    if (response.ok) {
+      connectionStatus = 'connected';
+      return 'connected';
+    } else {
+      connectionStatus = 'disconnected';
+      return 'disconnected';
+    }
+  } catch (error) {
+    connectionStatus = 'error';
+    return 'error';
+  }
+}
+
+// Periodic connection check
+setInterval(checkConnection, 30000); // Check every 30 seconds
+checkConnection(); // Initial check

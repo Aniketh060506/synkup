@@ -1,198 +1,148 @@
-// Content script for CopyDock extension
+// CopyDock Chrome Extension - Content Script
 
 let floatingButton = null;
 let currentSelection = null;
 
-// Listen for messages from background script
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === 'getSelection') {
-    captureCurrentSelection();
-  }
+// Initialize
+init();
 
-  if (request.action === 'captureFromShortcut') {
-    captureCurrentSelection();
-  }
-
-  // Forward messages to CopyDock app
-  if (request.type === 'CONTENT_CAPTURE') {
-    window.postMessage(request, '*');
-  }
-});
-
-// Capture current selection and send to CopyDock
-function captureCurrentSelection() {
-  const selection = window.getSelection();
-  if (selection.rangeCount > 0) {
-    const range = selection.getRangeAt(0);
-    const container = document.createElement('div');
-    container.appendChild(range.cloneContents());
-
-    // Get clean HTML
-    const selectedHTML = container.innerHTML;
-    const selectedText = selection.toString();
-
-    // Extract page info
-    const sourceDomain = window.location.hostname.replace('www.', '');
-    const sourceUrl = window.location.href;
-
-    // Send to background script
-    chrome.runtime.sendMessage({
-      action: 'captureContent',
-      data: {
-        selectedText,
-        selectedHTML,
-        sourceDomain,
-        sourceUrl,
-      },
-    });
-
-    // Visual feedback
-    showCaptureNotification();
-    hideFloatingButton();
-  }
+function init() {
+  // Listen for text selection
+  document.addEventListener('mouseup', handleTextSelection);
+  document.addEventListener('keyup', handleTextSelection);
+  
+  // Listen for messages from background script
+  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.action === 'captureSelection') {
+      captureCurrentSelection();
+    }
+    
+    if (request.action === 'captureSuccess') {
+      showToast(`✅ Saved to ${request.notebookName}`, 'success');
+      hideFloatingButton();
+    }
+    
+    if (request.action === 'captureError') {
+      showToast(`❌ Error: ${request.error}`, 'error');
+    }
+  });
 }
 
-// Listen for text selection on the page
-document.addEventListener('mouseup', handleTextSelection);
-document.addEventListener('touchend', handleTextSelection);
-
-// Handle text selection
 function handleTextSelection(e) {
-  // Small delay to ensure selection is complete
   setTimeout(() => {
     const selection = window.getSelection();
     const selectedText = selection.toString().trim();
-
+    
     if (selectedText.length > 0) {
-      currentSelection = selection;
+      currentSelection = {
+        text: selectedText,
+        html: getSelectedHTML(selection)
+      };
       showFloatingButton(e);
     } else {
       hideFloatingButton();
+      currentSelection = null;
     }
   }, 10);
 }
 
-// Show floating "Send to CopyDock" button
-function showFloatingButton(event) {
-  // Remove existing button if any
-  hideFloatingButton();
-
-  // Create floating button
-  floatingButton = document.createElement('div');
-  floatingButton.id = 'copydock-floating-button';
-  floatingButton.innerHTML = `
-    <button class="copydock-btn">
-      <span class="copydock-icon">📋</span>
-      <span class="copydock-text">Send to CopyDock</span>
-    </button>
-  `;
-
-  // Position near cursor
-  const x = event.pageX;
-  const y = event.pageY;
-  
-  floatingButton.style.cssText = `
-    position: absolute;
-    left: ${x + 10}px;
-    top: ${y + 10}px;
-    z-index: 999999;
-    animation: copydockFadeIn 0.2s ease-out;
-  `;
-
-  document.body.appendChild(floatingButton);
-
-  // Add click handler
-  const btn = floatingButton.querySelector('.copydock-btn');
-  btn.addEventListener('click', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    captureCurrentSelection();
-  });
-
-  // Hide on click outside
-  setTimeout(() => {
-    document.addEventListener('click', handleClickOutside);
-  }, 100);
+function getSelectedHTML(selection) {
+  if (selection.rangeCount > 0) {
+    const range = selection.getRangeAt(0);
+    const div = document.createElement('div');
+    div.appendChild(range.cloneContents());
+    return div.innerHTML;
+  }
+  return '';
 }
 
-// Hide floating button
+function showFloatingButton(event) {
+  if (!floatingButton) {
+    floatingButton = document.createElement('div');
+    floatingButton.id = 'copydock-floating-button';
+    floatingButton.innerHTML = '📋 Send to CopyDock';
+    floatingButton.addEventListener('click', captureCurrentSelection);
+    document.body.appendChild(floatingButton);
+  }
+  
+  // Position near the selection
+  const selection = window.getSelection();
+  if (selection.rangeCount > 0) {
+    const range = selection.getRangeAt(0);
+    const rect = range.getBoundingClientRect();
+    
+    floatingButton.style.left = `${rect.left + window.scrollX}px`;
+    floatingButton.style.top = `${rect.bottom + window.scrollY + 5}px`;
+  }
+  
+  floatingButton.classList.add('show');
+}
+
 function hideFloatingButton() {
   if (floatingButton) {
-    floatingButton.remove();
-    floatingButton = null;
-    document.removeEventListener('click', handleClickOutside);
+    floatingButton.classList.remove('show');
+    setTimeout(() => {
+      if (floatingButton && !floatingButton.classList.contains('show')) {
+        floatingButton.remove();
+        floatingButton = null;
+      }
+    }, 300);
   }
 }
 
-// Handle clicks outside the button
-function handleClickOutside(e) {
+function captureCurrentSelection() {
+  if (!currentSelection) {
+    showToast('⚠️ No text selected', 'warning');
+    return;
+  }
+  
+  // Show loading state
+  if (floatingButton) {
+    floatingButton.innerHTML = '⏳ Saving...';
+    floatingButton.classList.add('loading');
+  }
+  
+  // Send to background script
+  chrome.runtime.sendMessage({
+    action: 'capture',
+    selectedText: currentSelection.text,
+    selectedHTML: currentSelection.html,
+    sourceUrl: window.location.href
+  }, (response) => {
+    console.log('Capture response:', response);
+  });
+}
+
+function showToast(message, type = 'info') {
+  // Remove existing toast if any
+  const existingToast = document.getElementById('copydock-toast');
+  if (existingToast) {
+    existingToast.remove();
+  }
+  
+  // Create toast
+  const toast = document.createElement('div');
+  toast.id = 'copydock-toast';
+  toast.className = `copydock-toast copydock-toast-${type}`;
+  toast.innerHTML = message;
+  document.body.appendChild(toast);
+  
+  // Show animation
+  setTimeout(() => toast.classList.add('show'), 10);
+  
+  // Auto-hide after 3 seconds
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+
+// Hide floating button when clicking outside
+document.addEventListener('click', (e) => {
   if (floatingButton && !floatingButton.contains(e.target)) {
-    hideFloatingButton();
-  }
-}
-
-window.addEventListener('message', (event) => {
-  if (event.data.type === 'TARGET_NOTEBOOK_UPDATED') {
-    chrome.runtime.sendMessage({
-      action: 'setTargetNotebook',
-      notebookId: event.data.notebookId,
-    });
+    const selection = window.getSelection();
+    if (!selection.toString().trim()) {
+      hideFloatingButton();
+    }
   }
 });
-
-// Show visual feedback when content is captured
-function showCaptureNotification() {
-  const notification = document.createElement('div');
-  notification.textContent = '✅ Copied to CopyDock';
-  notification.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: #1C1C1E;
-    color: white;
-    padding: 12px 20px;
-    border-radius: 20px;
-    font-family: -apple-system, sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    z-index: 999999;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-    animation: slideIn 0.3s ease-out;
-  `;
-
-  document.body.appendChild(notification);
-
-  setTimeout(() => {
-    notification.style.animation = 'slideOut 0.3s ease-out';
-    setTimeout(() => {
-      notification.remove();
-    }, 300);
-  }, 2000);
-}
-
-// Add animation styles
-const style = document.createElement('style');
-style.textContent = `
-  @keyframes slideIn {
-    from {
-      transform: translateX(100%);
-      opacity: 0;
-    }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
-  }
-  @keyframes slideOut {
-    from {
-      transform: translateX(0);
-      opacity: 1;
-    }
-    to {
-      transform: translateX(100%);
-      opacity: 0;
-    }
-  }
-`;
-document.head.appendChild(style);
