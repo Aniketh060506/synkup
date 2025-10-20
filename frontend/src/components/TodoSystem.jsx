@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ChevronLeft, Plus, ChevronRight, Calendar, Check, Flame, X } from 'lucide-react';
+import SmartTimeInput from './SmartTimeInput';
 
 export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
   const currentYear = new Date().getFullYear();
