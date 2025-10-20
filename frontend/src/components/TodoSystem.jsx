@@ -728,15 +728,17 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
 
   return (
     <div className="flex-1 p-8 min-h-screen">
-      <div className="mb-8">
-        <button
-          onClick={onBack}
-          className="flex items-center gap-2 text-gray-400 hover:text-white transition-all mb-4"
-        >
-          <ChevronLeft className="w-4 h-4" />
-          <span className="text-sm">Back to Notebooks</span>
-        </button>
-      </div>
+      {currentView === 'month' && (
+        <div className="mb-8">
+          <button
+            onClick={onBack}
+            className="flex items-center gap-2 text-gray-400 hover:text-white transition-all mb-4"
+          >
+            <ChevronLeft className="w-4 h-4" />
+            <span className="text-sm">Back to Notebooks</span>
+          </button>
+        </div>
+      )}
 
       {currentView === 'year' && renderYearView()}
       {currentView === 'month' && renderMonthView()}
