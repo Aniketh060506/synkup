@@ -3,7 +3,7 @@
   "name": "CopyDock Web Clipper",
   "version": "1.0.0",
   "description": "Capture web content directly to CopyDock notebooks",
-  "permissions": ["storage", "tabs", "contextMenus", "activeTab"],
+  "permissions": ["storage", "tabs", "contextMenus", "activeTab", "nativeMessaging"],
   "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "background.js"
@@ -12,9 +12,19 @@
     {
       "matches": ["<all_urls>"],
       "js": ["content.js"],
+      "css": ["content.css"],
       "run_at": "document_end"
     }
   ],
+  "commands": {
+    "capture-selection": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+C",
+        "mac": "Command+Shift+C"
+      },
+      "description": "Capture selected text to CopyDock"
+    }
+  },
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
