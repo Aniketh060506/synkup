@@ -134,16 +134,11 @@ const calculateTodoStreak = (todoSystem) => {
 };
 
 export const calculateAnalytics = (data: CopyDockData): AnalyticsData => {
-  const today = new Date().toISOString().split('T')[0];
-  const todayNotes = data.notes.filter(n => n.createdAt.startsWith(today));
-  const webCaptures = data.notes.filter(n => n.source).length;
-  
-  const totalWords = data.notes.reduce((sum, note) => sum + note.wordCount, 0);
-  const avgWords = data.notes.length > 0 ? Math.round(totalWords / data.notes.length) : 0;
+  const totalWords = data.notebooks.reduce((sum, nb) => sum + nb.wordCount, 0);
   
   const notebookBreakdown = data.notebooks.map(nb => ({
     name: nb.name,
-    value: data.notes.filter(n => n.notebookId === nb.id).length,
+    value: nb.wordCount,
   }));
   
   const storageMb = calculateStorageSize(data);
@@ -156,20 +151,16 @@ export const calculateAnalytics = (data: CopyDockData): AnalyticsData => {
   return {
     notebookCount: data.notebooks.length,
     streak: todoStreak,
-    totalNotes: data.notes.length,
     storageMb,
     storageTotalMb: 10,
-    webCaptures,
+    webCaptures: data.analytics.webCaptures || 0,
     activity: data.analytics.activity || [],
     today: {
-      notes: todayNotes.length,
       todos: data.analytics.today?.todos || 0,
-      templates: data.analytics.today?.templates || 0,
-      captures: todayNotes.filter(n => n.source).length,
+      captures: data.analytics.today?.captures || 0,
     },
     content: {
       totalWords,
-      avgWordsPerNote: avgWords,
       breakdown: notebookBreakdown,
     },
     goals: {
@@ -178,18 +169,8 @@ export const calculateAnalytics = (data: CopyDockData): AnalyticsData => {
       monthlyProgress: data.analytics.goals?.monthlyProgress || 0,
     },
     storageBreakdown: [
-      { name: 'Notes', value: storageMb * 0.7 },
-      { name: 'Images', value: storageMb * 0.2 },
-      { name: 'Templates', value: storageMb * 0.1 },
+      { name: 'Notebooks', value: storageMb * 0.9 },
+      { name: 'Todos', value: storageMb * 0.1 },
     ],
-    templates: data.analytics.templates || [],
-    recentActivity: data.analytics.recentActivity || [],
-    favorites: data.analytics.favorites || [],
-    weeklyInsights: data.analytics.weeklyInsights || {
-      mostProductiveDay: 'Monday',
-      totalWords: 0,
-      notesCreated: 0,
-      todosCompleted: 0,
-    },
   };
 };
