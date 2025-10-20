@@ -242,7 +242,7 @@ export default function Sidebar({ analytics, onSearch }) {
                 <h3 className="text-white font-medium text-sm">Quick Templates</h3>
               </div>
               <div className="space-y-2">
-                {analytics.templates.map((template) => (
+                {(analytics.templates || []).map((template) => (
                   <div key={template.id} className="flex items-center justify-between">
                     <span className="text-gray-400 text-sm">{template.name} ({template.useCount}x)</span>
                     <button className="px-3 py-1 bg-white text-black text-xs rounded-full hover:scale-105 transition-all">
@@ -250,6 +250,9 @@ export default function Sidebar({ analytics, onSearch }) {
                     </button>
                   </div>
                 ))}
+                {(!analytics.templates || analytics.templates.length === 0) && (
+                  <div className="text-gray-500 text-sm text-center py-4">No templates yet</div>
+                )}
               </div>
             </div>
 
