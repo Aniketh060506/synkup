@@ -1,15 +1,13 @@
 import { useState, useEffect } from 'react';
 import { 
-  ComposedChart, 
-  Line, 
-  Area, 
+  BarChart,
   Bar, 
   XAxis, 
   YAxis, 
   ResponsiveContainer, 
   CartesianGrid,
   Tooltip,
-  Legend as RechartsLegend
+  Cell
 } from 'recharts';
 import {
   Flame,
