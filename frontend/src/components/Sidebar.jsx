@@ -203,10 +203,12 @@ export default function Sidebar({ analytics, notebooks = [], onSearch, onSelectN
                 </div>
               </div>
               <div onWheel={(e) => e.stopPropagation()}>
-                <ResponsiveContainer width="100%" height={140}>
-                  <ComposedChart 
+                <ResponsiveContainer width="100%" height={140} key={JSON.stringify(analytics?.activity || [])}>
+                  <BarChart 
                     data={analytics?.activity || []} 
                     margin={{ top: 5, right: 5, left: -25, bottom: 5 }}
+                    barGap={3}
+                    barCategoryGap="20%"
                   >
                     {/* Grid for better readability */}
                     <CartesianGrid 
@@ -241,48 +243,36 @@ export default function Sidebar({ analytics, notebooks = [], onSearch, onSelectN
                         padding: '8px'
                       }}
                       labelStyle={{ color: '#fff', marginBottom: '4px' }}
+                      cursor={{ fill: 'rgba(255,255,255,0.05)' }}
                       labelFormatter={(value) => {
                         const date = new Date(value);
-                        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                      }}
-                      formatter={(value, name) => {
-                        const labels = { todos: 'Tasks', notes: 'Notes', captures: 'Clips' };
-                        return [value, labels[name] || name];
+                        return date.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
                       }}
                     />
                     
-                    {/* Simple lines - clean and clear */}
-                    <Line 
-                      type="monotone" 
+                    {/* Colored Bars - VISIBLE rectangles */}
+                    <Bar 
                       dataKey="todos" 
+                      fill="#60A5FA" 
+                      radius={[4, 4, 0, 0]}
                       name="Tasks"
-                      stroke="#60A5FA" 
-                      strokeWidth={2.5}
-                      dot={{ fill: '#60A5FA', strokeWidth: 0, r: 3 }}
-                      activeDot={{ r: 5, fill: '#60A5FA', strokeWidth: 2, stroke: '#fff' }}
-                      isAnimationActive={false}
+                      minPointSize={2}
                     />
-                    <Line 
-                      type="monotone" 
+                    <Bar 
                       dataKey="notes" 
+                      fill="#34D399" 
+                      radius={[4, 4, 0, 0]}
                       name="Notes"
-                      stroke="#34D399" 
-                      strokeWidth={2.5}
-                      dot={{ fill: '#34D399', strokeWidth: 0, r: 3 }}
-                      activeDot={{ r: 5, fill: '#34D399', strokeWidth: 2, stroke: '#fff' }}
-                      isAnimationActive={false}
+                      minPointSize={2}
                     />
-                    <Line 
-                      type="monotone" 
+                    <Bar 
                       dataKey="captures" 
+                      fill="#A78BFA" 
+                      radius={[4, 4, 0, 0]}
                       name="Clips"
-                      stroke="#A78BFA" 
-                      strokeWidth={2.5}
-                      dot={{ fill: '#A78BFA', strokeWidth: 0, r: 3 }}
-                      activeDot={{ r: 5, fill: '#A78BFA', strokeWidth: 2, stroke: '#fff' }}
-                      isAnimationActive={false}
+                      minPointSize={2}
                     />
-                  </ComposedChart>
+                  </BarChart>
                 </ResponsiveContainer>
               </div>
             </div>
