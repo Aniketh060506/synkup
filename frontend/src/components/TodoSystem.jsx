@@ -106,9 +106,24 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
     </div>
   );
 
+  const updateMonthFocus = (monthIndex, focus) => {
+    const updatedYears = years.map(y => 
+      y.year === selectedYear.year 
+        ? {
+            ...y,
+            months: y.months.map((m, idx) => 
+              idx === monthIndex ? { ...m, focus } : m
+            )
+          }
+        : y
+    );
+    onUpdateTodos(updatedYears);
+    setSelectedYear(updatedYears.find(y => y.year === selectedYear.year));
+  };
+
   const renderMonthView = () => (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 animate-fadeIn">
+      <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
           <button
             onClick={() => {
@@ -118,26 +133,74 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
             className="flex items-center gap-2 text-gray-400 hover:text-white transition-all"
           >
             <ChevronLeft className="w-4 h-4" />
-            Back to Years
+            Back
+          </button>
+          <h2 className="text-blue-400 text-xl font-bold">{selectedYear?.year}</h2>
+        </div>
+        <div className="flex items-center gap-4">
+          <button className="p-2 hover:bg-[#1C1C1E] rounded-lg transition-all">
+            <ChevronLeft className="w-5 h-5 text-white" />
+          </button>
+          <button className="p-2 hover:bg-[#1C1C1E] rounded-lg transition-all">
+            <ChevronRight className="w-5 h-5 text-white" />
+          </button>
+          <button className="flex items-center gap-2 px-4 py-2 bg-[#1C1C1E] rounded-lg hover:bg-[#262626] transition-all">
+            <Calendar className="w-4 h-4 text-white" />
+            <span className="text-white text-sm">Quick Jump</span>
           </button>
         </div>
-        <h2 className="text-3xl font-bold text-white">{selectedYear?.year}</h2>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {selectedYear?.months.map((month, idx) => (
-          <div
-            key={idx}
-            onClick={() => {
-              setSelectedMonth({ ...month, index: idx });
-              setCurrentView('day');
-            }}
-            className="bg-[#1C1C1E] rounded-2xl p-5 border border-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)] transition-all cursor-pointer"
-          >
-            <h3 className="text-white font-semibold text-lg mb-2">{month.name}</h3>
-            <p className="text-gray-400 text-sm">{month.taskCount} tasks</p>
-            {month.focus && <p className="text-gray-600 text-xs mt-2">Focus: {month.focus}</p>}
-          </div>
-        ))}
+
+      <div className="text-center mb-8">
+        <h1 className="text-4xl font-bold text-white mb-2">{selectedYear?.year} - Monthly Overview</h1>
+      </div>
+
+      <div className="bg-[#1C1C1E] rounded-2xl overflow-hidden border border-[rgba(255,255,255,0.1)]">
+        <table className="w-full">
+          <thead className="bg-[#2C2C2E]">
+            <tr>
+              <th className="text-left text-gray-400 font-medium text-sm px-6 py-4">Month</th>
+              <th className="text-left text-gray-400 font-medium text-sm px-6 py-4">What I Will Focus On</th>
+              <th className="text-right text-gray-400 font-medium text-sm px-6 py-4">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {selectedYear?.months.map((month, idx) => (
+              <tr 
+                key={idx} 
+                className="border-t border-[rgba(255,255,255,0.05)] hover:bg-[#262626] transition-all"
+                style={{ animationDelay: `${idx * 0.05}s` }}
+              >
+                <td className="px-6 py-5">
+                  <div>
+                    <div className="text-white font-semibold text-base">{month.name}</div>
+                    <div className="text-gray-500 text-sm">{month.taskCount} tasks</div>
+                  </div>
+                </td>
+                <td className="px-6 py-5">
+                  <input
+                    type="text"
+                    value={month.focus || ''}
+                    onChange={(e) => updateMonthFocus(idx, e.target.value)}
+                    placeholder={`Enter ${month.name} goals...`}
+                    className="w-full bg-transparent text-gray-400 placeholder-gray-600 focus:outline-none focus:text-white transition-all"
+                  />
+                </td>
+                <td className="px-6 py-5 text-right">
+                  <button
+                    onClick={() => {
+                      setSelectedMonth({ ...month, index: idx });
+                      setCurrentView('day');
+                    }}
+                    className="px-6 py-2 bg-white text-black rounded-full hover:scale-105 transition-all font-medium text-sm"
+                  >
+                    Open Month
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
