@@ -387,7 +387,8 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
                     </td>
                     <td className="px-6 py-5 text-right">
                       <button
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation();
                           const existingDay = days.find(d => d.day === dayNum);
                           setSelectedDay({
                             day: dayNum,
