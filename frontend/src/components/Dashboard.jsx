@@ -469,6 +469,72 @@ export default function Dashboard({ notebook, onBack, onSaveNotebook }) {
             <TableIcon className="w-4 h-4" />
           </button>
 
+          {/* Table Controls - Show when cursor is in a table */}
+          {editor.isActive('table') && (
+            <>
+              <div className="w-px h-6 bg-[rgba(255,255,255,0.1)]" />
+              
+              {/* Row Controls */}
+              <button
+                onClick={() => editor.chain().focus().addRowBefore().run()}
+                className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-[#1C1C1E] transition-all"
+                title="Add row above"
+              >
+                <Plus className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => editor.chain().focus().addRowAfter().run()}
+                className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-[#1C1C1E] transition-all"
+                title="Add row below"
+              >
+                <Plus className="w-4 h-4 rotate-90" />
+              </button>
+              <button
+                onClick={() => editor.chain().focus().deleteRow().run()}
+                className="p-2 rounded-lg text-red-400 hover:text-red-300 hover:bg-[#1C1C1E] transition-all"
+                title="Delete row"
+              >
+                <Minus className="w-4 h-4" />
+              </button>
+
+              <div className="w-px h-6 bg-[rgba(255,255,255,0.1)]" />
+
+              {/* Column Controls */}
+              <button
+                onClick={() => editor.chain().focus().addColumnBefore().run()}
+                className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-[#1C1C1E] transition-all"
+                title="Add column before"
+              >
+                <Plus className="w-4 h-4 rotate-90" />
+              </button>
+              <button
+                onClick={() => editor.chain().focus().addColumnAfter().run()}
+                className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-[#1C1C1E] transition-all"
+                title="Add column after"
+              >
+                <Plus className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => editor.chain().focus().deleteColumn().run()}
+                className="p-2 rounded-lg text-red-400 hover:text-red-300 hover:bg-[#1C1C1E] transition-all"
+                title="Delete column"
+              >
+                <Minus className="w-4 h-4 rotate-90" />
+              </button>
+
+              <div className="w-px h-6 bg-[rgba(255,255,255,0.1)]" />
+
+              {/* Delete Table */}
+              <button
+                onClick={() => editor.chain().focus().deleteTable().run()}
+                className="p-2 rounded-lg text-red-500 hover:text-red-400 hover:bg-red-900/20 transition-all"
+                title="Delete table"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </>
+          )}
+
           <div className="w-px h-6 bg-[rgba(255,255,255,0.1)]" />
 
           {/* Undo/Redo */}
