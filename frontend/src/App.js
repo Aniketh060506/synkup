@@ -75,7 +75,9 @@ function App() {
       name,
       createdAt: new Date().toISOString(),
       lastModified: new Date().toISOString(),
+      lastAccessed: new Date().toISOString(),
       isTarget: data.notebooks.length === 0,
+      isFavorite: false,
       content: '',
       wordCount: 0,
       characterCount: 0,
@@ -86,6 +88,9 @@ function App() {
       notebooks: [...data.notebooks, newNotebook],
     };
 
+    // Track note creation
+    trackActivity(updatedData, 'noteCreated', 1);
+    
     updatedData.analytics = calculateAnalytics(updatedData);
     setData(updatedData);
     saveData(updatedData);
