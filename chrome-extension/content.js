@@ -1,36 +1,16 @@
 // Content script for CopyDock extension
 
+let floatingButton = null;
+let currentSelection = null;
+
 // Listen for messages from background script
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'getSelection') {
-    const selection = window.getSelection();
-    if (selection.rangeCount > 0) {
-      const range = selection.getRangeAt(0);
-      const container = document.createElement('div');
-      container.appendChild(range.cloneContents());
+    captureCurrentSelection();
+  }
 
-      // Get clean HTML
-      const selectedHTML = container.innerHTML;
-      const selectedText = selection.toString();
-
-      // Extract page info
-      const sourceDomain = window.location.hostname.replace('www.', '');
-      const sourceUrl = window.location.href;
-
-      // Send to background script
-      chrome.runtime.sendMessage({
-        action: 'captureContent',
-        data: {
-          selectedText,
-          selectedHTML,
-          sourceDomain,
-          sourceUrl,
-        },
-      });
-
-      // Visual feedback
-      showCaptureNotification();
-    }
+  if (request.action === 'captureFromShortcut') {
+    captureCurrentSelection();
   }
 
   // Forward messages to CopyDock app
@@ -38,6 +18,39 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     window.postMessage(request, '*');
   }
 });
+
+// Capture current selection and send to CopyDock
+function captureCurrentSelection() {
+  const selection = window.getSelection();
+  if (selection.rangeCount > 0) {
+    const range = selection.getRangeAt(0);
+    const container = document.createElement('div');
+    container.appendChild(range.cloneContents());
+
+    // Get clean HTML
+    const selectedHTML = container.innerHTML;
+    const selectedText = selection.toString();
+
+    // Extract page info
+    const sourceDomain = window.location.hostname.replace('www.', '');
+    const sourceUrl = window.location.href;
+
+    // Send to background script
+    chrome.runtime.sendMessage({
+      action: 'captureContent',
+      data: {
+        selectedText,
+        selectedHTML,
+        sourceDomain,
+        sourceUrl,
+      },
+    });
+
+    // Visual feedback
+    showCaptureNotification();
+    hideFloatingButton();
+  }
+}
 
 // Listen for target notebook updates from CopyDock
 window.addEventListener('message', (event) => {
