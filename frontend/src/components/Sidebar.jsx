@@ -235,9 +235,9 @@ export default function Sidebar({ analytics, notebooks = [], onSearch, onSelectN
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm mb-3">
-                  <span className="text-gray-400">{analytics.content.totalWords.toLocaleString()} total words</span>
+                  <span className="text-gray-400">{(analytics?.content?.totalWords || 0).toLocaleString()} total words</span>
                 </div>
-                {analytics.content.breakdown.slice(0, 3).map((item, idx) => (
+                {(analytics?.content?.breakdown || []).slice(0, 3).map((item, idx) => (
                   <div key={idx} className="flex items-center justify-between text-sm">
                     <span className="text-gray-400 truncate max-w-[150px]">{item.name}</span>
                     <span className="text-white">{item.value.toLocaleString()} words</span>
@@ -254,14 +254,14 @@ export default function Sidebar({ analytics, notebooks = [], onSearch, onSelectN
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-400">Current: {analytics.goals.currentStreak} days</span>
+                  <span className="text-gray-400">Current: {analytics?.goals?.currentStreak || 0} days</span>
                   <Flame className="w-4 h-4 text-[#EF4444]" />
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-400">Best ever: {analytics.goals.bestStreak} days</span>
+                  <span className="text-gray-400">Best ever: {analytics?.goals?.bestStreak || 0} days</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-400">This month: {analytics.goals.monthlyProgress}%</span>
+                  <span className="text-gray-400">This month: {analytics?.goals?.monthlyProgress || 0}%</span>
                 </div>
               </div>
             </div>
