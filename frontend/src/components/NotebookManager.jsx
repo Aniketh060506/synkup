@@ -132,7 +132,7 @@ export default function NotebookManager({ notebooks, onCreateNotebook, onSelectN
                 </div>
                 <div>
                   <h3 className="text-white font-medium text-base">{notebook.name}</h3>
-                  <p className="text-gray-400 text-sm">{notebook.itemCount} notes</p>
+                  <p className="text-gray-400 text-sm">{notebook.wordCount.toLocaleString()} words</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
