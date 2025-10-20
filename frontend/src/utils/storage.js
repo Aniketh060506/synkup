@@ -175,6 +175,181 @@ export const calculateAnalytics = (data: CopyDockData): AnalyticsData => {
     storageTotalMb: 10,
     webCaptures: data.analytics.webCaptures || 0,
     activity: activityData,
+
+
+// ============================================
+// Activity Tracking Functions
+// ============================================
+
+// Track activity for a specific date
+export const trackActivity = (data, activityType, value = 1) => {
+  const today = new Date().toISOString().split('T')[0];
+  
+  if (!data.activityLog) {
+    data.activityLog = {};
+  }
+  
+  if (!data.activityLog[today]) {
+    data.activityLog[today] = {
+      todosCompleted: 0,
+      notesCreated: 0,
+      captures: 0,
+      wordsWritten: 0,
+    };
+  }
+  
+  switch (activityType) {
+    case 'todoCompleted':
+      data.activityLog[today].todosCompleted += value;
+      break;
+    case 'noteCreated':
+      data.activityLog[today].notesCreated += value;
+      break;
+    case 'capture':
+      data.activityLog[today].captures += value;
+      break;
+    case 'wordsWritten':
+      data.activityLog[today].wordsWritten += value;
+      break;
+  }
+  
+  return data;
+};
+
+// Generate 7-day activity chart data
+export const generate7DayActivity = (activityLog) => {
+  const result = [];
+  const today = new Date();
+  
+  for (let i = 6; i >= 0; i--) {
+    const date = new Date(today);
+    date.setDate(date.getDate() - i);
+    const dateStr = date.toISOString().split('T')[0];
+    
+    const dayData = activityLog[dateStr] || {
+      todosCompleted: 0,
+      notesCreated: 0,
+      captures: 0,
+    };
+    
+    result.push({
+      date: dateStr,
+      todos: dayData.todosCompleted || 0,
+      captures: dayData.captures || 0,
+      notes: dayData.notesCreated || 0,
+    });
+  }
+  
+  return result;
+};
+
+// Get today's statistics
+export const getTodayStats = (activityLog) => {
+  const today = new Date().toISOString().split('T')[0];
+  const todayData = activityLog[today] || {
+    todosCompleted: 0,
+    notesCreated: 0,
+    captures: 0,
+    wordsWritten: 0,
+  };
+  
+  return {
+    todos: todayData.todosCompleted || 0,
+    captures: todayData.captures || 0,
+    notes: todayData.notesCreated || 0,
+    words: todayData.wordsWritten || 0,
+  };
+};
+
+// Calculate monthly progress
+export const calculateMonthlyProgress = (todoSystem) => {
+  if (!todoSystem || todoSystem.length === 0) return 0;
+  
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth();
+  
+  const yearData = todoSystem.find(y => y.year === currentYear);
+  if (!yearData || !yearData.months[currentMonth]) return 0;
+  
+  const monthData = yearData.months[currentMonth];
+  if (!monthData.days || monthData.days.length === 0) return 0;
+  
+  let totalTasks = 0;
+  let completedTasks = 0;
+  
+  monthData.days.forEach(day => {
+    if (day.hours) {
+      day.hours.forEach(hour => {
+        totalTasks++;
+        if (hour.completed) {
+          completedTasks++;
+        }
+      });
+    }
+  });
+  
+  return totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
+};
+
+// Generate weekly insights
+export const generateWeeklyInsights = (activityLog) => {
+  const last7Days = [];
+  const today = new Date();
+  
+  for (let i = 6; i >= 0; i--) {
+    const date = new Date(today);
+    date.setDate(date.getDate() - i);
+    const dateStr = date.toISOString().split('T')[0];
+    const dayData = activityLog[dateStr] || { todosCompleted: 0 };
+    
+    last7Days.push({
+      date: dateStr,
+      dayName: date.toLocaleDateString('en-US', { weekday: 'long' }),
+      totalTasks: dayData.todosCompleted || 0,
+    });
+  }
+  
+  // Find most productive day
+  const mostProductive = last7Days.reduce((max, day) => 
+    day.totalTasks > max.totalTasks ? day : max, 
+    last7Days[0]
+  );
+  
+  // Calculate average
+  const totalTasks = last7Days.reduce((sum, day) => sum + day.totalTasks, 0);
+  const averageTasksPerDay = Math.round(totalTasks / 7);
+  
+  // Determine trend (compare first 3 days vs last 3 days)
+  const firstHalf = last7Days.slice(0, 3).reduce((sum, day) => sum + day.totalTasks, 0) / 3;
+  const secondHalf = last7Days.slice(4, 7).reduce((sum, day) => sum + day.totalTasks, 0) / 3;
+  
+  let trend = 'stable';
+  if (secondHalf > firstHalf * 1.2) trend = 'up';
+  else if (secondHalf < firstHalf * 0.8) trend = 'down';
+  
+  return {
+    mostProductiveDay: mostProductive.dayName,
+    averageTasksPerDay,
+    trend,
+  };
+};
+
+// Get recent notebooks (sorted by last accessed)
+export const getRecentNotebooks = (notebooks, limit = 5) => {
+  return notebooks
+    .filter(nb => nb.lastAccessed)
+    .sort((a, b) => new Date(b.lastAccessed) - new Date(a.lastAccessed))
+    .slice(0, limit);
+};
+
+// Get favorite notebooks
+export const getFavoriteNotebooks = (notebooks) => {
+  return notebooks
+    .filter(nb => nb.isFavorite)
+    .sort((a, b) => new Date(b.lastModified) - new Date(a.lastModified));
+};
+
     today: {
       todos: todayStats.todos,
       captures: todayStats.captures,
