@@ -808,3 +808,64 @@ agent_communication:
       ✓ Clean, intuitive time input experience
       ✓ Works for both start and end time fields
 
+  - agent: "main"
+    message: |
+      ✅ FIXED SMART TIME INPUT - Now supports 11, 12 and all hours:
+      
+      Issue: Hour input was auto-advancing too quickly, preventing entry of 11, 12
+      
+      Changes Made:
+      1. Hour Input Logic:
+         - Type "1" → Waits for second digit (allows 10, 11, 12)
+         - Type "11" or "12" → Accepts and auto-advances
+         - Type "2-9" → Auto-formats with leading zero and advances
+         - Validates hour range (01-12)
+      
+      2. Minute Input Logic:
+         - Type "0-5" → Waits for second digit
+         - Type "6-9" → Auto-formats and advances
+         - Better consistency with hour behavior
+      
+      File: /app/frontend/src/components/SmartTimeInput.jsx
+
+  - agent: "main"
+    message: |
+      📊 FIXED ACTIVITY CHART - Now Shows REAL Data from Todos & Notebooks:
+      
+      Issue: Activity chart was invisible/empty because it relied on activityLog which wasn't populated
+      
+      Solution Applied:
+      1. Updated generate7DayActivity() to calculate from REAL data:
+         - Scans todoSystem for actual completed tasks per day
+         - Counts notebooks created on each date
+         - Falls back to activityLog if available
+         - Shows last 7 days of activity
+      
+      2. Enhanced Chart Visibility:
+         - Increased minPointSize from 2 to 5
+         - Bars now visible even with small values
+         - Better visual representation
+      
+      3. Real-time Data Calculation:
+         - Scans all years/months/days in todoSystem
+         - Counts completed hourly tasks for each date
+         - Accurate representation of user activity
+      
+      Changes Made:
+      - /app/frontend/src/utils/storage.js:
+        * Lines 240-298: Updated generate7DayActivity with todoSystem scanning
+        * Line 160: Pass todoSystem and notebooks to function
+      
+      - /app/frontend/src/components/Sidebar.jsx:
+        * Lines 259, 266, 273: Increased minPointSize to 5 for better visibility
+      
+      Now Working:
+      ✓ Chart displays REAL completed tasks from todoSystem
+      ✓ Shows notebooks created per day
+      ✓ Shows web captures per day
+      ✓ Colored bars (Blue=Tasks, Green=Notes, Purple=Clips)
+      ✓ Bars visible even with zero or small values
+      ✓ Accurate 7-day activity visualization
+      ✓ Updates in real-time when tasks are completed
+      ✓ Perfect graph depicting all metrics!
+
