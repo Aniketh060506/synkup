@@ -244,51 +244,38 @@ export default function Sidebar({ analytics, notebooks = [], onSearch, onSelectN
                         boxShadow: '0 8px 32px rgba(0,0,0,0.4)'
                       }}
                       labelStyle={{ color: '#fff', marginBottom: '8px', fontWeight: 600 }}
-                      cursor={{ fill: 'rgba(96,165,250,0.1)' }}
+                      cursor={{ fill: 'rgba(255,255,255,0.05)' }}
                       labelFormatter={(value) => {
                         const date = new Date(value);
                         return date.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
                       }}
                     />
                     
-                    {/* Colored Bars - VIBRANT & VISIBLE */}
+                    {/* WHITE SOLID BARS - ALWAYS VISIBLE */}
                     <Bar 
                       dataKey="todos" 
-                      fill="url(#blueGradient)" 
+                      fill="#FFFFFF" 
                       radius={[6, 6, 0, 0]}
                       name="Tasks"
-                      minPointSize={8}
+                      minPointSize={10}
+                      opacity={0.9}
                     />
                     <Bar 
                       dataKey="notes" 
-                      fill="url(#greenGradient)" 
+                      fill="#FFFFFF" 
                       radius={[6, 6, 0, 0]}
                       name="Notes"
-                      minPointSize={8}
+                      minPointSize={10}
+                      opacity={0.7}
                     />
                     <Bar 
                       dataKey="captures" 
-                      fill="url(#purpleGradient)" 
+                      fill="#FFFFFF" 
                       radius={[6, 6, 0, 0]}
                       name="Clips"
-                      minPointSize={8}
+                      minPointSize={10}
+                      opacity={0.5}
                     />
-                    
-                    {/* Gradients for vibrant colors */}
-                    <defs>
-                      <linearGradient id="blueGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#60A5FA" stopOpacity={1}/>
-                        <stop offset="100%" stopColor="#3B82F6" stopOpacity={0.8}/>
-                      </linearGradient>
-                      <linearGradient id="greenGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#34D399" stopOpacity={1}/>
-                        <stop offset="100%" stopColor="#10B981" stopOpacity={0.8}/>
-                      </linearGradient>
-                      <linearGradient id="purpleGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#A78BFA" stopOpacity={1}/>
-                        <stop offset="100%" stopColor="#8B5CF6" stopOpacity={0.8}/>
-                      </linearGradient>
-                    </defs>
                   </BarChart>
                 </ResponsiveContainer>
               </div>
