@@ -261,10 +261,18 @@ html.lenis body {
   margin-bottom: 0.5em;
 }
 
-.ProseMirror ul,
+.ProseMirror ul {
+  padding-left: 1.5em;
+  margin-bottom: 1em;
+  list-style-type: disc;
+  color: var(--color-white);
+}
+
 .ProseMirror ol {
   padding-left: 1.5em;
   margin-bottom: 1em;
+  list-style-type: decimal;
+  color: var(--color-white);
 }
 
 .ProseMirror code {
