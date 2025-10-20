@@ -460,3 +460,27 @@ agent_communication:
       ✅ Streak counts consecutive days with ≥1 completed task
       ✅ Works when planning ahead or catching up on past days
       ✅ Synced between TodoSystem and Sidebar
+
+  - agent: "main"
+    message: |
+      🔧 FIXED SIDEBAR SCROLLING ISSUE:
+      
+      Issue: User reported unable to scroll in Analytics section of sidebar
+      
+      Fixes Applied:
+      1. Added bottom padding (pb-8) to scrollable content area for better visibility
+      2. Added safe guards for analytics.templates array (prevents crashes)
+      3. Added safe guards for analytics.weeklyInsights object (optional chaining)
+      4. Added safe guards for analytics.recentActivity array
+      5. Added safe guards for analytics.favorites array
+      6. Added fallback message when no templates exist
+      
+      Changes Made:
+      - /app/frontend/src/components/Sidebar.jsx:
+        * Line 131: Added pb-8 to scrollable div
+        * Line 245-255: Safe guard for templates with empty state message
+        * Line 266-269: Optional chaining for weeklyInsights
+        * Line 282: Safe guard for recentActivity
+        * Line 304: Safe guard for favorites
+      
+      Analytics section should now scroll properly without errors!
