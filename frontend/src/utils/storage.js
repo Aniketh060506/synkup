@@ -1,27 +1,23 @@
-import { CopyDockData, Notebook, Note, YearPlan, AnalyticsData } from '../types';
+import { CopyDockData, Notebook, YearPlan, AnalyticsData } from '../types';
 
 const STORAGE_KEY = 'copyDockData';
 
 export const getInitialData = (): CopyDockData => {
   return {
     notebooks: [],
-    notes: [],
     analytics: {
       notebookCount: 0,
       streak: 0,
-      totalNotes: 0,
       storageMb: 0,
       storageTotalMb: 10,
+      webCaptures: 0,
       activity: [],
       today: {
-        notes: 0,
         todos: 0,
-        templates: 0,
         captures: 0,
       },
       content: {
         totalWords: 0,
-        avgWordsPerNote: 0,
         breakdown: [],
       },
       goals: {
@@ -30,15 +26,6 @@ export const getInitialData = (): CopyDockData => {
         monthlyProgress: 0,
       },
       storageBreakdown: [],
-      templates: [],
-      recentActivity: [],
-      favorites: [],
-      weeklyInsights: {
-        mostProductiveDay: 'Monday',
-        totalWords: 0,
-        notesCreated: 0,
-        todosCompleted: 0,
-      },
     },
     todoSystem: [],
   };
