@@ -478,10 +478,10 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
   };
 
   const addNewHourTask = () => {
-    if (!newTaskTime || !newTaskDesc) return;
+    if (!newTaskStartTime || !newTaskEndTime || !newTaskDesc) return;
 
     const newHour = {
-      timeRange: newTaskTime,
+      timeRange: `${newTaskStartTime} to ${newTaskEndTime}`,
       task: newTaskDesc,
       completed: false
     };
@@ -532,7 +532,8 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
     setSelectedMonth(updatedYear.months[selectedMonth.index]);
 
     // Reset form
-    setNewTaskTime('');
+    setNewTaskStartTime('');
+    setNewTaskEndTime('');
     setNewTaskDesc('');
   };
 
