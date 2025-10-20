@@ -170,18 +170,41 @@ export default function Sidebar({ analytics, notebooks = [], onSearch, onSelectN
           <>
             {/* Activity Chart */}
             <div className="bg-[#1C1C1E] rounded-2xl p-4 border border-[rgba(255,255,255,0.1)]">
-              <div className="flex items-center gap-2 mb-3">
-                <Activity className="w-4 h-4 text-white" />
-                <h3 className="text-white font-medium text-sm">Activity (7 days)</h3>
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <Activity className="w-4 h-4 text-white" />
+                  <h3 className="text-white font-medium text-sm">Activity (7 days)</h3>
+                </div>
+                {/* Legend */}
+                <div className="flex items-center gap-2 text-xs">
+                  <div className="flex items-center gap-1">
+                    <div className="w-2 h-2 rounded-full bg-blue-400"></div>
+                    <span className="text-gray-400">Tasks</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-2 h-2 rounded-full bg-green-400"></div>
+                    <span className="text-gray-400">Notes</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-2 h-2 rounded-full bg-purple-400"></div>
+                    <span className="text-gray-400">Clips</span>
+                  </div>
+                </div>
               </div>
               <div onWheel={(e) => e.stopPropagation()}>
-                <ResponsiveContainer width="100%" height={80}>
-                  <BarChart data={analytics?.activity || []}>
-                    <Bar dataKey="todos" radius={[8, 8, 0, 0]}>
-                      {(analytics?.activity || []).map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill="rgba(255, 255, 255, 0.8)" />
-                      ))}
-                    </Bar>
+                <ResponsiveContainer width="100%" height={100}>
+                  <BarChart data={analytics?.activity || []} barGap={2}>
+                    <XAxis 
+                      dataKey="date" 
+                      tick={{ fill: '#666', fontSize: 10 }}
+                      tickFormatter={(value) => {
+                        const date = new Date(value);
+                        return date.toLocaleDateString('en-US', { weekday: 'short' })[0];
+                      }}
+                    />
+                    <Bar dataKey="todos" fill="#60A5FA" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="notes" fill="#34D399" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="captures" fill="#A78BFA" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
