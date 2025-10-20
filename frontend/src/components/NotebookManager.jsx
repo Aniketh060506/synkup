@@ -178,7 +178,7 @@ export default function NotebookManager({ notebooks, onCreateNotebook, onSelectN
             <BookOpen className="w-10 h-10 text-gray-400" />
           </div>
           <h3 className="text-white text-xl font-semibold mb-2">No notebooks yet</h3>
-          <p className="text-gray-400 text-center mb-6">Create your first notebook to start organizing your notes</p>
+          <p className="text-gray-400 text-center mb-6">Create your first notebook to start writing</p>
           <button
             onClick={() => setShowCreateModal(true)}
             className="flex items-center gap-2 bg-white text-black px-5 py-2.5 rounded-full hover:scale-105 transition-all font-medium"
