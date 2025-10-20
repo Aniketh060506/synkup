@@ -187,14 +187,42 @@ export default function Dashboard({ notebook, notes, onBack, onSaveNote, onDelet
   };
 
   const colors = [
-    '#FFFFFF', '#000000', '#FF0000', '#00FF00', '#0000FF',
-    '#FFFF00', '#FF00FF', '#00FFFF', '#FFA500', '#800080',
-    '#FFC0CB', '#A52A2A', '#808080', '#00FF7F', '#4B0082',
+    '#FFFFFF', // White
+    '#000000', // Black
+    '#6B7280', // Gray
+    '#EF4444', // Red
+    '#F97316', // Orange
+    '#F59E0B', // Amber
+    '#EAB308', // Yellow
+    '#84CC16', // Lime
+    '#22C55E', // Green
+    '#10B981', // Emerald
+    '#14B8A6', // Teal
+    '#06B6D4', // Cyan
+    '#3B82F6', // Blue
+    '#6366F1', // Indigo
+    '#8B5CF6', // Violet
+    '#A855F7', // Purple
+    '#D946EF', // Fuchsia
+    '#EC4899', // Pink
   ];
 
   const highlightColors = [
-    '#FFFF00', '#00FF00', '#00FFFF', '#FF00FF', '#FFA500',
-    '#FF69B4', '#90EE90', '#FFB6C1', '#DDA0DD', '#F0E68C',
+    '#FEF3C7', // Yellow Soft
+    '#FDE68A', // Yellow Light
+    '#FCD34D', // Yellow
+    '#FEF4E0', // Orange Soft
+    '#FED7AA', // Orange Light
+    '#FBCFE8', // Pink Soft
+    '#F9A8D4', // Pink Light
+    '#DDD6FE', // Purple Soft
+    '#C7D2FE', // Indigo Soft
+    '#BFDBFE', // Blue Soft
+    '#BAE6FD', // Sky Soft
+    '#A7F3D0', // Green Soft
+    '#6EE7B7', // Green Light
+    '#D1FAE5', // Emerald Soft
+    '#FED7AA', // Peach
   ];
 
   if (!editor) {
