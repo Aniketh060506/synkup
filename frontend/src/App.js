@@ -92,6 +92,18 @@ function App() {
   };
 
   const handleSelectNotebook = (notebook) => {
+    // Update last accessed timestamp
+    const updatedData = {
+      ...data,
+      notebooks: data.notebooks.map(nb =>
+        nb.id === notebook.id
+          ? { ...nb, lastAccessed: new Date().toISOString() }
+          : nb
+      ),
+    };
+    
+    setData(updatedData);
+    saveData(updatedData);
     setSelectedNotebook(notebook);
     setCurrentView('editor');
   };
