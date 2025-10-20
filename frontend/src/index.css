@@ -513,3 +513,39 @@ html.lenis body {
   list-style-type: decimal !important;
   display: list-item !important;
 }
+
+/* Chart Line Glow Effects */
+.recharts-line-curve {
+  filter: drop-shadow(0 0 4px currentColor);
+  transition: filter 0.3s ease;
+}
+
+.recharts-line-curve:hover {
+  filter: drop-shadow(0 0 8px currentColor);
+}
+
+.recharts-dot {
+  filter: drop-shadow(0 0 3px currentColor);
+}
+
+.recharts-active-dot {
+  filter: drop-shadow(0 0 6px currentColor);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+/* Chart animations */
+.recharts-surface {
+  overflow: visible !important;
+}
+
