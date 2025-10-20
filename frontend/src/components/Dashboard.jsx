@@ -665,27 +665,3 @@ export default function Dashboard({ notebook, notes, onBack, onSaveNote, onDelet
     </div>
   );
 }
-              {isSaving ? 'Saving...' : 'Save'}
-            </button>
-          </div>
-        </div>
-
-        {/* Title Input */}
-        <div className="px-8 pt-6 pb-2">
-          <input
-            type="text"
-            value={noteTitle}
-            onChange={(e) => setNoteTitle(e.target.value)}
-            placeholder="Untitled Note"
-            className="w-full bg-transparent border-none text-white text-3xl font-bold focus:outline-none placeholder-gray-600"
-          />
-        </div>
-
-        {/* Editor Content */}
-        <div className="flex-1 overflow-y-auto px-8 pb-8">
-          <EditorContent editor={editor} />
-        </div>
-      </div>
-    </div>
-  );
-}
