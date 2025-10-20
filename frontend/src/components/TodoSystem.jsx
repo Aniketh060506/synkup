@@ -42,27 +42,60 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
   }, [todoData]);
 
   const calculateGlobalStreak = () => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    let currentStreak = 0;
-    let checkDate = new Date(today);
-
-    console.log('🔥 Calculating streak. Today:', today.toDateString());
+    console.log('🔥 Calculating streak');
     console.log('🔥 TodoData:', todoData);
 
-    // Go backwards from today
+    if (!todoData || todoData.length === 0) {
+      console.log('🔥 No todo data');
+      setStreak(0);
+      return;
+    }
+
+    // Find the most recent day with completed tasks
+    let mostRecentDate = null;
+    let allDaysWithTasks = [];
+
+    // Collect all days with completed tasks
+    todoData.forEach(yearData => {
+      yearData.months.forEach((monthData, monthIndex) => {
+        if (monthData.days && monthData.days.length > 0) {
+          monthData.days.forEach(dayData => {
+            const hasCompletedTask = dayData?.hours?.some(h => h.completed);
+            if (hasCompletedTask) {
+              const date = new Date(yearData.year, monthIndex, dayData.day);
+              date.setHours(0, 0, 0, 0);
+              allDaysWithTasks.push(date);
+            }
+          });
+        }
+      });
+    });
+
+    console.log('🔥 Days with completed tasks:', allDaysWithTasks.map(d => d.toDateString()));
+
+    if (allDaysWithTasks.length === 0) {
+      console.log('🔥 No days with completed tasks');
+      setStreak(0);
+      return;
+    }
+
+    // Sort dates in descending order (most recent first)
+    allDaysWithTasks.sort((a, b) => b - a);
+    mostRecentDate = allDaysWithTasks[0];
+
+    console.log('🔥 Most recent date with tasks:', mostRecentDate.toDateString());
+
+    // Now calculate streak backwards from the most recent date
+    let currentStreak = 0;
+    let checkDate = new Date(mostRecentDate);
+
     for (let i = 0; i < 365; i++) {
       const year = checkDate.getFullYear();
       const month = checkDate.getMonth();
       const day = checkDate.getDate();
 
-      console.log(`🔥 Checking: ${year}-${month + 1}-${day} (iteration ${i})`);
-
-      // Use todoData instead of years to ensure we have the latest data
       const yearData = todoData.find(y => y.year === year);
       if (!yearData) {
-        console.log(`🔥 No year data for ${year}`);
-        // No data for this year - if it's not today, break the streak
         if (i > 0) break;
         checkDate.setDate(checkDate.getDate() - 1);
         continue;
@@ -70,26 +103,17 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
 
       const monthData = yearData.months[month];
       if (!monthData || !monthData.days) {
-        console.log(`🔥 No month data for ${month + 1}`);
-        // No data for this month - if it's not today, break the streak
         if (i > 0) break;
         checkDate.setDate(checkDate.getDate() - 1);
         continue;
       }
 
       const dayData = monthData.days.find(d => d.day === day);
-      console.log(`🔥 Day data for ${day}:`, dayData);
-      
-      // Check if at least one task is completed for this day
       const hasCompletedTask = dayData?.hours?.some(h => h.completed);
-      console.log(`🔥 Has completed task: ${hasCompletedTask}`);
 
       if (hasCompletedTask) {
         currentStreak++;
-        console.log(`🔥 Streak incremented to: ${currentStreak}`);
       } else if (i > 0) {
-        // Only break if it's not today (allow today to have no tasks yet)
-        console.log(`🔥 Breaking streak at iteration ${i}`);
         break;
       }
 
