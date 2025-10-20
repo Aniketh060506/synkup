@@ -3,6 +3,8 @@ import { ChevronLeft, Plus, ChevronRight, Calendar, Check, Flame, X } from 'luci
 
 export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
   const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth();
+  const currentDay = new Date().getDate();
   const years = todoData.length > 0 ? todoData : [];
   
   // Initialize with current year if available, otherwise create it
@@ -32,13 +34,46 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
   const [newTaskEndTime, setNewTaskEndTime] = useState('');
   const [newTaskDesc, setNewTaskDesc] = useState('');
   const [streak, setStreak] = useState(0);
+  const [showQuickJump, setShowQuickJump] = useState(false);
 
-  // Calculate streak based on consecutive days with at least 1 task done
+  // Calculate global streak based on all years and months
   useEffect(() => {
-    if (selectedYear && selectedMonth) {
-      calculateStreak();
+    calculateGlobalStreak();
+  }, [todoData]);
+
+  const calculateGlobalStreak = () => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    let currentStreak = 0;
+    let checkDate = new Date(today);
+
+    // Go backwards from today
+    for (let i = 0; i < 365; i++) {
+      const year = checkDate.getFullYear();
+      const month = checkDate.getMonth();
+      const day = checkDate.getDate();
+
+      const yearData = years.find(y => y.year === year);
+      if (!yearData) break;
+
+      const monthData = yearData.months[month];
+      if (!monthData || !monthData.days) break;
+
+      const dayData = monthData.days.find(d => d.day === day);
+      const hasCompletedTask = dayData?.hours?.some(h => h.completed);
+
+      if (hasCompletedTask) {
+        currentStreak++;
+      } else if (i > 0) {
+        // Only break if it's not today (allow today to have no tasks yet)
+        break;
+      }
+
+      checkDate.setDate(checkDate.getDate() - 1);
     }
-  }, [selectedYear, selectedMonth]);
+
+    setStreak(currentStreak);
+  };
 
   const calculateStreak = () => {
     if (!selectedMonth || !selectedMonth.days) {
