@@ -222,6 +222,42 @@ frontend:
         agent: "main"
         comment: "Added fadeIn, slideUp, scaleIn animations with staggered delays"
 
+  - task: "Global Streak Display on All Views"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/TodoSystem.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Streak now visible at top of Year, Month, Day, and Hour views. Calculates globally across all data."
+
+  - task: "Quick Jump to Today Functionality"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/TodoSystem.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added Quick Jump dropdown with 'Jump to Today' option. Navigates to today's hourly view."
+
+  - task: "Left/Right Arrow Navigation"
+    implemented: true
+    working: "NA"
+    file: "frontend/src/components/TodoSystem.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Arrows navigate years in month view, months in day view, and days in hour view. Disabled at boundaries."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
