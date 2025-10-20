@@ -321,3 +321,34 @@ agent_communication:
          - Arrows disabled at boundaries
       
       Ready for testing these new features!
+
+  - agent: "main"
+    message: |
+      NOTEBOOK EDITOR FIXES COMPLETED:
+      
+      1. ✅ Table Insertion with Custom Rows/Columns:
+         - Added modal dialog when clicking table button
+         - User can now input number of rows (1-20) and columns (1-10)
+         - Default values: 3 rows, 3 columns
+         - Enter key support for quick insertion
+      
+      2. ✅ Code Block Button Fixed:
+         - Changed from inline code to code block (toggleCodeBlock)
+         - Code blocks now render with dark background, border, and monospace font
+         - Proper styling for multi-line code snippets
+      
+      3. ✅ Bullet Lists - Verified Working:
+         - StarterKit configured with bulletList support
+         - CSS styling for proper indentation and nested lists
+         - Toggle button working correctly
+      
+      4. ✅ Numbered Lists - Verified Working:
+         - StarterKit configured with orderedList support
+         - CSS styling for proper numbering and nested lists
+         - Toggle button working correctly
+      
+      Changes made:
+      - /app/frontend/src/components/Dashboard.jsx: Added table modal, fixed code block button
+      - /app/frontend/src/index.css: Enhanced code block styling
+      
+      Ready for user testing!
