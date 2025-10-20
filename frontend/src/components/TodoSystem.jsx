@@ -961,20 +961,16 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
         {/* Add Task Form */}
         <div className="bg-[#1C1C1E] rounded-2xl p-6 border border-[rgba(255,255,255,0.1)] mb-6">
           <div className="flex items-center gap-4">
-            <input
-              type="text"
+            <SmartTimeInput
               value={newTaskStartTime}
-              onChange={(e) => setNewTaskStartTime(e.target.value)}
-              placeholder="05:54 PM"
-              className="w-32 px-4 py-3 bg-[#0A0A0A] border border-[rgba(255,255,255,0.1)] rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-[rgba(255,255,255,0.3)]"
+              onChange={setNewTaskStartTime}
+              placeholder="00:00 AM"
             />
             <span className="text-gray-600">to</span>
-            <input
-              type="text"
+            <SmartTimeInput
               value={newTaskEndTime}
-              onChange={(e) => setNewTaskEndTime(e.target.value)}
-              placeholder="06:54 PM"
-              className="w-32 px-4 py-3 bg-[#0A0A0A] border border-[rgba(255,255,255,0.1)] rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-[rgba(255,255,255,0.3)]"
+              onChange={setNewTaskEndTime}
+              placeholder="00:00 AM"
             />
             <input
               type="text"
