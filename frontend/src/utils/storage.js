@@ -175,7 +175,28 @@ export const calculateAnalytics = (data: CopyDockData): AnalyticsData => {
     storageTotalMb: 10,
     webCaptures: data.analytics.webCaptures || 0,
     activity: activityData,
-
+    todayStats: {
+      todos: todayStats.todos,
+      captures: todayStats.captures,
+      notes: todayStats.notes,
+      words: todayStats.words,
+    },
+    content: {
+      totalWords,
+      breakdown: notebookBreakdown,
+    },
+    goals: {
+      currentStreak: todoStreak,
+      bestStreak: bestStreak,
+      monthlyProgress: monthlyProgress,
+    },
+    storageBreakdown: [
+      { name: 'Notebooks', value: storageMb * 0.9 },
+      { name: 'Todos', value: storageMb * 0.1 },
+    ],
+    weeklyInsights: weeklyInsights,
+  };
+};
 
 // ============================================
 // Activity Tracking Functions
