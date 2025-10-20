@@ -351,6 +351,9 @@ function App() {
             notebooks={data.notebooks}
             onSearch={(query) => console.log('Search:', query)}
             onSelectNotebook={handleSelectNotebook}
+            onSyncWebCaptures={() => syncWebCaptures(data)}
+            isSyncing={isSyncing}
+            lastSyncTime={lastSyncTime}
           />
         )}
 
