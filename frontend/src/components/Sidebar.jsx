@@ -203,27 +203,11 @@ export default function Sidebar({ analytics, notebooks = [], onSearch, onSelectN
                 </div>
               </div>
               <div onWheel={(e) => e.stopPropagation()}>
-                <ResponsiveContainer width="100%" height={180}>
+                <ResponsiveContainer width="100%" height={140}>
                   <ComposedChart 
                     data={analytics?.activity || []} 
-                    margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                    margin={{ top: 5, right: 5, left: -25, bottom: 5 }}
                   >
-                    <defs>
-                      {/* Gradients for Areas */}
-                      <linearGradient id="colorTodos" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#60A5FA" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="#60A5FA" stopOpacity={0.05}/>
-                      </linearGradient>
-                      <linearGradient id="colorNotes" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#34D399" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="#34D399" stopOpacity={0.05}/>
-                      </linearGradient>
-                      <linearGradient id="colorCaptures" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#A78BFA" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="#A78BFA" stopOpacity={0.05}/>
-                      </linearGradient>
-                    </defs>
-                    
                     {/* Grid for better readability */}
                     <CartesianGrid 
                       strokeDasharray="3 3" 
@@ -234,7 +218,7 @@ export default function Sidebar({ analytics, notebooks = [], onSearch, onSelectN
                     {/* Axes */}
                     <XAxis 
                       dataKey="date" 
-                      tick={{ fill: '#888', fontSize: 11 }}
+                      tick={{ fill: '#888', fontSize: 10 }}
                       stroke="rgba(255,255,255,0.1)"
                       tickFormatter={(value) => {
                         const date = new Date(value);
@@ -242,9 +226,9 @@ export default function Sidebar({ analytics, notebooks = [], onSearch, onSelectN
                       }}
                     />
                     <YAxis 
-                      tick={{ fill: '#888', fontSize: 11 }}
+                      tick={{ fill: '#888', fontSize: 10 }}
                       stroke="rgba(255,255,255,0.1)"
-                      width={30}
+                      width={25}
                     />
                     
                     {/* Tooltip */}
@@ -253,72 +237,50 @@ export default function Sidebar({ analytics, notebooks = [], onSearch, onSelectN
                         backgroundColor: '#2C2C2E', 
                         border: '1px solid rgba(255,255,255,0.1)',
                         borderRadius: '8px',
-                        fontSize: '12px'
+                        fontSize: '11px',
+                        padding: '8px'
                       }}
-                      labelStyle={{ color: '#fff' }}
-                      itemStyle={{ color: '#fff' }}
+                      labelStyle={{ color: '#fff', marginBottom: '4px' }}
                       labelFormatter={(value) => {
                         const date = new Date(value);
-                        return date.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+                        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                      }}
+                      formatter={(value, name) => {
+                        const labels = { todos: 'Tasks', notes: 'Notes', captures: 'Clips' };
+                        return [value, labels[name] || name];
                       }}
                     />
                     
-                    {/* Area charts with gradients */}
-                    <Area 
-                      type="monotone" 
-                      dataKey="todos" 
-                      fill="url(#colorTodos)" 
-                      stroke="none"
-                      animationDuration={1000}
-                      animationBegin={0}
-                    />
-                    <Area 
-                      type="monotone" 
-                      dataKey="notes" 
-                      fill="url(#colorNotes)" 
-                      stroke="none"
-                      animationDuration={1000}
-                      animationBegin={200}
-                    />
-                    <Area 
-                      type="monotone" 
-                      dataKey="captures" 
-                      fill="url(#colorCaptures)" 
-                      stroke="none"
-                      animationDuration={1000}
-                      animationBegin={400}
-                    />
-                    
-                    {/* Dynamic lines on top with glow effect */}
+                    {/* Simple lines - clean and clear */}
                     <Line 
                       type="monotone" 
                       dataKey="todos" 
+                      name="Tasks"
                       stroke="#60A5FA" 
-                      strokeWidth={3}
-                      dot={{ fill: '#60A5FA', strokeWidth: 2, r: 4, stroke: '#1C1C1E' }}
-                      activeDot={{ r: 6, stroke: '#60A5FA', strokeWidth: 3 }}
-                      animationDuration={1000}
-                      animationBegin={0}
+                      strokeWidth={2.5}
+                      dot={{ fill: '#60A5FA', strokeWidth: 0, r: 3 }}
+                      activeDot={{ r: 5, fill: '#60A5FA', strokeWidth: 2, stroke: '#fff' }}
+                      isAnimationActive={false}
                     />
                     <Line 
                       type="monotone" 
                       dataKey="notes" 
+                      name="Notes"
                       stroke="#34D399" 
-                      strokeWidth={3}
-                      dot={{ fill: '#34D399', strokeWidth: 2, r: 4, stroke: '#1C1C1E' }}
-                      activeDot={{ r: 6, stroke: '#34D399', strokeWidth: 3 }}
-                      animationDuration={1000}
-                      animationBegin={200}
+                      strokeWidth={2.5}
+                      dot={{ fill: '#34D399', strokeWidth: 0, r: 3 }}
+                      activeDot={{ r: 5, fill: '#34D399', strokeWidth: 2, stroke: '#fff' }}
+                      isAnimationActive={false}
                     />
                     <Line 
                       type="monotone" 
                       dataKey="captures" 
+                      name="Clips"
                       stroke="#A78BFA" 
-                      strokeWidth={3}
-                      dot={{ fill: '#A78BFA', strokeWidth: 2, r: 4, stroke: '#1C1C1E' }}
-                      activeDot={{ r: 6, stroke: '#A78BFA', strokeWidth: 3 }}
-                      animationDuration={1000}
-                      animationBegin={400}
+                      strokeWidth={2.5}
+                      dot={{ fill: '#A78BFA', strokeWidth: 0, r: 3 }}
+                      activeDot={{ r: 5, fill: '#A78BFA', strokeWidth: 2, stroke: '#fff' }}
+                      isAnimationActive={false}
                     />
                   </ComposedChart>
                 </ResponsiveContainer>
