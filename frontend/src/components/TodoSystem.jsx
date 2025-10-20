@@ -267,11 +267,19 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
               idx === selectedMonth.index 
                 ? {
                     ...m,
-                    days: m.days.map(d => 
-                      d.day === dayNum 
-                        ? { ...d, goal }
-                        : d
-                    )
+                    days: (() => {
+                      const existingDays = m.days || [];
+                      const dayIndex = existingDays.findIndex(d => d.day === dayNum);
+                      
+                      if (dayIndex >= 0) {
+                        const newDays = [...existingDays];
+                        newDays[dayIndex] = { ...newDays[dayIndex], goal };
+                        return newDays;
+                      } else if (goal) {
+                        return [...existingDays, { day: dayNum, goal, hours: [] }];
+                      }
+                      return existingDays;
+                    })()
                   }
                 : m
             )
