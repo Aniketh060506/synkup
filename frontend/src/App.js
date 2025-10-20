@@ -5,8 +5,7 @@ import Sidebar from './components/Sidebar';
 import NotebookManager from './components/NotebookManager';
 import Dashboard from './components/Dashboard';
 import TodoSystem from './components/TodoSystem';
-import { loadData, saveData, calculateAnalytics } from './utils/storage';
-import { getMockData } from './utils/mockData';
+import { loadData, saveData, calculateAnalytics, getInitialData } from './utils/storage';
 import { Menu, X, CheckSquare } from 'lucide-react';
 
 function App() {
@@ -16,16 +15,9 @@ function App() {
   const [showSidebar, setShowSidebar] = useState(true);
 
   useEffect(() => {
-    // Load data from localStorage or use mock data
+    // Load data from localStorage
     const storedData = loadData();
-    if (storedData.notebooks.length === 0) {
-      // First time user - use mock data
-      const mockData = getMockData();
-      setData(mockData);
-      saveData(mockData);
-    } else {
-      setData(storedData);
-    }
+    setData(storedData);
   }, []);
 
   useEffect(() => {
@@ -49,31 +41,27 @@ function App() {
       return;
     }
 
-    const newNote = {
-      id: `note_${Date.now()}`,
-      notebookId: targetNotebook.id,
-      title: `Capture from ${payload.sourceDomain}`,
-      content: payload.selectedHTML,
-      source: payload.sourceDomain,
-      sourceUrl: payload.sourceUrl,
-      createdAt: new Date().toISOString(),
-      lastModified: new Date().toISOString(),
-      wordCount: payload.selectedText.split(/\s+/).filter(Boolean).length,
-      characterCount: payload.selectedText.length,
-    };
-
+    // Append captured content to target notebook
+    const capturedContent = `\n\n---\n**Captured from ${payload.sourceDomain}**\n${payload.sourceUrl}\n\n${payload.selectedHTML}`;
+    
     const updatedData = {
       ...data,
-      notes: [...data.notes, newNote],
+      notebooks: data.notebooks.map(nb =>
+        nb.id === targetNotebook.id
+          ? { 
+              ...nb, 
+              content: nb.content + capturedContent,
+              lastModified: new Date().toISOString(),
+              wordCount: nb.wordCount + payload.selectedText.split(/\s+/).filter(Boolean).length,
+              characterCount: nb.characterCount + payload.selectedText.length,
+            }
+          : nb
+      ),
     };
 
-    updatedData.notebooks = updatedData.notebooks.map(nb =>
-      nb.id === targetNotebook.id
-        ? { ...nb, itemCount: nb.itemCount + 1 }
-        : nb
-    );
-
     updatedData.analytics = calculateAnalytics(updatedData);
+    updatedData.analytics.webCaptures = (updatedData.analytics.webCaptures || 0) + 1;
+    
     setData(updatedData);
     saveData(updatedData);
 
@@ -85,9 +73,12 @@ function App() {
     const newNotebook = {
       id: `nb_${Date.now()}`,
       name,
-      itemCount: 0,
       createdAt: new Date().toISOString(),
+      lastModified: new Date().toISOString(),
       isTarget: data.notebooks.length === 0,
+      content: '',
+      wordCount: 0,
+      characterCount: 0,
     };
 
     const updatedData = {
@@ -110,12 +101,17 @@ function App() {
       const updatedData = {
         ...data,
         notebooks: data.notebooks.filter(nb => nb.id !== notebookId),
-        notes: data.notes.filter(n => n.notebookId !== notebookId),
       };
 
       updatedData.analytics = calculateAnalytics(updatedData);
       setData(updatedData);
       saveData(updatedData);
+      
+      // If deleted notebook was selected, go back to notebooks
+      if (selectedNotebook?.id === notebookId) {
+        setCurrentView('notebooks');
+        setSelectedNotebook(null);
+      }
     }
   };
 
@@ -138,43 +134,18 @@ function App() {
     }, '*');
   };
 
-  const handleSaveNote = (noteData) => {
-    const existingNoteIndex = data.notes.findIndex(n => n.id === noteData.id);
-    let updatedNotes;
-
-    if (existingNoteIndex >= 0) {
-      updatedNotes = [...data.notes];
-      updatedNotes[existingNoteIndex] = noteData;
-    } else {
-      updatedNotes = [...data.notes, noteData];
-      // Update notebook item count
-      data.notebooks = data.notebooks.map(nb =>
-        nb.id === noteData.notebookId
-          ? { ...nb, itemCount: nb.itemCount + 1 }
-          : nb
-      );
-    }
-
+  const handleSaveNotebook = (notebookId, content, wordCount, characterCount) => {
     const updatedData = {
       ...data,
-      notes: updatedNotes,
-    };
-
-    updatedData.analytics = calculateAnalytics(updatedData);
-    setData(updatedData);
-    saveData(updatedData);
-  };
-
-  const handleDeleteNote = (noteId) => {
-    const note = data.notes.find(n => n.id === noteId);
-    if (!note) return;
-
-    const updatedData = {
-      ...data,
-      notes: data.notes.filter(n => n.id !== noteId),
       notebooks: data.notebooks.map(nb =>
-        nb.id === note.notebookId
-          ? { ...nb, itemCount: Math.max(0, nb.itemCount - 1) }
+        nb.id === notebookId
+          ? { 
+              ...nb, 
+              content,
+              lastModified: new Date().toISOString(),
+              wordCount,
+              characterCount,
+            }
           : nb
       ),
     };
