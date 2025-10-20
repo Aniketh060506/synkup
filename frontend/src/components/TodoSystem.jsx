@@ -385,6 +385,316 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
     );
   };
 
+  const toggleHourComplete = (hourIndex) => {
+    const updatedHours = [...selectedDay.hours];
+    updatedHours[hourIndex].completed = !updatedHours[hourIndex].completed;
+    
+    const updatedDay = { ...selectedDay, hours: updatedHours };
+    setSelectedDay(updatedDay);
+
+    // Update in the main data structure
+    const updatedYears = years.map(y => 
+      y.year === selectedYear.year 
+        ? {
+            ...y,
+            months: y.months.map((m, idx) => 
+              idx === selectedMonth.index 
+                ? {
+                    ...m,
+                    days: (() => {
+                      const existingDays = m.days || [];
+                      const dayIndex = existingDays.findIndex(d => d.day === selectedDay.day);
+                      
+                      if (dayIndex >= 0) {
+                        const newDays = [...existingDays];
+                        newDays[dayIndex] = { 
+                          day: selectedDay.day, 
+                          hours: updatedHours,
+                          goal: selectedDay.goal 
+                        };
+                        return newDays;
+                      } else {
+                        return [...existingDays, { 
+                          day: selectedDay.day, 
+                          hours: updatedHours,
+                          goal: selectedDay.goal 
+                        }];
+                      }
+                    })()
+                  }
+                : m
+            )
+          }
+        : y
+    );
+    
+    onUpdateTodos(updatedYears);
+    const updatedYear = updatedYears.find(y => y.year === selectedYear.year);
+    setSelectedYear(updatedYear);
+    setSelectedMonth(updatedYear.months[selectedMonth.index]);
+  };
+
+  const deleteHourTask = (hourIndex) => {
+    const updatedHours = selectedDay.hours.filter((_, idx) => idx !== hourIndex);
+    const updatedDay = { ...selectedDay, hours: updatedHours };
+    setSelectedDay(updatedDay);
+
+    // Update in the main data structure
+    const updatedYears = years.map(y => 
+      y.year === selectedYear.year 
+        ? {
+            ...y,
+            months: y.months.map((m, idx) => 
+              idx === selectedMonth.index 
+                ? {
+                    ...m,
+                    days: (() => {
+                      const existingDays = m.days || [];
+                      const dayIndex = existingDays.findIndex(d => d.day === selectedDay.day);
+                      
+                      if (dayIndex >= 0) {
+                        const newDays = [...existingDays];
+                        newDays[dayIndex] = { 
+                          day: selectedDay.day, 
+                          hours: updatedHours,
+                          goal: selectedDay.goal 
+                        };
+                        return newDays;
+                      }
+                      return existingDays;
+                    })()
+                  }
+                : m
+            )
+          }
+        : y
+    );
+    
+    onUpdateTodos(updatedYears);
+    const updatedYear = updatedYears.find(y => y.year === selectedYear.year);
+    setSelectedYear(updatedYear);
+    setSelectedMonth(updatedYear.months[selectedMonth.index]);
+  };
+
+  const addNewHourTask = () => {
+    if (!newTaskTime || !newTaskDesc) return;
+
+    const newHour = {
+      timeRange: newTaskTime,
+      task: newTaskDesc,
+      completed: false
+    };
+
+    const updatedHours = [...selectedDay.hours, newHour];
+    const updatedDay = { ...selectedDay, hours: updatedHours };
+    setSelectedDay(updatedDay);
+
+    // Update in the main data structure
+    const updatedYears = years.map(y => 
+      y.year === selectedYear.year 
+        ? {
+            ...y,
+            months: y.months.map((m, idx) => 
+              idx === selectedMonth.index 
+                ? {
+                    ...m,
+                    days: (() => {
+                      const existingDays = m.days || [];
+                      const dayIndex = existingDays.findIndex(d => d.day === selectedDay.day);
+                      
+                      if (dayIndex >= 0) {
+                        const newDays = [...existingDays];
+                        newDays[dayIndex] = { 
+                          day: selectedDay.day, 
+                          hours: updatedHours,
+                          goal: selectedDay.goal 
+                        };
+                        return newDays;
+                      } else {
+                        return [...existingDays, { 
+                          day: selectedDay.day, 
+                          hours: updatedHours,
+                          goal: selectedDay.goal 
+                        }];
+                      }
+                    })()
+                  }
+                : m
+            )
+          }
+        : y
+    );
+    
+    onUpdateTodos(updatedYears);
+    const updatedYear = updatedYears.find(y => y.year === selectedYear.year);
+    setSelectedYear(updatedYear);
+    setSelectedMonth(updatedYear.months[selectedMonth.index]);
+
+    // Reset form
+    setNewTaskTime('');
+    setNewTaskDesc('');
+  };
+
+  const renderHourView = () => {
+    const dateStr = new Date(selectedYear.year, selectedMonth.index, selectedDay.day).toLocaleDateString('en-US', {
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric'
+    });
+
+    const allCompleted = selectedDay.hours.length > 0 && selectedDay.hours.every(h => h.completed);
+    const someCompleted = selectedDay.hours.some(h => h.completed);
+
+    return (
+      <div className="space-y-6 animate-fadeIn">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => {
+                setCurrentView('day');
+                setSelectedDay(null);
+              }}
+              className="flex items-center gap-2 text-gray-400 hover:text-white transition-all"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              Back
+            </button>
+            <h2 className="text-blue-400 text-xl font-bold">{selectedYear?.year}</h2>
+            <ChevronRight className="w-4 h-4 text-gray-600" />
+            <h2 className="text-blue-400 text-xl font-bold">{selectedMonth.name}</h2>
+            <ChevronRight className="w-4 h-4 text-gray-600" />
+            <h2 className="text-blue-400 text-xl font-bold">Day {selectedDay.day} - Hours</h2>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 px-4 py-2 bg-[#1C1C1E] rounded-lg border border-[rgba(255,255,255,0.1)]">
+              <Flame className={`w-5 h-5 ${someCompleted ? 'text-orange-500' : 'text-gray-600'}`} />
+              <span className={`font-bold text-lg ${someCompleted ? 'text-orange-500' : 'text-gray-600'}`}>{streak}</span>
+              <span className="text-gray-400 text-sm">Streak</span>
+            </div>
+            <button className="flex items-center gap-2 px-4 py-2 bg-[#1C1C1E] rounded-lg hover:bg-[#262626] transition-all">
+              <Calendar className="w-4 h-4 text-white" />
+              <span className="text-white text-sm">Quick Jump</span>
+            </button>
+            <button 
+              onClick={onBack}
+              className="p-2 hover:bg-[#1C1C1E] rounded-lg transition-all"
+            >
+              <X className="w-5 h-5 text-white" />
+            </button>
+          </div>
+        </div>
+
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-white mb-2">{dateStr} - Hourly Schedule</h1>
+        </div>
+
+        {/* Add Task Form */}
+        <div className="bg-[#1C1C1E] rounded-2xl p-6 border border-[rgba(255,255,255,0.1)] mb-6">
+          <div className="flex items-center gap-4">
+            <input
+              type="text"
+              value={newTaskTime}
+              onChange={(e) => setNewTaskTime(e.target.value)}
+              placeholder="05:54 PM"
+              className="w-32 px-4 py-3 bg-[#0A0A0A] border border-[rgba(255,255,255,0.1)] rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-[rgba(255,255,255,0.3)]"
+            />
+            <span className="text-gray-600">to</span>
+            <input
+              type="text"
+              value={newTaskDesc}
+              onChange={(e) => setNewTaskDesc(e.target.value)}
+              placeholder="--:-- --"
+              className="w-32 px-4 py-3 bg-[#0A0A0A] border border-[rgba(255,255,255,0.1)] rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-[rgba(255,255,255,0.3)]"
+            />
+            <input
+              type="text"
+              placeholder="What will you do during this time?"
+              className="flex-1 px-4 py-3 bg-[#0A0A0A] border border-[rgba(255,255,255,0.1)] rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-[rgba(255,255,255,0.3)]"
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  addNewHourTask();
+                }
+              }}
+            />
+            <button 
+              onClick={addNewHourTask}
+              className="px-6 py-3 bg-white text-black rounded-xl hover:scale-105 transition-all font-medium flex items-center gap-2"
+            >
+              <Plus className="w-4 h-4" />
+              Add
+            </button>
+          </div>
+        </div>
+
+        {/* Task List */}
+        <div className="bg-[#1C1C1E] rounded-2xl overflow-hidden border border-[rgba(255,255,255,0.1)]">
+          <table className="w-full">
+            <thead className="bg-[#2C2C2E]">
+              <tr>
+                <th className="text-center text-gray-400 font-medium text-sm px-4 py-4 w-12">✓</th>
+                <th className="text-left text-gray-400 font-medium text-sm px-6 py-4 w-48">Time Range</th>
+                <th className="text-left text-gray-400 font-medium text-sm px-6 py-4">What I Will Do</th>
+                <th className="text-right text-gray-400 font-medium text-sm px-6 py-4 w-24">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {selectedDay.hours.length === 0 ? (
+                <tr>
+                  <td colSpan="4" className="px-6 py-12 text-center">
+                    <div className="text-gray-400">
+                      No tasks scheduled for this day. Add your first task above!
+                    </div>
+                  </td>
+                </tr>
+              ) : (
+                selectedDay.hours.map((hour, idx) => (
+                  <tr 
+                    key={idx}
+                    className="border-t border-[rgba(255,255,255,0.05)] hover:bg-[#262626] transition-all"
+                    style={{ animationDelay: `${idx * 0.05}s` }}
+                  >
+                    <td className="px-4 py-5 text-center">
+                      <input
+                        type="checkbox"
+                        checked={hour.completed}
+                        onChange={() => toggleHourComplete(idx)}
+                        className="w-5 h-5 rounded-full cursor-pointer accent-green-500"
+                      />
+                    </td>
+                    <td className="px-6 py-5">
+                      <span className="text-gray-400 text-sm font-medium">{hour.timeRange}</span>
+                    </td>
+                    <td className="px-6 py-5">
+                      <span className={`${hour.completed ? 'text-gray-600 line-through' : 'text-white'} transition-all`}>
+                        {hour.task}
+                      </span>
+                    </td>
+                    <td className="px-6 py-5 text-right">
+                      <button
+                        onClick={() => deleteHourTask(idx)}
+                        className="text-red-500 hover:text-red-400 transition-all"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Status Message */}
+        {allCompleted && selectedDay.hours.length > 0 && (
+          <div className="bg-green-500/10 border border-green-500/30 rounded-2xl p-4 text-center animate-fadeIn">
+            <p className="text-green-400 font-medium">🎉 All tasks completed! Great job!</p>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="flex-1 p-8 min-h-screen">
       <div className="mb-8">
@@ -400,6 +710,7 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
       {currentView === 'year' && renderYearView()}
       {currentView === 'month' && renderMonthView()}
       {currentView === 'day' && renderDayView()}
+      {currentView === 'hour' && renderHourView()}
     </div>
   );
 }
