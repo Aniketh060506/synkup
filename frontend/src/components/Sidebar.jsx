@@ -156,13 +156,7 @@ export default function Sidebar({ analytics, onSearch }) {
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-400">{analytics.today.notes} notes created</span>
-                </div>
-                <div className="flex items-center justify-between text-sm">
                   <span className="text-gray-400">{analytics.today.todos} todos completed</span>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-400">{analytics.today.templates} templates used</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-gray-400">{analytics.today.captures} web captures</span>
