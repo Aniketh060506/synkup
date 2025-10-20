@@ -156,16 +156,30 @@ export const calculateAnalytics = (data: CopyDockData): AnalyticsData => {
   const previousBestStreak = data.analytics.goals?.bestStreak || 0;
   const bestStreak = Math.max(todoStreak, previousBestStreak);
   
+  // Generate 7-day activity data
+  const activityData = generate7DayActivity(data.activityLog || {});
+  
+  // Get today's stats
+  const todayStats = getTodayStats(data.activityLog || {});
+  
+  // Calculate monthly progress
+  const monthlyProgress = calculateMonthlyProgress(data.todoSystem);
+  
+  // Generate weekly insights
+  const weeklyInsights = generateWeeklyInsights(data.activityLog || {});
+  
   return {
     notebookCount: data.notebooks.length,
     streak: todoStreak,
     storageMb,
     storageTotalMb: 10,
     webCaptures: data.analytics.webCaptures || 0,
-    activity: data.analytics.activity || [],
+    activity: activityData,
     today: {
-      todos: data.analytics.today?.todos || 0,
-      captures: data.analytics.today?.captures || 0,
+      todos: todayStats.todos,
+      captures: todayStats.captures,
+      notes: todayStats.notes,
+      words: todayStats.words,
     },
     content: {
       totalWords,
@@ -174,11 +188,12 @@ export const calculateAnalytics = (data: CopyDockData): AnalyticsData => {
     goals: {
       currentStreak: todoStreak,
       bestStreak: bestStreak,
-      monthlyProgress: data.analytics.goals?.monthlyProgress || 0,
+      monthlyProgress: monthlyProgress,
     },
     storageBreakdown: [
       { name: 'Notebooks', value: storageMb * 0.9 },
       { name: 'Todos', value: storageMb * 0.1 },
     ],
+    weeklyInsights: weeklyInsights,
   };
 };
