@@ -58,7 +58,7 @@ export default function Sidebar({ analytics, onSearch }) {
 
       {/* Quick Stats */}
       <div className="px-5 py-4 border-b border-[rgba(255,255,255,0.1)] flex-shrink-0">
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-3 gap-3">
           <div className="bg-[#1C1C1E] rounded-2xl p-3 text-center border border-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)] transition-all cursor-pointer" title="Notebooks">
             <div className="text-2xl font-bold text-white mb-1">{analytics.notebookCount}</div>
             <div className="text-xs text-gray-400">NB</div>
@@ -68,11 +68,7 @@ export default function Sidebar({ analytics, onSearch }) {
               <Flame className={`w-5 h-5 ${analytics.streak > 0 ? 'text-orange-500' : 'text-gray-600'}`} />
               <span className="text-2xl font-bold text-white">{analytics.streak}</span>
             </div>
-            <div className="text-xs text-gray-400">STR</div>
-          </div>
-          <div className="bg-[#1C1C1E] rounded-2xl p-3 text-center border border-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)] transition-all cursor-pointer" title="Total Notes">
-            <div className="text-2xl font-bold text-white mb-1">{analytics.totalNotes}</div>
-            <div className="text-xs text-gray-400">NT</div>
+            <div className="text-xs text-gray-400">Streak</div>
           </div>
           <div className="bg-[#1C1C1E] rounded-2xl p-3 text-center border border-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)] transition-all cursor-pointer" title="Storage Used">
             <div className="text-lg font-bold text-white mb-1">{analytics.storageMb.toFixed(1)}</div>
