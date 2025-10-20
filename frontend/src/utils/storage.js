@@ -69,12 +69,18 @@ export const calculateStorageSize = (data: CopyDockData): number => {
 
 // Calculate todo streak from todo system
 const calculateTodoStreak = (todoSystem) => {
-  if (!todoSystem || todoSystem.length === 0) return 0;
+  console.log('📊 calculateTodoStreak called with:', todoSystem);
+  if (!todoSystem || todoSystem.length === 0) {
+    console.log('📊 No todo system data, returning 0');
+    return 0;
+  }
   
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   let currentStreak = 0;
   let checkDate = new Date(today);
+
+  console.log('📊 Calculating streak from:', today.toDateString());
 
   // Go backwards from today
   for (let i = 0; i < 365; i++) {
@@ -82,8 +88,11 @@ const calculateTodoStreak = (todoSystem) => {
     const month = checkDate.getMonth();
     const day = checkDate.getDate();
 
+    console.log(`📊 Checking: ${year}-${month + 1}-${day}`);
+
     const yearData = todoSystem.find(y => y.year === year);
     if (!yearData) {
+      console.log(`📊 No year data for ${year}`);
       // No data for this year - if it's not today, break the streak
       if (i > 0) break;
       checkDate.setDate(checkDate.getDate() - 1);
@@ -92,6 +101,7 @@ const calculateTodoStreak = (todoSystem) => {
 
     const monthData = yearData.months[month];
     if (!monthData || !monthData.days) {
+      console.log(`📊 No month data for ${month + 1}`);
       // No data for this month - if it's not today, break the streak
       if (i > 0) break;
       checkDate.setDate(checkDate.getDate() - 1);
@@ -99,19 +109,25 @@ const calculateTodoStreak = (todoSystem) => {
     }
 
     const dayData = monthData.days.find(d => d.day === day);
+    console.log(`📊 Day ${day} data:`, dayData);
+    
     // Check if at least one task is completed for this day
     const hasCompletedTask = dayData?.hours?.some(h => h.completed);
+    console.log(`📊 Has completed task: ${hasCompletedTask}`);
 
     if (hasCompletedTask) {
       currentStreak++;
+      console.log(`📊 Streak: ${currentStreak}`);
     } else if (i > 0) {
       // Only break if it's not today (allow today to have no tasks yet)
+      console.log(`📊 Breaking streak at iteration ${i}`);
       break;
     }
 
     checkDate.setDate(checkDate.getDate() - 1);
   }
 
+  console.log(`📊 Final streak: ${currentStreak}`);
   return currentStreak;
 };
 
