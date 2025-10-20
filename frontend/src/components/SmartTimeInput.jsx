@@ -86,11 +86,24 @@ export default function SmartTimeInput({ value, onChange, placeholder = "00:00 A
       return;
     }
 
+    // Limit to 2 digits max
+    if (val.length > 2) {
+      val = val.slice(0, 2);
+    }
+
     // If single digit
     if (val.length === 1) {
-      setMinute(val.padStart(2, '0'));
-      // Auto-advance to period
-      setTimeout(() => periodRef.current?.focus(), 0);
+      setMinute(val);
+      // For minutes 0-5, wait for second digit
+      let num = parseInt(val);
+      if (num >= 0 && num <= 5) {
+        return; // Don't auto-advance
+      }
+      // For 6-9, auto-format and advance (since 60+ is invalid)
+      else {
+        setMinute(val.padStart(2, '0'));
+        setTimeout(() => periodRef.current?.focus(), 10);
+      }
     }
     // If two digits
     else if (val.length === 2) {
@@ -98,11 +111,11 @@ export default function SmartTimeInput({ value, onChange, placeholder = "00:00 A
       if (num >= 0 && num <= 59) {
         setMinute(val);
         // Auto-advance to period
-        setTimeout(() => periodRef.current?.focus(), 0);
+        setTimeout(() => periodRef.current?.focus(), 10);
       } else {
         // Cap at 59
         setMinute('59');
-        setTimeout(() => periodRef.current?.focus(), 0);
+        setTimeout(() => periodRef.current?.focus(), 10);
       }
     }
   };
