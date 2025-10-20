@@ -193,47 +193,6 @@ export default function Sidebar({ analytics, onSearch }) {
             </div>
           </>
         )}
-
-        {activeTab === 'recent' && (
-          <div className="bg-[#1C1C1E] rounded-2xl p-4 border border-[rgba(255,255,255,0.1)]">
-            <div className="flex items-center gap-2 mb-3">
-              <Clock className="w-4 h-4 text-white" />
-              <h3 className="text-white font-medium text-sm">Recent Activity</h3>
-            </div>
-            <div className="space-y-3">
-              {(analytics.recentActivity || []).map((item) => (
-                <div key={item.id} className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-full bg-[#262626] flex items-center justify-center flex-shrink-0">
-                    <BookOpen className="w-4 h-4 text-white" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="text-white text-sm font-medium">{item.notebookName}</div>
-                    <div className="text-gray-400 text-xs">{item.timestamp}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'favorites' && (
-          <div className="bg-[#1C1C1E] rounded-2xl p-4 border border-[rgba(255,255,255,0.1)]">
-            <div className="flex items-center gap-2 mb-3">
-              <Star className="w-4 h-4 text-white" />
-              <h3 className="text-white font-medium text-sm">Favorites</h3>
-            </div>
-            <div className="space-y-3">
-              {(analytics.favorites || []).map((item) => (
-                <div key={item.id} className="flex items-center gap-3 cursor-pointer hover:bg-[#262626] p-2 rounded-xl transition-all">
-                  <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                  <div className="flex-1">
-                    <div className="text-white text-sm font-medium">{item.name}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
