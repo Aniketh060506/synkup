@@ -193,9 +193,15 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
                     value={month.focus || ''}
                     onChange={(e) => {
                       e.stopPropagation();
+                      e.preventDefault();
                       updateMonthFocus(idx, e.target.value);
                     }}
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                    }}
+                    onMouseDown={(e) => e.stopPropagation()}
+                    onFocus={(e) => e.stopPropagation()}
                     placeholder={`Enter ${month.name} goals...`}
                     className="w-full bg-transparent text-gray-400 placeholder-gray-600 focus:outline-none focus:text-white transition-all"
                   />
