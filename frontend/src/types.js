@@ -4,6 +4,8 @@ export interface Notebook {
   name: string;
   createdAt: string;
   isTarget: boolean;
+  isFavorite?: boolean;
+  lastAccessed?: string;
   color?: string;
   content: string;
   lastModified: string;
