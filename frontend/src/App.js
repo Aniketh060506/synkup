@@ -245,12 +245,12 @@ function App() {
       todoSystem,
     };
 
-    // Track newly completed todos
+    // Track newly completed todos - trackActivity mutates the data
     if (newlyCompletedCount > 0) {
       trackActivity(updatedData, 'todoCompleted', newlyCompletedCount);
     }
 
-    // Recalculate analytics to update streak
+    // Recalculate analytics to update streak and stats
     updatedData.analytics = calculateAnalytics(updatedData);
     
     setData(updatedData);
