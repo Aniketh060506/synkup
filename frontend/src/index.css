@@ -431,9 +431,20 @@ html.lenis body {
 }
 
 /* Improved Bullet and Ordered Lists */
+.ProseMirror ul,
+.ProseMirror ol {
+  color: var(--color-white);
+}
+
 .ProseMirror ul li,
 .ProseMirror ol li {
   margin-bottom: 0.3em;
+  color: var(--color-white);
+}
+
+.ProseMirror ul li::marker,
+.ProseMirror ol li::marker {
+  color: var(--color-white) !important;
 }
 
 .ProseMirror ul li p,
