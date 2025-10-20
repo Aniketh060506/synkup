@@ -174,12 +174,10 @@ export default function Sidebar({ analytics, onSearch }) {
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-gray-400">{analytics.content.totalWords.toLocaleString()} total words</span>
                 </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-400">{analytics.content.avgWordsPerNote} avg words/note</span>
-                </div>
-                {analytics.content.breakdown.slice(0, 2).map((item, idx) => (
+                {analytics.content.breakdown.slice(0, 3).map((item, idx) => (
                   <div key={idx} className="flex items-center justify-between text-sm">
-                    <span className="text-gray-400">{item.name}: {item.value}%</span>
+                    <span className="text-gray-400">{item.name}</span>
+                    <span className="text-white">{item.value.toLocaleString()} words</span>
                   </div>
                 ))}
               </div>
