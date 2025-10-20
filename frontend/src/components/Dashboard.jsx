@@ -49,6 +49,9 @@ export default function Dashboard({ notebook, notes, onBack, onSaveNote, onDelet
   const [isSaving, setIsSaving] = useState(false);
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [showHighlightPicker, setShowHighlightPicker] = useState(false);
+  const [showTableModal, setShowTableModal] = useState(false);
+  const [tableRows, setTableRows] = useState('3');
+  const [tableCols, setTableCols] = useState('3');
 
   const editor = useEditor({
     extensions: [
