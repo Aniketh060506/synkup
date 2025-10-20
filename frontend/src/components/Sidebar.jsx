@@ -174,7 +174,7 @@ export default function Sidebar({ analytics, notebooks = [], onSearch, onSelectN
                 <Activity className="w-4 h-4 text-white" />
                 <h3 className="text-white font-medium text-sm">Activity (7 days)</h3>
               </div>
-              <div className="pointer-events-none">
+              <div onWheel={(e) => e.stopPropagation()}>
                 <ResponsiveContainer width="100%" height={80}>
                   <BarChart data={analytics?.activity || []}>
                     <Bar dataKey="todos" radius={[8, 8, 0, 0]}>
