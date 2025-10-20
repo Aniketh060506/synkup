@@ -59,7 +59,7 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
   };
 
   const renderYearView = () => (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fadeIn">
       <div className="flex items-center justify-between">
         <h2 className="text-3xl font-bold text-white">Your Planning Years</h2>
         <button
@@ -71,14 +71,15 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
         </button>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {years.map((yearPlan) => (
+        {years.map((yearPlan, idx) => (
           <div
             key={yearPlan.year}
             onClick={() => {
               setSelectedYear(yearPlan);
               setCurrentView('month');
             }}
-            className="bg-[#1C1C1E] rounded-3xl p-6 border border-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)] transition-all cursor-pointer"
+            style={{ animationDelay: `${idx * 0.1}s` }}
+            className="bg-[#1C1C1E] rounded-3xl p-6 border border-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)] hover:scale-105 transition-all cursor-pointer animate-slideUp"
           >
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-white font-bold text-2xl">{yearPlan.year}</h3>
@@ -89,7 +90,7 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
         ))}
       </div>
       {years.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-20">
+        <div className="flex flex-col items-center justify-center py-20 animate-fadeIn">
           <Calendar className="w-16 h-16 text-gray-600 mb-4" />
           <h3 className="text-white text-xl font-semibold mb-2">No planning years yet</h3>
           <p className="text-gray-400 text-center mb-6">Create your first year to start planning</p>
