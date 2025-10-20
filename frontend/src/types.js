@@ -2,20 +2,10 @@
 export interface Notebook {
   id: string;
   name: string;
-  itemCount: number;
   createdAt: string;
   isTarget: boolean;
   color?: string;
-}
-
-export interface Note {
-  id: string;
-  notebookId: string;
-  title: string;
   content: string;
-  source?: string;
-  sourceUrl?: string;
-  createdAt: string;
   lastModified: string;
   wordCount: number;
   characterCount: number;
