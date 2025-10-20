@@ -99,22 +99,26 @@
 
   <div class="status">
     <div class="status-item">
-      <span class="status-label">Status</span>
-      <span class="status-value" id="status">Ready</span>
+      <span class="status-label">
+        <span id="statusDot" class="status-dot"></span>
+        Connection
+      </span>
+      <span class="status-value" id="status">Checking...</span>
     </div>
     <div class="status-item">
-      <span class="status-label">Target Notebook</span>
-      <span class="status-value" id="target">Not set</span>
+      <span class="status-label">Saving to</span>
+      <span class="status-value" id="target">...</span>
     </div>
   </div>
 
-  <button class="btn" id="openApp">Open CopyDock</button>
+  <button class="btn" id="openApp">Launch Desktop App</button>
 
   <div class="instructions">
     <strong>How to use:</strong><br>
     1. Select text on any webpage<br>
-    2. Right-click and choose "Copy to CopyDock"<br>
-    3. Content will be saved to your target notebook
+    2. Click "📋 Send to CopyDock" button<br>
+    3. Or use <kbd>Ctrl+Shift+C</kbd> shortcut<br>
+    4. Content saves to desktop app automatically
   </div>
 
   <script src="popup.js"></script>
