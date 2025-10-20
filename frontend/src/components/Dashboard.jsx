@@ -42,6 +42,8 @@ import {
   Trash2,
   Plus,
   Minus,
+  Rows,
+  Columns,
 } from 'lucide-react';
 
 export default function Dashboard({ notebook, onBack, onSaveNotebook }) {
