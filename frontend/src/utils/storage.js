@@ -67,9 +67,46 @@ export const calculateStorageSize = (data: CopyDockData): number => {
   return new Blob([jsonString]).size / (1024 * 1024);
 };
 
+// Calculate todo streak from todo system
+const calculateTodoStreak = (todoSystem) => {
+  if (!todoSystem || todoSystem.length === 0) return 0;
+  
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  let currentStreak = 0;
+  let checkDate = new Date(today);
+
+  // Go backwards from today
+  for (let i = 0; i < 365; i++) {
+    const year = checkDate.getFullYear();
+    const month = checkDate.getMonth();
+    const day = checkDate.getDate();
+
+    const yearData = todoSystem.find(y => y.year === year);
+    if (!yearData) break;
+
+    const monthData = yearData.months[month];
+    if (!monthData || !monthData.days) break;
+
+    const dayData = monthData.days.find(d => d.day === day);
+    const hasCompletedTask = dayData?.hours?.some(h => h.completed);
+
+    if (hasCompletedTask) {
+      currentStreak++;
+    } else if (i > 0) {
+      break;
+    }
+
+    checkDate.setDate(checkDate.getDate() - 1);
+  }
+
+  return currentStreak;
+};
+
 export const calculateAnalytics = (data: CopyDockData): AnalyticsData => {
   const today = new Date().toISOString().split('T')[0];
   const todayNotes = data.notes.filter(n => n.createdAt.startsWith(today));
+  const webCaptures = data.notes.filter(n => n.source).length;
   
   const totalWords = data.notes.reduce((sum, note) => sum + note.wordCount, 0);
   const avgWords = data.notes.length > 0 ? Math.round(totalWords / data.notes.length) : 0;
@@ -80,13 +117,15 @@ export const calculateAnalytics = (data: CopyDockData): AnalyticsData => {
   }));
   
   const storageMb = calculateStorageSize(data);
+  const todoStreak = calculateTodoStreak(data.todoSystem);
   
   return {
     notebookCount: data.notebooks.length,
-    streak: data.analytics.streak || 0,
+    streak: todoStreak,
     totalNotes: data.notes.length,
     storageMb,
     storageTotalMb: 10,
+    webCaptures,
     activity: data.analytics.activity || [],
     today: {
       notes: todayNotes.length,
@@ -100,8 +139,8 @@ export const calculateAnalytics = (data: CopyDockData): AnalyticsData => {
       breakdown: notebookBreakdown,
     },
     goals: data.analytics.goals || {
-      currentStreak: 0,
-      bestStreak: 0,
+      currentStreak: todoStreak,
+      bestStreak: Math.max(todoStreak, data.analytics.goals?.bestStreak || 0),
       monthlyProgress: 0,
     },
     storageBreakdown: [
