@@ -47,15 +47,21 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
     let currentStreak = 0;
     let checkDate = new Date(today);
 
+    console.log('🔥 Calculating streak. Today:', today.toDateString());
+    console.log('🔥 TodoData:', todoData);
+
     // Go backwards from today
     for (let i = 0; i < 365; i++) {
       const year = checkDate.getFullYear();
       const month = checkDate.getMonth();
       const day = checkDate.getDate();
 
+      console.log(`🔥 Checking: ${year}-${month + 1}-${day} (iteration ${i})`);
+
       // Use todoData instead of years to ensure we have the latest data
       const yearData = todoData.find(y => y.year === year);
       if (!yearData) {
+        console.log(`🔥 No year data for ${year}`);
         // No data for this year - if it's not today, break the streak
         if (i > 0) break;
         checkDate.setDate(checkDate.getDate() - 1);
@@ -64,6 +70,7 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
 
       const monthData = yearData.months[month];
       if (!monthData || !monthData.days) {
+        console.log(`🔥 No month data for ${month + 1}`);
         // No data for this month - if it's not today, break the streak
         if (i > 0) break;
         checkDate.setDate(checkDate.getDate() - 1);
@@ -71,19 +78,25 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
       }
 
       const dayData = monthData.days.find(d => d.day === day);
+      console.log(`🔥 Day data for ${day}:`, dayData);
+      
       // Check if at least one task is completed for this day
       const hasCompletedTask = dayData?.hours?.some(h => h.completed);
+      console.log(`🔥 Has completed task: ${hasCompletedTask}`);
 
       if (hasCompletedTask) {
         currentStreak++;
+        console.log(`🔥 Streak incremented to: ${currentStreak}`);
       } else if (i > 0) {
         // Only break if it's not today (allow today to have no tasks yet)
+        console.log(`🔥 Breaking streak at iteration ${i}`);
         break;
       }
 
       checkDate.setDate(checkDate.getDate() - 1);
     }
 
+    console.log(`🔥 Final streak: ${currentStreak}`);
     setStreak(currentStreak);
   };
 
