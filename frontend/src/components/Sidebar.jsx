@@ -228,6 +228,34 @@ export default function Sidebar({ analytics, onSearch }) {
             </div>
           </>
         )}
+
+        {activeTab === 'recent' && (
+          <div className="bg-[#1C1C1E] rounded-2xl p-4 border border-[rgba(255,255,255,0.1)]">
+            <div className="flex items-center gap-2 mb-3">
+              <Clock className="w-4 h-4 text-white" />
+              <h3 className="text-white font-medium text-sm">Recent Notebooks</h3>
+            </div>
+            <div className="space-y-3">
+              <div className="text-gray-400 text-sm text-center py-4">
+                Recently accessed notebooks will appear here
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'favorites' && (
+          <div className="bg-[#1C1C1E] rounded-2xl p-4 border border-[rgba(255,255,255,0.1)]">
+            <div className="flex items-center gap-2 mb-3">
+              <Star className="w-4 h-4 text-white" />
+              <h3 className="text-white font-medium text-sm">Favorite Notebooks</h3>
+            </div>
+            <div className="space-y-3">
+              <div className="text-gray-400 text-sm text-center py-4">
+                Star notebooks to add them to your favorites
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
