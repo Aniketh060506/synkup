@@ -90,42 +90,7 @@ export default function Sidebar({ analytics, onSearch }) {
         </div>
       </div>
 
-      {/* Tab Navigation */}
-      <div className="px-5 py-3 border-b border-[rgba(255,255,255,0.1)] flex items-center gap-4 flex-shrink-0 overflow-x-auto">
-        <button
-          onClick={() => setActiveTab('analytics')}
-          className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm transition-all ${
-            activeTab === 'analytics'
-              ? 'bg-white text-black'
-              : 'text-gray-400 hover:text-white'
-          }`}
-        >
-          <TrendingUp className="w-4 h-4" />
-          Analytics
-        </button>
-        <button
-          onClick={() => setActiveTab('recent')}
-          className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm transition-all ${
-            activeTab === 'recent'
-              ? 'bg-white text-black'
-              : 'text-gray-400 hover:text-white'
-          }`}
-        >
-          <Clock className="w-4 h-4" />
-          Recent
-        </button>
-        <button
-          onClick={() => setActiveTab('favorites')}
-          className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm transition-all ${
-            activeTab === 'favorites'
-              ? 'bg-white text-black'
-              : 'text-gray-400 hover:text-white'
-          }`}
-        >
-          <Star className="w-4 h-4" />
-          Favorites
-        </button>
-      </div>
+      {/* Tab Navigation - Removed, only Analytics */}
 
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto overflow-x-hidden px-5 py-4 space-y-4 pb-8">
