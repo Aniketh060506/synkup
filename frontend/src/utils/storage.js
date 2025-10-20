@@ -15,6 +15,8 @@ export const getInitialData = (): CopyDockData => {
       today: {
         todos: 0,
         captures: 0,
+        notes: 0,
+        words: 0,
       },
       content: {
         totalWords: 0,
@@ -26,8 +28,14 @@ export const getInitialData = (): CopyDockData => {
         monthlyProgress: 0,
       },
       storageBreakdown: [],
+      weeklyInsights: {
+        mostProductiveDay: 'N/A',
+        averageTasksPerDay: 0,
+        trend: 'stable',
+      },
     },
     todoSystem: [],
+    activityLog: {},
   };
 };
 
