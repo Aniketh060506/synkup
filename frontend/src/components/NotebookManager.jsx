@@ -81,6 +81,11 @@ export default function NotebookManager({ notebooks, onCreateNotebook, onSelectN
                   Target
                 </div>
               )}
+              {notebook.isFavorite && (
+                <div className={`absolute ${notebook.isTarget ? 'top-12' : 'top-4'} right-4`}>
+                  <Star className="w-5 h-5 text-yellow-500 fill-yellow-500" />
+                </div>
+              )}
               <div className="flex items-start gap-4 mb-4">
                 <div className="w-12 h-12 rounded-full bg-[#262626] flex items-center justify-center flex-shrink-0">
                   <BookOpen className="w-6 h-6 text-white" />
