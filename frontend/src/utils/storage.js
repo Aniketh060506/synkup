@@ -331,14 +331,25 @@ export const generateWeeklyInsights = (activityLog) => {
     });
   }
   
-  // Find most productive day
+  // Calculate total tasks across the week
+  const totalTasks = last7Days.reduce((sum, day) => sum + day.totalTasks, 0);
+  
+  // If no tasks at all, return N/A
+  if (totalTasks === 0) {
+    return {
+      mostProductiveDay: 'N/A',
+      averageTasksPerDay: 0,
+      trend: 'stable',
+    };
+  }
+  
+  // Find most productive day (only among days with tasks)
   const mostProductive = last7Days.reduce((max, day) => 
     day.totalTasks > max.totalTasks ? day : max, 
     last7Days[0]
   );
   
   // Calculate average
-  const totalTasks = last7Days.reduce((sum, day) => sum + day.totalTasks, 0);
   const averageTasksPerDay = Math.round(totalTasks / 7);
   
   // Determine trend (compare first 3 days vs last 3 days)
