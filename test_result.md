@@ -270,6 +270,9 @@ test_plan:
     - "Test smart checkbox hierarchy in hourly view"
     - "Test streak tracking updates correctly"
     - "Test add/delete task functionality"
+    - "Test global streak display on all views"
+    - "Test Quick Jump to Today feature"
+    - "Test Left/Right arrow navigation (years, months, days)"
   stuck_tasks: []
   test_all: true
   test_priority: "high_first"
