@@ -631,3 +631,59 @@ agent_communication:
       ✓ Trend shows "Increasing", "Decreasing", or "Stable" based on task patterns
       ✓ All stats update in real-time when tasks are toggled
       ✓ Stats persist correctly after page refresh
+
+  - agent: "main"
+    message: |
+      🎨 DYNAMIC ACTIVITY CHART VISUALIZATION UPGRADE:
+      
+      User reported: "cannot see the graph line make it a very dynamic lines dude"
+      
+      Transformed the activity chart from basic bars to a highly dynamic, animated visualization:
+      
+      1. **Line + Area Combination Chart**:
+         - Replaced BarChart with ComposedChart
+         - Added gradient-filled areas under each line for depth
+         - Blue gradient for Tasks, Green for Notes, Purple for Clips
+      
+      2. **Visible, Dynamic Lines**:
+         - Thick 3px lines in vibrant colors (#60A5FA, #34D399, #A78BFA)
+         - Smooth "monotone" curves for natural flow
+         - Each data point marked with visible dots
+      
+      3. **Enhanced Visual Effects**:
+         - CSS glow effects on lines (drop-shadow filter)
+         - Pulsing animation on active dots
+         - Larger active dots on hover (6px radius)
+         - Subtle grid lines for better readability
+      
+      4. **Better Data Presentation**:
+         - Added YAxis to show scale
+         - Increased chart height from 100px to 180px
+         - Interactive tooltip showing full date and values
+         - Day labels on X-axis (M, T, W, T, F, S, S)
+      
+      5. **Smooth Animations**:
+         - Staggered animation timing (0ms, 200ms, 400ms) for each metric
+         - 1-second animation duration for smooth entrance
+         - Hover transitions on lines
+      
+      Changes Made:
+      - /app/frontend/src/components/Sidebar.jsx:
+        * Lines 1-13: Added ComposedChart, Line, Area, CartesianGrid, Tooltip imports
+        * Lines 171-267: Complete chart redesign with gradients, lines, areas, and animations
+      
+      - /app/frontend/src/index.css:
+        * Lines 516-547: Added CSS for line glow effects and animations
+        * Drop shadows and pulse keyframes for visual appeal
+      
+      Now Working:
+      ✓ Lines are clearly visible with 3px thickness
+      ✓ Gradient areas show beneath each line
+      ✓ Smooth animations when chart loads
+      ✓ Interactive tooltips on hover
+      ✓ Glowing effect on lines and dots
+      ✓ YAxis shows scale for context
+      ✓ Much taller chart (180px) for better visibility
+      ✓ Grid lines aid in reading values
+      ✓ Beautiful, dynamic visualization that's easy to read
+
