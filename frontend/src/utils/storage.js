@@ -264,18 +264,39 @@ export const generate7DayActivity = (activityLog) => {
   return result;
 };
 
-// Get today's statistics
-export const getTodayStats = (activityLog) => {
-  const today = new Date().toISOString().split('T')[0];
-  const todayData = activityLog[today] || {
-    todosCompleted: 0,
+// Get today's statistics - calculate directly from todo system and activity log
+export const getTodayStats = (activityLog, todoSystem) => {
+  const today = new Date();
+  const todayYear = today.getFullYear();
+  const todayMonth = today.getMonth();
+  const todayDay = today.getDate();
+  
+  // Calculate actual completed todos for today from todo system
+  let todosCompleted = 0;
+  
+  if (todoSystem && todoSystem.length > 0) {
+    const yearData = todoSystem.find(y => y.year === todayYear);
+    if (yearData && yearData.months[todayMonth]) {
+      const monthData = yearData.months[todayMonth];
+      if (monthData.days) {
+        const dayData = monthData.days.find(d => d.day === todayDay);
+        if (dayData && dayData.hours) {
+          todosCompleted = dayData.hours.filter(h => h.completed).length;
+        }
+      }
+    }
+  }
+  
+  // Get other stats from activity log
+  const todayStr = today.toISOString().split('T')[0];
+  const todayData = activityLog[todayStr] || {
     notesCreated: 0,
     captures: 0,
     wordsWritten: 0,
   };
   
   return {
-    todos: todayData.todosCompleted || 0,
+    todos: todosCompleted,
     captures: todayData.captures || 0,
     notes: todayData.notesCreated || 0,
     words: todayData.wordsWritten || 0,
