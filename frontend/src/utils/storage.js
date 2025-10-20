@@ -131,6 +131,10 @@ export const calculateAnalytics = (data: CopyDockData): AnalyticsData => {
   const storageMb = calculateStorageSize(data);
   const todoStreak = calculateTodoStreak(data.todoSystem);
   
+  // Calculate best streak - maintain the highest ever streak
+  const previousBestStreak = data.analytics.goals?.bestStreak || 0;
+  const bestStreak = Math.max(todoStreak, previousBestStreak);
+  
   return {
     notebookCount: data.notebooks.length,
     streak: todoStreak,
@@ -150,10 +154,10 @@ export const calculateAnalytics = (data: CopyDockData): AnalyticsData => {
       avgWordsPerNote: avgWords,
       breakdown: notebookBreakdown,
     },
-    goals: data.analytics.goals || {
+    goals: {
       currentStreak: todoStreak,
-      bestStreak: Math.max(todoStreak, data.analytics.goals?.bestStreak || 0),
-      monthlyProgress: 0,
+      bestStreak: bestStreak,
+      monthlyProgress: data.analytics.goals?.monthlyProgress || 0,
     },
     storageBreakdown: [
       { name: 'Notes', value: storageMb * 0.7 },
