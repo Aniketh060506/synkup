@@ -186,7 +186,16 @@ export default function Dashboard({ notebook, notes, onBack, onSaveNote, onDelet
   };
 
   const addTable = () => {
-    editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
+    setShowTableModal(true);
+  };
+
+  const insertTable = () => {
+    const rows = parseInt(tableRows) || 3;
+    const cols = parseInt(tableCols) || 3;
+    editor.chain().focus().insertTable({ rows, cols, withHeaderRow: true }).run();
+    setShowTableModal(false);
+    setTableRows('3');
+    setTableCols('3');
   };
 
   const colors = [
