@@ -151,6 +151,20 @@ function App() {
     }, '*');
   };
 
+  const handleToggleFavorite = (notebookId) => {
+    const updatedData = {
+      ...data,
+      notebooks: data.notebooks.map(nb =>
+        nb.id === notebookId
+          ? { ...nb, isFavorite: !nb.isFavorite }
+          : nb
+      ),
+    };
+
+    setData(updatedData);
+    saveData(updatedData);
+  };
+
   const handleSaveNotebook = (notebookId, content, wordCount, characterCount) => {
     const updatedData = {
       ...data,
