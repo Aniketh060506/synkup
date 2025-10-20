@@ -869,3 +869,109 @@ agent_communication:
       ✓ Updates in real-time when tasks are completed
       ✓ Perfect graph depicting all metrics!
 
+  - agent: "main"
+    message: |
+      ⚪ WHITE BARS IMPLEMENTED - Fixed & Always Visible:
+      
+      Changed all activity chart bars to solid white with varying opacity levels.
+      
+      File: /app/frontend/src/components/Sidebar.jsx
+      - All bars now white (#FFFFFF)
+      - Different opacity for differentiation (90%, 70%, 50%)
+      - minPointSize: 10 for maximum visibility
+
+  - agent: "main"
+    message: |
+      🚀 CHROME EXTENSION - COMPLETE IMPLEMENTATION (Native Messaging):
+      
+      Built full-featured Chrome extension for CopyDock desktop app!
+      
+      ✅ PHASE 1: Floating Selection Button
+      - Beautiful floating "📋 Send to CopyDock" button appears on text selection
+      - Smooth animations and modern dark design
+      - Auto-hides on click outside or after capture
+      - Visual toast notifications: "✅ Saved to [Notebook]"
+      
+      ✅ PHASE 2: Native Messaging (NO LOCALHOST!)
+      - Uses Chrome Native Messaging API for desktop app communication
+      - Direct STDIN/STDOUT communication
+      - Works with any desktop app (.exe, .app, binary)
+      - Connection status monitoring with auto-reconnect
+      - Protocol: JSON messages with 4-byte length prefix
+      
+      ✅ PHASE 3: Enhanced Popup
+      - Live connection status indicator (Connected ✅ / Disconnected ❌)
+      - Shows actual target notebook name (not just "Set")
+      - Real-time status updates every 3 seconds
+      - Clear instructions for users
+      
+      ✅ PHASE 4: Keyboard Shortcuts
+      - Ctrl+Shift+C (Windows/Linux)
+      - Cmd+Shift+C (Mac)
+      - Works from anywhere, instant capture
+      
+      ✅ PHASE 5: Professional Styling
+      - Custom CSS for floating button
+      - Gradient background with glassmorphism
+      - Hover effects and smooth transitions
+      - Toast notification animations
+      
+      Files Created/Modified:
+      - /app/chrome-extension/background.js: Native messaging implementation
+      - /app/chrome-extension/content.js: Floating button + selection handling
+      - /app/chrome-extension/content.css: Beautiful button styling
+      - /app/chrome-extension/manifest.json: Added nativeMessaging permission + keyboard commands
+      - /app/chrome-extension/popup.html: Enhanced UI with status dot
+      - /app/chrome-extension/popup.js: Connection status checker
+      - /app/chrome-extension/com.copydock.app.json: Native messaging host manifest
+      - /app/chrome-extension/README.md: Complete setup guide with examples
+      
+      📋 MESSAGE PROTOCOL:
+      
+      Extension → Desktop App:
+      ```json
+      {
+        "type": "CONTENT_CAPTURE",
+        "payload": {
+          "selectedText": "...",
+          "selectedHTML": "...",
+          "sourceDomain": "wikipedia.org",
+          "sourceUrl": "https://...",
+          "targetNotebookId": "nb_123",
+          "timestamp": "2025-01-20T..."
+        }
+      }
+      ```
+      
+      Desktop App → Extension:
+      ```json
+      {
+        "type": "CAPTURE_SUCCESS",
+        "notebookName": "Work Notes"
+      }
+      ```
+      
+      🎯 USER EXPERIENCE:
+      1. Browse any website
+      2. Select text
+      3. Floating button appears: "📋 Send to CopyDock"
+      4. Click or press Ctrl+Shift+C
+      5. Toast: "✅ Saved to Work Notes"
+      6. Content in desktop app instantly!
+      
+      📦 DESKTOP APP REQUIREMENTS:
+      - Implement Chrome Native Messaging protocol (STDIN/STDOUT)
+      - Register manifest file with Chrome
+      - Handle JSON messages with 4-byte length prefix
+      - Python example code provided in README
+      
+      🔧 SETUP STEPS:
+      1. Load extension in Chrome (chrome://extensions)
+      2. Note Extension ID
+      3. Update com.copydock.app.json with app path + extension ID
+      4. Register manifest with Chrome (Windows registry / Mac plist / Linux config)
+      5. Start desktop app
+      6. Extension shows "Connected ✅"
+      
+      Ready for desktop app integration! 🎉
+
