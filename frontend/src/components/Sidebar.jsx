@@ -90,7 +90,42 @@ export default function Sidebar({ analytics, onSearch }) {
         </div>
       </div>
 
-      {/* Tab Navigation - Removed, only Analytics */}
+      {/* Tab Navigation - Vertical */}
+      <div className="px-5 py-3 border-b border-[rgba(255,255,255,0.1)] flex flex-col gap-2 flex-shrink-0">
+        <button
+          onClick={() => setActiveTab('analytics')}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm transition-all ${
+            activeTab === 'analytics'
+              ? 'bg-white text-black'
+              : 'text-gray-400 hover:text-white hover:bg-[#1C1C1E]'
+          }`}
+        >
+          <TrendingUp className="w-4 h-4" />
+          Analytics
+        </button>
+        <button
+          onClick={() => setActiveTab('recent')}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm transition-all ${
+            activeTab === 'recent'
+              ? 'bg-white text-black'
+              : 'text-gray-400 hover:text-white hover:bg-[#1C1C1E]'
+          }`}
+        >
+          <Clock className="w-4 h-4" />
+          Recent
+        </button>
+        <button
+          onClick={() => setActiveTab('favorites')}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm transition-all ${
+            activeTab === 'favorites'
+              ? 'bg-white text-black'
+              : 'text-gray-400 hover:text-white hover:bg-[#1C1C1E]'
+          }`}
+        >
+          <Star className="w-4 h-4" />
+          Favorites
+        </button>
+      </div>
 
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto overflow-x-hidden px-5 py-4 space-y-4 pb-8">
