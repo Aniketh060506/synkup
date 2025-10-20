@@ -433,3 +433,30 @@ agent_communication:
       ✓ Today is allowed to have zero tasks without breaking streak
       
       Ready for testing!
+
+  - agent: "main"
+    message: |
+      🐛 FOUND ROOT CAUSE - Streak was 0 because:
+      - System date: October 20, 2025
+      - Completed task date: January 1, 2025
+      - Old logic: Started from TODAY (Oct 20) backwards → found no tasks → streak = 0
+      - Issue: User completing tasks on past/future dates weren't counted
+      
+      🔧 REAL FIX APPLIED:
+      Changed streak calculation to start from MOST RECENT DAY with completed tasks, not today's date.
+      
+      New Logic:
+      1. Scan all todo data to find days with completed tasks
+      2. Sort by date (most recent first)
+      3. Start streak calculation from most recent date with tasks
+      4. Count backwards consecutively
+      
+      Updated Files:
+      - /app/frontend/src/components/TodoSystem.jsx: New calculateGlobalStreak logic
+      - /app/frontend/src/utils/storage.js: New calculateTodoStreak logic
+      
+      Now streak works correctly:
+      ✅ Complete task on ANY day (past, present, future) → streak updates
+      ✅ Streak counts consecutive days with ≥1 completed task
+      ✅ Works when planning ahead or catching up on past days
+      ✅ Synced between TodoSystem and Sidebar
