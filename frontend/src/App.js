@@ -166,6 +166,10 @@ function App() {
   };
 
   const handleSaveNotebook = (notebookId, content, wordCount, characterCount) => {
+    const notebook = data.notebooks.find(nb => nb.id === notebookId);
+    const previousWordCount = notebook ? notebook.wordCount : 0;
+    const wordsAdded = Math.max(0, wordCount - previousWordCount);
+    
     const updatedData = {
       ...data,
       notebooks: data.notebooks.map(nb =>
@@ -174,12 +178,18 @@ function App() {
               ...nb, 
               content,
               lastModified: new Date().toISOString(),
+              lastAccessed: new Date().toISOString(),
               wordCount,
               characterCount,
             }
           : nb
       ),
     };
+
+    // Track words written
+    if (wordsAdded > 0) {
+      trackActivity(updatedData, 'wordsWritten', wordsAdded);
+    }
 
     updatedData.analytics = calculateAnalytics(updatedData);
     setData(updatedData);
