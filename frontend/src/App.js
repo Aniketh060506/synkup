@@ -271,7 +271,9 @@ function App() {
         {showSidebar && (
           <Sidebar
             analytics={data.analytics}
+            notebooks={data.notebooks}
             onSearch={(query) => console.log('Search:', query)}
+            onSelectNotebook={handleSelectNotebook}
           />
         )}
 
