@@ -38,32 +38,42 @@ export default function SmartTimeInput({ value, onChange, placeholder = "00:00 A
       return;
     }
 
+    // Limit to 2 digits max
+    if (val.length > 2) {
+      val = val.slice(0, 2);
+    }
+
     // Convert to number
     let num = parseInt(val);
     
     // If single digit
     if (val.length === 1) {
+      setHour(val);
       // If 0 or 1, wait for second digit (user might want 10, 11, 12)
       if (num === 0 || num === 1) {
-        setHour(val);
-        return;
+        return; // Don't auto-advance, wait for second digit
       }
-      // If 2-9, auto-format and advance
+      // If 2-9, auto-format with leading zero and advance
       else if (num >= 2 && num <= 9) {
         setHour(val.padStart(2, '0'));
-        setTimeout(() => minuteRef.current?.focus(), 0);
+        setTimeout(() => minuteRef.current?.focus(), 10);
       }
     } 
     // If two digits
     else if (val.length === 2) {
+      // Validate hour range (01-12)
       if (num >= 1 && num <= 12) {
         setHour(val);
         // Auto-advance to minutes
-        setTimeout(() => minuteRef.current?.focus(), 0);
-      } else if (num === 0 || num > 12) {
-        // Invalid - default to 12
+        setTimeout(() => minuteRef.current?.focus(), 10);
+      } else if (num === 0) {
+        // 00 is invalid, default to 01
+        setHour('01');
+        setTimeout(() => minuteRef.current?.focus(), 10);
+      } else if (num > 12) {
+        // Greater than 12, cap at 12
         setHour('12');
-        setTimeout(() => minuteRef.current?.focus(), 0);
+        setTimeout(() => minuteRef.current?.focus(), 10);
       }
     }
   };
