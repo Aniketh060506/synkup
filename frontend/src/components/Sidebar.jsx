@@ -301,7 +301,7 @@ export default function Sidebar({ analytics, onSearch }) {
               <h3 className="text-white font-medium text-sm">Favorites</h3>
             </div>
             <div className="space-y-3">
-              {analytics.favorites.map((item) => (
+              {(analytics.favorites || []).map((item) => (
                 <div key={item.id} className="flex items-center gap-3 cursor-pointer hover:bg-[#262626] p-2 rounded-xl transition-all">
                   <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
                   <div className="flex-1">
