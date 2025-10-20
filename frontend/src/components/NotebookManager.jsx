@@ -11,7 +11,7 @@ import {
   Star,
 } from 'lucide-react';
 
-export default function NotebookManager({ notebooks, onCreateNotebook, onSelectNotebook, onDeleteNotebook, onSetTarget }) {
+export default function NotebookManager({ notebooks, onCreateNotebook, onSelectNotebook, onDeleteNotebook, onSetTarget, onToggleFavorite }) {
   const [viewMode, setViewMode] = useState('grid');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newNotebookName, setNewNotebookName] = useState('');
