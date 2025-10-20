@@ -39,6 +39,9 @@ import {
   Heading3,
   CheckSquare,
   Palette,
+  Trash2,
+  Plus,
+  Minus,
 } from 'lucide-react';
 
 export default function Dashboard({ notebook, onBack, onSaveNotebook }) {
