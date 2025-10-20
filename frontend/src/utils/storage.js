@@ -370,26 +370,3 @@ export const getFavoriteNotebooks = (notebooks) => {
     .filter(nb => nb.isFavorite)
     .sort((a, b) => new Date(b.lastModified) - new Date(a.lastModified));
 };
-
-    today: {
-      todos: todayStats.todos,
-      captures: todayStats.captures,
-      notes: todayStats.notes,
-      words: todayStats.words,
-    },
-    content: {
-      totalWords,
-      breakdown: notebookBreakdown,
-    },
-    goals: {
-      currentStreak: todoStreak,
-      bestStreak: bestStreak,
-      monthlyProgress: monthlyProgress,
-    },
-    storageBreakdown: [
-      { name: 'Notebooks', value: storageMb * 0.9 },
-      { name: 'Todos', value: storageMb * 0.1 },
-    ],
-    weeklyInsights: weeklyInsights,
-  };
-};
