@@ -402,3 +402,34 @@ agent_communication:
       - Logic checks for dayData?.hours?.some(h => h.completed) which is correct
       - Need to ensure synchronization between TodoSystem streak and Sidebar streak
       - Will fix any inconsistencies in the streak calculation logic
+
+  - agent: "main"
+    message: |
+      ✅ STREAK TRACKING LOGIC FIXED:
+      
+      Fixed Issues:
+      1. TodoSystem.jsx was using stale 'years' variable instead of 'todoData' prop
+      2. Both streak calculators now properly handle missing data (continue checking instead of breaking)
+      3. Best streak tracking improved in calculateAnalytics
+      4. Consistent logic between TodoSystem and Sidebar
+      
+      Changes Made:
+      - /app/frontend/src/components/TodoSystem.jsx:
+        * Updated calculateGlobalStreak to use todoData instead of years
+        * Added proper continue logic when year/month data is missing
+        * Ensures streak updates immediately when tasks are toggled
+      
+      - /app/frontend/src/utils/storage.js:
+        * Updated calculateTodoStreak with same consistent logic
+        * Added continue logic for missing year/month data
+        * Fixed bestStreak tracking to properly maintain highest streak
+      
+      How It Works Now:
+      ✓ When you complete at least 1 task in a day, streak increments
+      ✓ Streak shows in Todo System view (with flame icon)
+      ✓ Same streak reflects in Sidebar analytics
+      ✓ Best streak is tracked and updated automatically
+      ✓ Streak breaks only if a previous day had zero completed tasks
+      ✓ Today is allowed to have zero tasks without breaking streak
+      
+      Ready for testing!
