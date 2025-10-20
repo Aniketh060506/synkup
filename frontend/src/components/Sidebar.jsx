@@ -263,10 +263,10 @@ export default function Sidebar({ analytics, onSearch }) {
                 <h3 className="text-white font-medium text-sm">Weekly Insights</h3>
               </div>
               <div className="space-y-2">
-                <div className="text-sm text-gray-400">Most productive: {analytics.weeklyInsights.mostProductiveDay}</div>
-                <div className="text-sm text-gray-400">{analytics.weeklyInsights.totalWords} words written</div>
-                <div className="text-sm text-gray-400">{analytics.weeklyInsights.notesCreated} notes created</div>
-                <div className="text-sm text-gray-400">{analytics.weeklyInsights.todosCompleted} todos completed</div>
+                <div className="text-sm text-gray-400">Most productive: {analytics.weeklyInsights?.mostProductiveDay || 'N/A'}</div>
+                <div className="text-sm text-gray-400">{analytics.weeklyInsights?.totalWords || 0} words written</div>
+                <div className="text-sm text-gray-400">{analytics.weeklyInsights?.notesCreated || 0} notes created</div>
+                <div className="text-sm text-gray-400">{analytics.weeklyInsights?.todosCompleted || 0} todos completed</div>
               </div>
             </div>
           </>
