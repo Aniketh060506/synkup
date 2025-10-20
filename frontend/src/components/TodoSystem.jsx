@@ -384,9 +384,15 @@ export default function TodoSystem({ todoData, onUpdateTodos, onBack }) {
                         value={dayData?.goal || ''}
                         onChange={(e) => {
                           e.stopPropagation();
+                          e.preventDefault();
                           updateDayGoal(dayNum, e.target.value);
                         }}
-                        onClick={(e) => e.stopPropagation()}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                        }}
+                        onMouseDown={(e) => e.stopPropagation()}
+                        onFocus={(e) => e.stopPropagation()}
                         placeholder={`Day ${dayNum} tasks...`}
                         className="w-full bg-transparent text-gray-400 placeholder-gray-600 focus:outline-none focus:text-white transition-all"
                       />
