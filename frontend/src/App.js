@@ -245,10 +245,8 @@ function App() {
           {currentView === 'editor' && selectedNotebook && (
             <Dashboard
               notebook={selectedNotebook}
-              notes={data.notes.filter(n => n.notebookId === selectedNotebook.id)}
               onBack={handleBackToNotebooks}
-              onSaveNote={handleSaveNote}
-              onDeleteNote={handleDeleteNote}
+              onSaveNotebook={handleSaveNotebook}
             />
           )}
 
