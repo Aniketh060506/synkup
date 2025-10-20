@@ -226,41 +226,6 @@ export default function Sidebar({ analytics, onSearch }) {
                 ))}
               </div>
             </div>
-
-            {/* Quick Templates */}
-            <div className="bg-[#1C1C1E] rounded-2xl p-4 border border-[rgba(255,255,255,0.1)]">
-              <div className="flex items-center gap-2 mb-3">
-                <BookOpen className="w-4 h-4 text-white" />
-                <h3 className="text-white font-medium text-sm">Quick Templates</h3>
-              </div>
-              <div className="space-y-2">
-                {(analytics.templates || []).map((template) => (
-                  <div key={template.id} className="flex items-center justify-between">
-                    <span className="text-gray-400 text-sm">{template.name} ({template.useCount}x)</span>
-                    <button className="px-3 py-1 bg-white text-black text-xs rounded-full hover:scale-105 transition-all">
-                      Use
-                    </button>
-                  </div>
-                ))}
-                {(!analytics.templates || analytics.templates.length === 0) && (
-                  <div className="text-gray-500 text-sm text-center py-4">No templates yet</div>
-                )}
-              </div>
-            </div>
-
-            {/* Weekly Insights */}
-            <div className="bg-[#1C1C1E] rounded-2xl p-4 border border-[rgba(255,255,255,0.1)]">
-              <div className="flex items-center gap-2 mb-3">
-                <Calendar className="w-4 h-4 text-white" />
-                <h3 className="text-white font-medium text-sm">Weekly Insights</h3>
-              </div>
-              <div className="space-y-2">
-                <div className="text-sm text-gray-400">Most productive: {analytics.weeklyInsights?.mostProductiveDay || 'N/A'}</div>
-                <div className="text-sm text-gray-400">{analytics.weeklyInsights?.totalWords || 0} words written</div>
-                <div className="text-sm text-gray-400">{analytics.weeklyInsights?.notesCreated || 0} notes created</div>
-                <div className="text-sm text-gray-400">{analytics.weeklyInsights?.todosCompleted || 0} todos completed</div>
-              </div>
-            </div>
           </>
         )}
 
