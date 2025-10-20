@@ -258,3 +258,27 @@ agent_communication:
       2. Check/uncheck hourly tasks and verify day checkbox updates
       3. Add a new task after all are checked - day should uncheck
       4. Verify streak updates correctly
+  
+  - agent: "main"
+    message: |
+      NEW FEATURES ADDED:
+      
+      1. Global Streak Display (Top of All Views):
+         - Streak now visible on Year, Month, Day, and Hour views
+         - Shows flame icon with day count
+         - Calculates across all years and months
+         - Orange when active, gray when 0
+      
+      2. Quick Jump Functionality:
+         - "Quick Jump" button on all views
+         - Dropdown with "Jump to Today" option
+         - Navigates directly to today's hourly task view
+         - Auto-creates year/month if needed
+      
+      3. Left/Right Arrow Navigation:
+         - Month view: Navigate between years
+         - Day view: Navigate between months (wraps to prev/next year)
+         - Hour view: Navigate between days in current month
+         - Arrows disabled at boundaries
+      
+      Ready for testing these new features!
