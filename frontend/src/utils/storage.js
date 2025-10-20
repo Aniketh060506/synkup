@@ -159,14 +159,14 @@ export const calculateAnalytics = (data: CopyDockData): AnalyticsData => {
   // Generate 7-day activity data
   const activityData = generate7DayActivity(data.activityLog || {});
   
-  // Get today's stats
-  const todayStats = getTodayStats(data.activityLog || {});
+  // Get today's stats - pass todoSystem for real-time calculation
+  const todayStats = getTodayStats(data.activityLog || {}, data.todoSystem);
   
   // Calculate monthly progress
   const monthlyProgress = calculateMonthlyProgress(data.todoSystem);
   
-  // Generate weekly insights
-  const weeklyInsights = generateWeeklyInsights(data.activityLog || {});
+  // Generate weekly insights - pass todoSystem for real-time calculation
+  const weeklyInsights = generateWeeklyInsights(data.activityLog || {}, data.todoSystem);
   
   return {
     notebookCount: data.notebooks.length,
