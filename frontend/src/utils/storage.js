@@ -334,8 +334,8 @@ export const calculateMonthlyProgress = (todoSystem) => {
   return totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
 };
 
-// Generate weekly insights
-export const generateWeeklyInsights = (activityLog) => {
+// Generate weekly insights - calculate directly from todo system
+export const generateWeeklyInsights = (activityLog, todoSystem) => {
   const last7Days = [];
   const today = new Date();
   
@@ -343,12 +343,26 @@ export const generateWeeklyInsights = (activityLog) => {
     const date = new Date(today);
     date.setDate(date.getDate() - i);
     const dateStr = date.toISOString().split('T')[0];
-    const dayData = activityLog[dateStr] || { todosCompleted: 0 };
+    
+    // Calculate actual completed todos for this day from todo system
+    let completedTodos = 0;
+    if (todoSystem && todoSystem.length > 0) {
+      const yearData = todoSystem.find(y => y.year === date.getFullYear());
+      if (yearData && yearData.months[date.getMonth()]) {
+        const monthData = yearData.months[date.getMonth()];
+        if (monthData.days) {
+          const dayData = monthData.days.find(d => d.day === date.getDate());
+          if (dayData && dayData.hours) {
+            completedTodos = dayData.hours.filter(h => h.completed).length;
+          }
+        }
+      }
+    }
     
     last7Days.push({
       date: dateStr,
       dayName: date.toLocaleDateString('en-US', { weekday: 'long' }),
-      totalTasks: dayData.todosCompleted || 0,
+      totalTasks: completedTodos,
     });
   }
   
@@ -360,7 +374,7 @@ export const generateWeeklyInsights = (activityLog) => {
     return {
       mostProductiveDay: 'N/A',
       averageTasksPerDay: 0,
-      trend: 'stable',
+      trend: 'Stable',
     };
   }
   
