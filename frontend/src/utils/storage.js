@@ -268,14 +268,14 @@ export const generate7DayActivity = (activityLog, todoSystem = [], notebooks = [
     // Scan todoSystem for completed tasks on this specific date
     for (const year of todoSystem) {
       if (year.year === targetYear && year.months) {
-        for (const month of year.months) {
-          if (month.month === targetMonth && month.days) {
-            for (const day of month.days) {
-              if (day.day === targetDay && day.hours) {
-                for (const hour of day.hours) {
-                  if (hour.completed) {
-                    todosCompletedCount++;
-                  }
+        // Access month directly by index (months is an array where index = month number)
+        const monthData = year.months[targetMonth];
+        if (monthData && monthData.days) {
+          for (const day of monthData.days) {
+            if (day.day === targetDay && day.hours) {
+              for (const hour of day.hours) {
+                if (hour.completed) {
+                  todosCompletedCount++;
                 }
               }
             }
