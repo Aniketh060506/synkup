@@ -36,8 +36,9 @@
     ],
     "extraResources": [
       {
-        "from": "../backend/dist/copydock-backend.exe",
-        "to": "backend/copydock-backend.exe"
+        "from": "../backend",
+        "to": "backend",
+        "filter": ["server.py", "storage_service.py", "requirements.txt"]
       },
       {
         "from": "../frontend/build",
