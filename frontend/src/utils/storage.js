@@ -246,6 +246,8 @@ export const generate7DayActivity = (activityLog, todoSystem = [], notebooks = [
   const result = [];
   const today = new Date();
   
+  console.log('📈 generate7DayActivity called with activityLog:', activityLog);
+  
   // Demo data pattern for visual appeal (will be replaced by real data)
   const demoPattern = [3, 5, 4, 8, 6, 7, 5]; // Varying heights for visual interest
   
