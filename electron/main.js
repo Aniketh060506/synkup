@@ -213,12 +213,8 @@ app.on('window-all-closed', () => {
 app.on('before-quit', () => {
     console.log('[APP] Quitting app, cleaning up...');
     
-    // Kill backend process
-    if (backendProcess) {
-        console.log('[BACKEND] Killing backend process...');
-        backendProcess.kill('SIGTERM');
-        backendProcess = null;
-    }
+    // Stop backend using launcher
+    launcher.stopBackend();
     
     // Kill native messaging host
     if (nativeMessagingHost) {
