@@ -176,7 +176,7 @@ The extension is now:
 
 ### Via API
 ```bash
-curl https://sprint-3.preview.emergentagent.com/api/web-captures
+curl https://jog-track-1.preview.emergentagent.com/api/web-captures
 ```
 
 ---

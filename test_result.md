@@ -1024,7 +1024,7 @@ agent_communication:
          - Handles POST to /api/web-capture
          - Connection status monitoring
          - Message passing between components
-         - Uses production URL: https://sprint-3.preview.emergentagent.com/api
+         - Uses production URL: https://jog-track-1.preview.emergentagent.com/api
       
       4. content.js ✅
          - Floating button on text selection

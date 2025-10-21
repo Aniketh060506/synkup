@@ -1,7 +1,7 @@
 // CopyDock Chrome Extension - Background Service Worker
 
 // Use the public backend URL that routes through the proxy
-const API_URL = 'https://sprint-3.preview.emergentagent.com/api';
+const API_URL = 'https://jog-track-1.preview.emergentagent.com/api';
 
 let connectionStatus = 'disconnected';
 let targetNotebookId = null;
