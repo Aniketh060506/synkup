@@ -1,148 +1,202 @@
-// CopyDock Chrome Extension - Content Script
+/**
+ * CopyDock Chrome Extension - Content Script
+ * Handles text selection and floating button UI
+ */
 
 let floatingButton = null;
-let currentSelection = null;
+let targetNotebookName = 'Loading...';
+let isConnected = false;
 
-// Initialize
-init();
+console.log('[Content] CopyDock content script loaded');
 
-function init() {
-  // Listen for text selection
-  document.addEventListener('mouseup', handleTextSelection);
-  document.addEventListener('keyup', handleTextSelection);
-  
-  // Listen for messages from background script
-  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.action === 'captureSelection') {
-      captureCurrentSelection();
+// Listen for messages from background script
+chrome.runtime.onMessage.addListener((message) => {
+    console.log('[Content] Received message:', message);
+    
+    switch (message.type) {
+        case 'CONNECTION_STATUS':
+            isConnected = message.connected;
+            if (!isConnected) {
+                targetNotebookName = 'Desktop App Not Running';
+                updateFloatingButton();
+            }
+            break;
+        
+        case 'TARGET_NOTEBOOK_UPDATED':
+            targetNotebookName = message.notebook.name;
+            isConnected = true;
+            updateFloatingButton();
+            break;
+        
+        case 'CAPTURE_RESULT':
+            if (message.success) {
+                showToast(`✅ Saved to ${message.notebookName}`, 'success');
+            } else {
+                showToast(`❌ ${message.message}`, 'error');
+            }
+            hideFloatingButton();
+            break;
+    }
+});
+
+// Get initial status from background
+chrome.runtime.sendMessage({ type: 'GET_STATUS' }, (response) => {
+    if (response) {
+        isConnected = response.connected;
+        if (response.targetNotebook) {
+            targetNotebookName = response.targetNotebook.name;
+        }
+        console.log('[Content] Initial status:', { isConnected, targetNotebookName });
+    }
+});
+
+// Show floating button on text selection
+document.addEventListener('mouseup', (e) => {
+    // Small delay to ensure selection is complete
+    setTimeout(() => {
+        const selectedText = window.getSelection().toString().trim();
+        
+        if (selectedText.length > 0) {
+            showFloatingButton(e.pageX, e.pageY);
+        } else {
+            hideFloatingButton();
+        }
+    }, 10);
+});
+
+// Hide button when clicking elsewhere
+document.addEventListener('mousedown', (e) => {
+    if (floatingButton && !floatingButton.contains(e.target)) {
+        const selectedText = window.getSelection().toString().trim();
+        if (selectedText.length === 0) {
+            hideFloatingButton();
+        }
+    }
+});
+
+function showFloatingButton(x, y) {
+    if (!floatingButton) {
+        floatingButton = document.createElement('div');
+        floatingButton.id = 'copydock-floating-button';
+        floatingButton.className = 'copydock-floating-button';
+        document.body.appendChild(floatingButton);
+        
+        floatingButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            captureSelection();
+        });
     }
     
-    if (request.action === 'captureSuccess') {
-      showToast(`✅ Saved to ${request.notebookName}`, 'success');
-      hideFloatingButton();
-    }
+    updateFloatingButton();
     
-    if (request.action === 'captureError') {
-      showToast(`❌ Error: ${request.error}`, 'error');
-    }
-  });
+    // Position button
+    floatingButton.style.left = `${x}px`;
+    floatingButton.style.top = `${y + 20}px`;
+    floatingButton.style.display = 'block';
+    
+    // Add animation
+    floatingButton.style.opacity = '0';
+    floatingButton.style.transform = 'translateY(-5px)';
+    setTimeout(() => {
+        floatingButton.style.opacity = '1';
+        floatingButton.style.transform = 'translateY(0)';
+    }, 10);
 }
 
-function handleTextSelection(e) {
-  setTimeout(() => {
-    const selection = window.getSelection();
-    const selectedText = selection.toString().trim();
-    
-    if (selectedText.length > 0) {
-      currentSelection = {
-        text: selectedText,
-        html: getSelectedHTML(selection)
-      };
-      showFloatingButton(e);
-    } else {
-      hideFloatingButton();
-      currentSelection = null;
+function updateFloatingButton() {
+    if (floatingButton) {
+        if (isConnected) {
+            floatingButton.innerHTML = `📋 Send to <strong>${targetNotebookName}</strong>`;
+            floatingButton.style.cursor = 'pointer';
+            floatingButton.style.opacity = '1';
+        } else {
+            floatingButton.innerHTML = `⚠️ Desktop App Not Running`;
+            floatingButton.style.cursor = 'not-allowed';
+            floatingButton.style.opacity = '0.7';
+        }
     }
-  }, 10);
-}
-
-function getSelectedHTML(selection) {
-  if (selection.rangeCount > 0) {
-    const range = selection.getRangeAt(0);
-    const div = document.createElement('div');
-    div.appendChild(range.cloneContents());
-    return div.innerHTML;
-  }
-  return '';
-}
-
-function showFloatingButton(event) {
-  if (!floatingButton) {
-    floatingButton = document.createElement('div');
-    floatingButton.id = 'copydock-floating-button';
-    floatingButton.innerHTML = '📋 Send to CopyDock';
-    floatingButton.addEventListener('click', captureCurrentSelection);
-    document.body.appendChild(floatingButton);
-  }
-  
-  // Position near the selection
-  const selection = window.getSelection();
-  if (selection.rangeCount > 0) {
-    const range = selection.getRangeAt(0);
-    const rect = range.getBoundingClientRect();
-    
-    floatingButton.style.left = `${rect.left + window.scrollX}px`;
-    floatingButton.style.top = `${rect.bottom + window.scrollY + 5}px`;
-  }
-  
-  floatingButton.classList.add('show');
 }
 
 function hideFloatingButton() {
-  if (floatingButton) {
-    floatingButton.classList.remove('show');
-    setTimeout(() => {
-      if (floatingButton && !floatingButton.classList.contains('show')) {
-        floatingButton.remove();
-        floatingButton = null;
-      }
-    }, 300);
-  }
+    if (floatingButton) {
+        floatingButton.style.opacity = '0';
+        floatingButton.style.transform = 'translateY(-5px)';
+        setTimeout(() => {
+            if (floatingButton) {
+                floatingButton.style.display = 'none';
+            }
+        }, 200);
+    }
 }
 
-function captureCurrentSelection() {
-  if (!currentSelection) {
-    showToast('⚠️ No text selected', 'warning');
-    return;
-  }
-  
-  // Show loading state
-  if (floatingButton) {
-    floatingButton.innerHTML = '⏳ Saving...';
-    floatingButton.classList.add('loading');
-  }
-  
-  // Send to background script
-  chrome.runtime.sendMessage({
-    action: 'capture',
-    selectedText: currentSelection.text,
-    selectedHTML: currentSelection.html,
-    sourceUrl: window.location.href
-  }, (response) => {
-    console.log('Capture response:', response);
-  });
+function captureSelection() {
+    if (!isConnected) {
+        showToast('⚠️ Please open CopyDock desktop app', 'warning');
+        return;
+    }
+    
+    const selection = window.getSelection();
+    const selectedText = selection.toString().trim();
+    
+    if (!selectedText) {
+        showToast('⚠️ No text selected', 'warning');
+        return;
+    }
+    
+    // Get HTML content
+    let selectedHTML = '';
+    if (selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        const div = document.createElement('div');
+        div.appendChild(range.cloneContents());
+        selectedHTML = div.innerHTML;
+    }
+    
+    // Send to background script
+    chrome.runtime.sendMessage({
+        type: 'CAPTURE_CONTENT',
+        payload: {
+            selectedText: selectedText,
+            selectedHTML: selectedHTML,
+            sourceDomain: window.location.hostname,
+            sourceUrl: window.location.href,
+            timestamp: new Date().toISOString()
+        }
+    }, (response) => {
+        if (response && !response.success) {
+            showToast(`❌ ${response.message}`, 'error');
+        } else {
+            showToast('📤 Sending to CopyDock...', 'info');
+        }
+    });
 }
 
 function showToast(message, type = 'info') {
-  // Remove existing toast if any
-  const existingToast = document.getElementById('copydock-toast');
-  if (existingToast) {
-    existingToast.remove();
-  }
-  
-  // Create toast
-  const toast = document.createElement('div');
-  toast.id = 'copydock-toast';
-  toast.className = `copydock-toast copydock-toast-${type}`;
-  toast.innerHTML = message;
-  document.body.appendChild(toast);
-  
-  // Show animation
-  setTimeout(() => toast.classList.add('show'), 10);
-  
-  // Auto-hide after 3 seconds
-  setTimeout(() => {
-    toast.classList.remove('show');
-    setTimeout(() => toast.remove(), 300);
-  }, 3000);
+    const toast = document.createElement('div');
+    toast.className = `copydock-toast copydock-toast-${type}`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.classList.add('show');
+    }, 10);
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
 }
 
-// Hide floating button when clicking outside
-document.addEventListener('click', (e) => {
-  if (floatingButton && !floatingButton.contains(e.target)) {
-    const selection = window.getSelection();
-    if (!selection.toString().trim()) {
-      hideFloatingButton();
+// Keyboard shortcut handler
+document.addEventListener('keydown', (e) => {
+    // Ctrl+Shift+C or Cmd+Shift+C
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'C') {
+        const selectedText = window.getSelection().toString().trim();
+        if (selectedText) {
+            e.preventDefault();
+            captureSelection();
+        }
     }
-  }
 });
+
+console.log('[Content] CopyDock content script ready');

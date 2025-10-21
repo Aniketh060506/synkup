@@ -1,99 +1,95 @@
-// CopyDock Extension Popup Script
+/**
+ * CopyDock Chrome Extension - Popup Script
+ * Displays connection status and target notebook
+ */
 
-let connectionStatusInterval = null;
+let connectionStatusEl = document.getElementById('connection-status');
+let targetNotebookEl = document.getElementById('target-notebook');
+let testButton = document.getElementById('test-capture');
+let refreshButton = document.getElementById('refresh-button');
 
-// Initialize popup
-init();
+console.log('[Popup] Popup opened');
 
-function init() {
-  updateStatus();
-  
-  // Update status every 3 seconds
-  connectionStatusInterval = setInterval(updateStatus, 3000);
-  
-  // Test capture button
-  document.getElementById('test-capture').addEventListener('click', testCapture);
-}
-
-// Update connection status and settings
-function updateStatus() {
-  // Get settings from background script
-  chrome.runtime.sendMessage({ action: 'getSettings' }, (response) => {
-    if (response) {
-      updateNotebookDisplay(response.targetNotebookName || 'Web Captures');
-      updateConnectionDisplay(response.connectionStatus || 'checking');
-    }
-  });
-  
-  // Check actual connection
-  chrome.runtime.sendMessage({ action: 'checkConnection' }, (response) => {
-    if (response) {
-      updateConnectionDisplay(response.status);
-    }
-  });
-}
-
-function updateConnectionDisplay(status) {
-  const statusElement = document.getElementById('connection-status');
-  const dot = statusElement.querySelector('.status-dot');
-  const text = statusElement.querySelector('span:last-child');
-  
-  // Remove all status classes
-  dot.classList.remove('status-connected', 'status-disconnected', 'status-checking');
-  
-  if (status === 'connected') {
-    dot.classList.add('status-connected');
-    text.textContent = 'Connected ✅';
-    text.style.color = '#10B981';
-  } else if (status === 'error' || status === 'disconnected') {
-    dot.classList.add('status-disconnected');
-    text.textContent = 'Disconnected ❌';
-    text.style.color = '#EF4444';
-  } else {
-    dot.classList.add('status-checking');
-    text.textContent = 'Checking...';
-    text.style.color = '#F59E0B';
-  }
-}
-
-function updateNotebookDisplay(notebookName) {
-  document.getElementById('target-notebook').textContent = notebookName;
-}
-
-function testCapture() {
-  const button = document.getElementById('test-capture');
-  button.textContent = 'Testing...';
-  button.disabled = true;
-  
-  // Send test message to background
-  chrome.runtime.sendMessage({
-    action: 'capture',
-    selectedText: 'This is a test capture from CopyDock extension!',
-    selectedHTML: '<p>This is a <strong>test</strong> capture.</p>',
-    sourceUrl: 'chrome-extension://test'
-  }, (response) => {
-    button.disabled = false;
-    if (response && response.success) {
-      button.textContent = '✅ Test Successful!';
-      button.style.background = 'linear-gradient(135deg, #10B981 0%, #059669 100%)';
-      setTimeout(() => {
-        button.textContent = 'Test Capture';
-        button.style.background = '';
-      }, 2000);
+// Update UI with current status
+function updateUI(status) {
+    console.log('[Popup] Updating UI with status:', status);
+    
+    if (status.connected) {
+        connectionStatusEl.innerHTML = '<span class="status-dot connected"></span> Connected ✅';
+        connectionStatusEl.className = 'status connected';
+        targetNotebookEl.innerHTML = `Target: <strong>${status.targetNotebook.name}</strong>`;
+        testButton.disabled = false;
+        refreshButton.disabled = false;
     } else {
-      button.textContent = '❌ Test Failed';
-      button.style.background = 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)';
-      setTimeout(() => {
-        button.textContent = 'Test Capture';
-        button.style.background = '';
-      }, 2000);
+        connectionStatusEl.innerHTML = '<span class="status-dot disconnected"></span> Disconnected ❌';
+        connectionStatusEl.className = 'status disconnected';
+        targetNotebookEl.innerHTML = '<em>Desktop app not running</em><br><small style="color: #888;">Please open CopyDock desktop app</small>';
+        testButton.disabled = true;
+        refreshButton.disabled = true;
     }
-  });
 }
 
-// Cleanup interval on popup close
-window.addEventListener('unload', () => {
-  if (connectionStatusInterval) {
-    clearInterval(connectionStatusInterval);
-  }
+// Get status from background script
+function checkStatus() {
+    chrome.runtime.sendMessage({ type: 'GET_STATUS' }, (response) => {
+        if (response) {
+            updateUI(response);
+        }
+    });
+}
+
+// Initial status check
+checkStatus();
+
+// Listen for status updates
+chrome.runtime.onMessage.addListener((message) => {
+    if (message.type === 'CONNECTION_STATUS' || message.type === 'TARGET_NOTEBOOK_UPDATED') {
+        checkStatus();
+    }
 });
+
+// Test capture button
+if (testButton) {
+    testButton.addEventListener('click', () => {
+        chrome.runtime.sendMessage({
+            type: 'CAPTURE_CONTENT',
+            payload: {
+                selectedText: 'Test capture from extension popup',
+                selectedHTML: '<p>Test capture from extension popup</p>',
+                sourceDomain: 'extension-popup',
+                sourceUrl: 'chrome-extension://popup',
+                timestamp: new Date().toISOString()
+            }
+        }, (response) => {
+            if (response && response.success) {
+                testButton.textContent = 'Sent! ✅';
+                setTimeout(() => {
+                    testButton.textContent = 'Test Capture';
+                }, 2000);
+            } else {
+                testButton.textContent = 'Failed ❌';
+                setTimeout(() => {
+                    testButton.textContent = 'Test Capture';
+                }, 2000);
+            }
+        });
+    });
+}
+
+// Refresh button
+if (refreshButton) {
+    refreshButton.addEventListener('click', () => {
+        refreshButton.textContent = 'Refreshing...';
+        chrome.runtime.sendMessage({ type: 'REFRESH_TARGET' }, () => {
+            setTimeout(() => {
+                refreshButton.textContent = '🔄 Refresh';
+                checkStatus();
+            }, 500);
+        });
+    });
+}
+
+// Auto-refresh every 3 seconds
+setInterval(checkStatus, 3000);
+
+console.log('[Popup] Popup script ready');
