@@ -176,7 +176,7 @@ The extension is now:
 
 ### Via API
 ```bash
-curl https://copydock-app.preview.emergentagent.com/api/web-captures
+curl https://quick-deploy-42.preview.emergentagent.com/api/web-captures
 ```
 
 ---
