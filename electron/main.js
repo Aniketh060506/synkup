@@ -11,11 +11,26 @@ let tray = null;
 
 // Paths
 const isDev = process.env.NODE_ENV === 'development';
-const BACKEND_PATH = path.join(__dirname, '../backend/server.py');
-const FRONTEND_URL = isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../frontend/build/index.html')}`;
+const resourcesPath = app.isPackaged 
+    ? process.resourcesPath 
+    : path.join(__dirname, '..');
+
+const BACKEND_PATH = app.isPackaged
+    ? path.join(resourcesPath, 'backend', 'server.py')
+    : path.join(__dirname, '../backend/server.py');
+
+const FRONTEND_PATH = app.isPackaged
+    ? path.join(resourcesPath, 'frontend', 'index.html')
+    : path.join(__dirname, '../frontend/build/index.html');
+
+const FRONTEND_URL = isDev 
+    ? 'http://localhost:3000' 
+    : `file://${FRONTEND_PATH}`;
 
 console.log('[MAIN] Starting CopyDock Desktop App...');
 console.log('[MAIN] Development mode:', isDev);
+console.log('[MAIN] Packaged:', app.isPackaged);
+console.log('[MAIN] Resources path:', resourcesPath);
 console.log('[MAIN] Backend path:', BACKEND_PATH);
 console.log('[MAIN] Frontend URL:', FRONTEND_URL);
 
