@@ -1043,7 +1043,7 @@ agent_communication:
          - Handles POST to /api/web-capture
          - Connection status monitoring
          - Message passing between components
-         - Uses production URL: https://desktop-clipper.preview.emergentagent.com/api
+         - Uses production URL: https://copydock-app.preview.emergentagent.com/api
       
       4. content.js ✅
          - Floating button on text selection

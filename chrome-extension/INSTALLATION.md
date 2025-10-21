@@ -176,7 +176,7 @@ The extension is now:
 
 ### Via API
 ```bash
-curl https://desktop-clipper.preview.emergentagent.com/api/web-captures
+curl https://copydock-app.preview.emergentagent.com/api/web-captures
 ```
 
 ---
