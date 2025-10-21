@@ -51,7 +51,20 @@ function startBackend() {
         // Port not in use, start backend
     }
     
-    backendProcess = spawn('python3', [BACKEND_PATH]);
+    // Check if backend executable exists
+    if (!fs.existsSync(BACKEND_PATH)) {
+        console.error('[BACKEND] Backend executable not found at:', BACKEND_PATH);
+        dialog.showErrorBox(
+            'Backend Error',
+            `Backend executable not found: ${BACKEND_PATH}`
+        );
+        return;
+    }
+    
+    backendProcess = spawn(BACKEND_PATH, [], {
+        detached: false,
+        stdio: ['ignore', 'pipe', 'pipe']
+    });
     
     backendProcess.stdout.on('data', (data) => {
         console.log(`[BACKEND] ${data.toString().trim()}`);
