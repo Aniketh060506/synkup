@@ -405,6 +405,25 @@ agent_communication:
 
   - agent: "main"
     message: |
+      🔧 FIXING TODO & WEB CAPTURE ANALYTICS UPDATES:
+      
+      User reported:
+      1. ✅ FIXED: Todo completions not updating in bar graph - Fixed month array access issue
+      2. 🔍 INVESTIGATING: Web captures not updating in bar graph
+      
+      Added debug logging to trace data flow:
+      - trackActivity() now logs when captures are tracked
+      - generate7DayActivity() logs activityLog contents and daily data
+      - Will identify if captures are being tracked but not displayed, or not tracked at all
+      
+      Next steps:
+      - User should open browser console (F12)
+      - Complete a todo or make a web capture
+      - Check console for logs starting with 📊, 📈, 📅
+      - This will help identify where the data flow breaks
+
+  - agent: "main"
+    message: |
       ✅ STREAK TRACKING LOGIC FIXED:
       
       Fixed Issues:
