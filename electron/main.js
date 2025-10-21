@@ -1,11 +1,11 @@
 const { app, BrowserWindow, ipcMain, Menu, Tray, dialog } = require('electron');
 const path = require('path');
+const launcher = require('./launcher');
 const { spawn } = require('child_process');
 const fs = require('fs');
 const os = require('os');
 
 let mainWindow = null;
-let backendProcess = null;
 let nativeMessagingHost = null;
 let tray = null;
 
@@ -31,7 +31,7 @@ console.log('[MAIN] Starting CopyDock Desktop App...');
 console.log('[MAIN] Development mode:', isDev);
 console.log('[MAIN] Packaged:', app.isPackaged);
 console.log('[MAIN] Resources path:', resourcesPath);
-console.log('[MAIN] Backend path:', BACKEND_PATH);
+console.log('[MAIN] Backend script:', BACKEND_SCRIPT);
 console.log('[MAIN] Frontend URL:', FRONTEND_URL);
 
 // Start FastAPI Backend
