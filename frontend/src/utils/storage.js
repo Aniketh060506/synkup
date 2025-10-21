@@ -222,15 +222,19 @@ export const trackActivity = (data, activityType, value = 1) => {
   switch (activityType) {
     case 'todoCompleted':
       data.activityLog[today].todosCompleted += value;
+      console.log(`📊 Tracked ${value} todos completed on ${today}. Total: ${data.activityLog[today].todosCompleted}`);
       break;
     case 'noteCreated':
       data.activityLog[today].notesCreated += value;
+      console.log(`📊 Tracked ${value} notes created on ${today}. Total: ${data.activityLog[today].notesCreated}`);
       break;
     case 'capture':
       data.activityLog[today].captures += value;
+      console.log(`📊 Tracked ${value} captures on ${today}. Total: ${data.activityLog[today].captures}`);
       break;
     case 'wordsWritten':
       data.activityLog[today].wordsWritten += value;
+      console.log(`📊 Tracked ${value} words written on ${today}. Total: ${data.activityLog[today].wordsWritten}`);
       break;
   }
   
