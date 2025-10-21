@@ -34,62 +34,14 @@ console.log('[MAIN] Resources path:', resourcesPath);
 console.log('[MAIN] Backend script:', BACKEND_SCRIPT);
 console.log('[MAIN] Frontend URL:', FRONTEND_URL);
 
-// Start FastAPI Backend
-function startBackend() {
-    console.log('[BACKEND] Starting FastAPI backend...');
-    
-    // Check if backend is already running
-    const checkCmd = process.platform === 'win32' 
-        ? 'netstat -ano | findstr :8001'
-        : 'lsof -i :8001';
-    
+// Start FastAPI Backend using launcher
+async function startBackend() {
     try {
-        require('child_process').execSync(checkCmd);
-        console.log('[BACKEND] Backend already running on port 8001');
-        return;
-    } catch (e) {
-        // Port not in use, start backend
+        await launcher.startBackend(BACKEND_SCRIPT);
+        console.log('[MAIN] Backend started successfully');
+    } catch (err) {
+        console.error('[MAIN] Failed to start backend:', err.message);
     }
-    
-    // Check if backend executable exists
-    if (!fs.existsSync(BACKEND_PATH)) {
-        console.error('[BACKEND] Backend executable not found at:', BACKEND_PATH);
-        dialog.showErrorBox(
-            'Backend Error',
-            `Backend executable not found: ${BACKEND_PATH}`
-        );
-        return;
-    }
-    
-    backendProcess = spawn(BACKEND_PATH, [], {
-        detached: false,
-        stdio: ['ignore', 'pipe', 'pipe']
-    });
-    
-    backendProcess.stdout.on('data', (data) => {
-        console.log(`[BACKEND] ${data.toString().trim()}`);
-    });
-    
-    backendProcess.stderr.on('data', (data) => {
-        console.error(`[BACKEND ERROR] ${data.toString().trim()}`);
-    });
-    
-    backendProcess.on('close', (code) => {
-        console.log(`[BACKEND] Process exited with code ${code}`);
-        if (code !== 0 && mainWindow && !mainWindow.isDestroyed()) {
-            // Restart backend if crashed
-            console.log('[BACKEND] Restarting in 2 seconds...');
-            setTimeout(startBackend, 2000);
-        }
-    });
-    
-    backendProcess.on('error', (err) => {
-        console.error('[BACKEND] Failed to start:', err);
-        dialog.showErrorBox(
-            'Backend Error',
-            `Failed to start backend: ${err.message}\n\nPlease ensure Python 3 is installed.`
-        );
-    });
 }
 
 // Create Main Window
