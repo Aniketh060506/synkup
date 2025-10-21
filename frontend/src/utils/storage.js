@@ -305,16 +305,21 @@ export const generate7DayActivity = (activityLog, todoSystem = [], notebooks = [
       hasAnyRealData = true;
     }
     
-    result.push({
+    const dayResult = {
       date: dateStr,
       todos: todosCompletedCount > 0 ? todosCompletedCount : (dayData.todosCompleted || 0),
       captures: dayData.captures || 0,
       notes: notesCreatedCount > 0 ? notesCreatedCount : (dayData.notesCreated || 0),
-    });
+    };
+    
+    console.log(`📅 ${dateStr}: todos=${dayResult.todos}, captures=${dayResult.captures}, notes=${dayResult.notes}, hasData=${hasDayData}`);
+    
+    result.push(dayResult);
   }
   
   // If no real data exists, show demo data for visual appeal
   if (!hasAnyRealData) {
+    console.log('⚠️ No real data found, using demo pattern');
     return result.map((item, index) => ({
       date: item.date,
       todos: demoPattern[index] || 5,
@@ -323,6 +328,7 @@ export const generate7DayActivity = (activityLog, todoSystem = [], notebooks = [
     }));
   }
   
+  console.log('✅ Returning real activity data:', result);
   return result;
 };
 
