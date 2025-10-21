@@ -15,9 +15,9 @@ const resourcesPath = app.isPackaged
     ? process.resourcesPath 
     : path.join(__dirname, '..');
 
-const BACKEND_PATH = app.isPackaged
-    ? path.join(resourcesPath, 'backend', 'copydock-backend.exe')
-    : path.join(__dirname, '../backend/dist/copydock-backend.exe');
+const BACKEND_SCRIPT = app.isPackaged
+    ? path.join(resourcesPath, 'backend', 'server.py')
+    : path.join(__dirname, '../backend/server.py');
 
 const FRONTEND_PATH = app.isPackaged
     ? path.join(resourcesPath, 'frontend', 'index.html')
