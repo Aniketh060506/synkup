@@ -1,23 +1,18 @@
 from fastapi import FastAPI, APIRouter
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
-from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import logging
 from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict
-from typing import List
+from typing import List, Optional
 import uuid
 from datetime import datetime, timezone
+from storage_service import storage
 
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
-
-# MongoDB connection
-mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
 
 # Create the main app without a prefix
 app = FastAPI()
@@ -28,7 +23,7 @@ api_router = APIRouter(prefix="/api")
 
 # Define Models
 class StatusCheck(BaseModel):
-    model_config = ConfigDict(extra="ignore")  # Ignore MongoDB's _id field
+    model_config = ConfigDict(extra="ignore")
     
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     client_name: str
@@ -42,7 +37,7 @@ class WebCaptureRequest(BaseModel):
     selectedHTML: str = ""
     sourceDomain: str
     sourceUrl: str
-    targetNotebookId: str = None
+    targetNotebookId: Optional[str] = None
     timestamp: str
 
 class WebCaptureResponse(BaseModel):
@@ -51,27 +46,54 @@ class WebCaptureResponse(BaseModel):
     notebookName: str
     message: str
 
+class TargetNotebookRequest(BaseModel):
+    notebookId: str
+    notebookName: str
+
+class TargetNotebookResponse(BaseModel):
+    notebookId: str
+    notebookName: str
+
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
+
 # Add your routes to the router instead of directly to app
 @api_router.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "CopyDock Backend API - Running with localStorage"}
+
+@api_router.get("/health")
+async def health_check():
+    return {
+        "status": "ok",
+        "message": "Backend is running",
+        "storage": "localStorage",
+        "version": "1.0.0"
+    }
 
 @api_router.post("/status", response_model=StatusCheck)
 async def create_status_check(input: StatusCheckCreate):
     status_dict = input.model_dump()
     status_obj = StatusCheck(**status_dict)
     
-    # Convert to dict and serialize datetime to ISO string for MongoDB
+    # Convert to dict and serialize datetime to ISO string
     doc = status_obj.model_dump()
     doc['timestamp'] = doc['timestamp'].isoformat()
     
-    _ = await db.status_checks.insert_one(doc)
+    # Store in file-based storage
+    storage.add_status_check(doc)
     return status_obj
 
 @api_router.get("/status", response_model=List[StatusCheck])
 async def get_status_checks():
-    # Exclude MongoDB's _id field from the query results
-    status_checks = await db.status_checks.find({}, {"_id": 0}).to_list(1000)
+    # Get status checks from file storage
+    status_checks = storage.get_status_checks()
     
     # Convert ISO string timestamps back to datetime objects
     for check in status_checks:
@@ -83,10 +105,15 @@ async def get_status_checks():
 @api_router.post("/web-capture", response_model=WebCaptureResponse)
 async def capture_web_content(capture: WebCaptureRequest):
     """
-    Receive web content from Chrome extension and store in database.
+    Receive web content from Chrome extension and store in localStorage.
     Returns the notebook ID and name where content was saved.
     """
     try:
+        # Get current target notebook settings
+        settings = storage.get_settings()
+        target_notebook_id = capture.targetNotebookId or settings.get('target_notebook_id', 'default')
+        target_notebook_name = settings.get('target_notebook_name', 'Web Captures')
+        
         # Create a web capture document
         capture_doc = {
             "id": str(uuid.uuid4()),
@@ -94,22 +121,25 @@ async def capture_web_content(capture: WebCaptureRequest):
             "selectedHTML": capture.selectedHTML,
             "sourceDomain": capture.sourceDomain,
             "sourceUrl": capture.sourceUrl,
-            "targetNotebookId": capture.targetNotebookId,
+            "targetNotebookId": target_notebook_id,
             "timestamp": capture.timestamp,
             "createdAt": datetime.now(timezone.utc).isoformat()
         }
         
-        # Store in MongoDB
-        result = await db.web_captures.insert_one(capture_doc)
+        # Store in file-based storage
+        success = storage.add_web_capture(capture_doc)
         
-        logger.info(f"Web capture saved: {capture.sourceDomain} -> {capture.targetNotebookId}")
-        
-        return WebCaptureResponse(
-            success=True,
-            notebookId=capture.targetNotebookId or "default",
-            notebookName="Web Captures",
-            message="Content captured successfully"
-        )
+        if success:
+            logger.info(f"Web capture saved: {capture.sourceDomain} -> {target_notebook_id}")
+            return WebCaptureResponse(
+                success=True,
+                notebookId=target_notebook_id,
+                notebookName=target_notebook_name,
+                message="Content captured successfully"
+            )
+        else:
+            raise Exception("Failed to save capture")
+            
     except Exception as e:
         logger.error(f"Error saving web capture: {str(e)}")
         return WebCaptureResponse(
@@ -122,8 +152,32 @@ async def capture_web_content(capture: WebCaptureRequest):
 @api_router.get("/web-captures")
 async def get_web_captures(limit: int = 100):
     """Get recent web captures"""
-    captures = await db.web_captures.find({}, {"_id": 0}).sort("createdAt", -1).to_list(limit)
+    captures = storage.get_web_captures(limit)
     return {"captures": captures, "count": len(captures)}
+
+@api_router.get("/settings/target-notebook", response_model=TargetNotebookResponse)
+async def get_target_notebook():
+    """Get the current target notebook for Chrome extension"""
+    settings = storage.get_settings()
+    return TargetNotebookResponse(
+        notebookId=settings.get('target_notebook_id', 'default'),
+        notebookName=settings.get('target_notebook_name', 'Web Captures')
+    )
+
+@api_router.post("/settings/target-notebook")
+async def set_target_notebook(notebook: TargetNotebookRequest):
+    """Set the target notebook for Chrome extension"""
+    storage.update_settings({
+        'target_notebook_id': notebook.notebookId,
+        'target_notebook_name': notebook.notebookName
+    })
+    logger.info(f"Target notebook updated: {notebook.notebookName}")
+    return {
+        "success": True,
+        "message": "Target notebook updated",
+        "notebookId": notebook.notebookId,
+        "notebookName": notebook.notebookName
+    }
 
 # Include the router in the main app
 app.include_router(api_router)
@@ -136,13 +190,4 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
-
-@app.on_event("shutdown")
-async def shutdown_db_client():
-    client.close()
+logger.info("CopyDock Backend started with localStorage")
